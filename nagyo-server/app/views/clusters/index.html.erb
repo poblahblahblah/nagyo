@@ -1,0 +1,32 @@
+<%- @page_title = 'Clusters' -%>
+
+<h1>Clusters</h1>
+
+<div id="results_table">
+<table cellspacing="0" class="styled">
+  <thead>
+    <tr>
+      <th nowrap="nowrap"></th>
+      <th>Nodegroup</th>
+      <th>Contacts</th>
+      <th>Check Command</th>
+      <th>Check Command Arguments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%- @clusters.each do |c| -%>
+    <tr class="<%= cycle('odd', 'even') -%>">
+      <td><%= link_to 'Show', c %> | <%= link_to 'Edit', edit_cluster_path(c) %> | <%= link_to 'Destroy', c, :confirm => 'Are you sure?', :method => :delete %></td>
+      <td><%= h c.nodegroup %></td>
+      <td><%= h c.contacts %></td>
+      <td><%= h c.check_command %></td>
+      <td><%= h c.check_command_arguments %></td>
+    </tr>
+    <%- end -%>
+  </tbody>
+</table>
+</div> <!-- end results_table div -->
+
+<br />
+
+<%= link_to 'New Cluster', new_cluster_path %>

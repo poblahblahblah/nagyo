@@ -1,0 +1,54 @@
+<div id="center_content">
+<%= semantic_form_for @service, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+  <fieldset>
+    <legend>Required Parameters</legend>
+    <%= f.input :_nodegroup %>
+    <%= f.input :contacts, :as => :select, :collection => Contact.all.map{|i| i.contact_name} %>
+    <%= f.input :check_command, :as => :select, :collection => Command.all.map{|i| i.command_name}%>
+    <%= f.input :check_command_arguments %>
+    <%= f.input :max_check_attempts, :as => :select, :collection => [ 1, 2, 3, 4, 5] %>
+    <%= f.input :check_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5] %>
+    <%= f.input :retry_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5] %>
+    <%= f.input :notification_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5] %>
+    <%= f.input :check_period, :as => :select, :collection => Timeperiod.all.map{|i| i.timeperiod_name} %>
+    <%= f.input :notification_period, :as => :select, :collection => Timeperiod.all.map{|i| i.timeperiod_name} %>
+  </fieldset>
+  <fieldset>
+    <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
+    <div id="toggleSection" style="display:none">
+      <%= f.input :display_name %>
+      <%= f.input :servicegroups %>
+      <%= f.input :is_volatile, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :initial_state, :as => :select, :collection => options_from_array(%W(o w u c)) %>
+      <%= f.input :active_checks_enabled, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :passive_checks_enabled, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :obsess_over_service, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :check_freshness, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :freshness_threshold %>
+      <%= f.input :event_handler %>
+      <%= f.input :event_handler_enabled, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :low_flap_threshold %>
+      <%= f.input :high_flap_threshold %>
+      <%= f.input :flap_detection_enabled, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :flap_detection_options %>
+      <%= f.input :process_perf_data, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :retain_status_information, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :retain_nonstatus_information, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :first_notification_delay, :as => :select, :collection => [ 1, 2, 3, 4, 5] %>
+      <%= f.input :notification_options %>
+      <%= f.input :notifications_enabled, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :stalking_options %>
+      <%= f.input :register, :as => :select, :collection => [ 0, 1 ] %>
+      <% f.input :service_description %>
+      <% f.input :name %>
+      <%= f.input :notes %>
+      <%= f.input :notes_url %>
+      <%= f.input :action_url %>
+    </div>
+  </fieldset>
+  <%= f.actions do %>
+    <%= f.action :submit, :as => :button %>
+    <%= f.action :cancel, :as => :link %>
+  <% end %>
+<% end %>
+

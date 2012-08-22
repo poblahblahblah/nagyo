@@ -1,0 +1,2 @@
+module HardwareprofilesHelper
+end

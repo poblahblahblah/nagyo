@@ -1,0 +1,34 @@
+<%- @page_title = 'Service Dependencies' -%>
+
+<h1>Service Dependencies</h1>
+
+<div id="results_table">
+<table cellspacing="0" class="styled">
+  <thead>
+    <tr>
+      <th nowrap="nowrap"></th>
+      <th>Host Name</th>
+      <th>Dependent Host Name</th>
+      <th>Nodegroup Name</th>
+      <th>Dependent Nodegroup Name</th>
+      <th>Dependency Period</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%- @servicedependencies.each do |c| -%>
+    <tr class="<%= cycle('odd', 'even') -%>">
+      <td><%= link_to 'Show', c %> | <%= link_to 'Edit', edit_servicedependency_path(c) %> | <%= link_to 'Destroy', c, :confirm => 'Are you sure?', :method => :delete %></td>
+      <td><%= h c.host_name %></td>
+      <td><%= h c.dependent_host_name %></td>
+      <td><%= h c.hostgroup_name %></td>
+      <td><%= h c.dependent_hostgroup_name %></td>
+      <td><%= h c.dependency_period %></td>
+    </tr>
+    <%- end -%>
+  </tbody>
+</table>
+</div> <!-- end results_table div -->
+
+<br />
+
+<%= link_to 'New Service Dependency', new_servicedependency_path %>

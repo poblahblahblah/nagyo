@@ -1,0 +1,83 @@
+<html> 
+<head> 
+<title>nagyo: <%= controller.action_name %></title> 
+
+<%= stylesheet_link_tag    "application", :media => "all" %>
+<%= javascript_include_tag 'application' %>
+<%= csrf_meta_tag %>
+
+</head> 
+
+<script>
+  $(document).ready(function() {
+    $('#toggleButton').click(function() {
+      if ($('#toggleSection').is(":hidden"))
+    {
+      $('#toggleSection').slideDown("slow");
+    } else {
+      $('#toggleSection').slideUp("slow");
+    }
+      return false;
+    });
+  });
+</script>
+
+<body> 
+<div id="header">
+<p id="account_links">
+Welcome back, <%= session[:account_id] %>!
+| <%= link_to "Clusters", :controller => 'clusters' %>
+| <%= link_to "Commands", :controller => 'commands' %>
+| <%= link_to "Contacts", :controller => 'contacts' %>
+| <%= link_to "Hardware Profile Checks", :controller => 'hardwareprofiles' %>
+| <%= link_to "Hosts", :controller => 'hosts' %>
+| <%= link_to "HostGroups", :controller => 'hostgroups' %>
+| <%= link_to "Host Dependencies", :controller=> 'hostdependencies' %>
+| <%= link_to "Services", :controller => 'services' %>
+| <%= link_to "Service Dependencies", :controller => 'servicedependencies' %>
+| <%= link_to "Timeperiods", :controller => 'timeperiods' %>
+| <%= link_to "Vips", :controller => 'vips' %>
+</p>
+
+<h1 id="branding"><a href="/">nagyo</a></h1>
+<hr />
+</div> <!-- end header -->
+<div id="content">
+<% if flash[:notice] -%>
+<div id="notice"><%= flash[:notice] %></div>
+  <script type="text/javascript">
+    new Effect.Pulsate('notice', {pulses:1, duration:1});
+  </script>
+<% end -%>
+
+<% if flash[:error] -%>
+<div id="error"><%= flash[:error] %></div>
+  <script type="text/javascript">
+    new Effect.Shake('error', {distance:5});
+  </script>
+<% end -%>
+
+<% # here comes some ugliness %>
+<% options = [] %>
+<% def options_from_array(array) %>
+<% (0..array.length).to_a.combination(2).map{|i,j| array[i...j]}.sort.each do |a| %>
+<% options << a.join(',') %>
+<% end %>
+<% return options %>
+<% end %>
+
+<%- # Calling yield here triggers the insertion of the specific view -%>
+<%= yield %>
+
+</div>
+<hr />
+
+<% if false -%>
+<div id="footer">
+<p>Some cool footer here.</p>
+</div> <!-- end footer -->
+<% end -%>
+</body>
+</body> 
+</html> 
+

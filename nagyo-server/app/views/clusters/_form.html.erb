@@ -1,0 +1,23 @@
+<div id="center_content">
+  <%= semantic_form_for @cluster, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+  <fieldset>
+    <legend>Required Parameters</legend>
+    <%= f.input :nodegroup %>
+    <%= f.input :contacts, :as => :select, :collection => Contact.all.map{|i| i.contact_name} %>
+    <%= f.input :check_command, :as => :select, :collection => Command.all.map{|i| i.command_name} %>
+    <%= f.input :check_command_arguments %>
+  </fieldset>
+  <fieldset>
+    <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
+    <div id="toggleSection" style="display:none">
+      <%= f.input :node_check_command, :as => :select, :collection => Command.all.map{|i| i.command_name} %>
+      <%= f.input :node_check_command_arguments %>
+      <%= f.input :notify_on_node_service, :as => :select, :collection => [ true, false ] %>
+    </div>
+  </fieldset>
+  <%= f.actions do %>
+    <%= f.action :submit, :as => :button %>
+    <%= f.action :cancel, :as => :link %>
+  <% end %>
+<% end %>
+

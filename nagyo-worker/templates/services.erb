@@ -1,0 +1,9 @@
+define service {
+  name                            <%= cc['_nodegroup'] %>-<%= cc['name'] %>
+  hostgroup_name                  <%= cc['_nodegroup'] %>
+  check_command                   <%= cc['check_command'] %>!<%= cc['check_command_arguments'] %>
+  service_description             <%= cc['_nodegroup'] %>-<%= cc['name'] %>
+<% cc.each_pair do |k,v| %>
+<% next if k =~ /^id$|^created_at$|^updated_at$|^name$|^check_command/ %><% next if v.to_s.empty? %>
+<%= "\s\s" %><%= k %><%= "\t" %><%= v %><% end %>
+}

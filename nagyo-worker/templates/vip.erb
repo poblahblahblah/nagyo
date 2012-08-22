@@ -1,0 +1,93 @@
+<% port_list = [] %>
+<% host_list = [] %>
+<% hosts_to_check.each {|host| port_list << host.split(':')[-1]; host_list << host.split(':')[0]} %>
+
+define host{
+  _nodegroups                   <%= cc['nodegroup'] %>
+  host_name                     vip::<%= cc['vip_dns'] %>
+  address                       <%= cc['vip_dns'] %>
+  notifications_enabled         1
+  event_handler_enabled         1
+  flap_detection_enabled        1
+  process_perf_data             0
+  retain_status_information     1
+  retain_nonstatus_information  1
+  max_check_attempts            3
+  notification_interval         3
+  check_period                  24x7
+  notification_period           24x7
+  notification_options          d,u,r
+  check_command                 check_ping!-w 100.0,20% -c 500.0,60% -p 5 -4
+  contacts                      <%= cc['contacts'] %>
+}
+
+define service {
+  _nodegroups                   <%= cc['nodegroup'] %>
+  _uri                          <%= cc['ecv_uri'] %>
+  _string                       <%= cc['ecv_string'] %>
+  name                          vip::<%= cc['vip_dns'] %>
+  host_name                     vip::<%= cc['vip_dns'] %>
+  active_checks_enabled         1
+  passive_checks_enabled        1
+  parallelize_check             1
+  obsess_over_service           0
+  check_freshness               0
+  freshness_threshold           1200
+  notifications_enabled         1
+  event_handler_enabled         0
+  flap_detection_enabled        0
+  process_perf_data             0
+  retain_status_information     1
+  retain_nonstatus_information  1
+  register                      1
+  is_volatile                   0
+  max_check_attempts            3
+  retry_check_interval          3
+  check_period                  24x7
+  notification_period           24x7
+  notification_options          w,c,r
+  notification_interval         120
+  contacts                      <%= cc['contacts'] %>
+  service_description           vip::<%= cc['vip_dns'] %>
+  normal_check_interval         24x7
+  check_command                 <%= cc['check_command'] %>!-H <%= hosts_to_check.sort.join(',') %> -c <%= cc['percent_crit'] %> -w <%= cc['percent_warn'] %> -u <%= cc['ecv_uri'] %> -e <%= cc['ecv_string'] %> -V <%= cc['vip_name'] %>
+}
+
+<% port_list.uniq.each do |port| %>
+define service {
+  _nodegroups                   <%= cc['nodegroup'] %>
+  _port                         <%= port %>
+  _uri                          <%= cc['ecv_uri'] %>
+  _string                       <%= cc['ecv_string'] %>
+  name                          vip::<%= cc['vip_dns'] %>::<%= cc['check_command'] %>::<%= port %>
+  host_name                     <%= host_list.sort.join(',') %>
+  active_checks_enabled         1
+  passive_checks_enabled        1
+  parallelize_check             1
+  obsess_over_service           0
+  check_freshness               0
+  freshness_threshold           1200
+<% if cc['notify_on_node_service'] == true %>
+  notifications_enabled         1
+<% else %>
+  notifications_enabled         0<% end %>
+  event_handler_enabled         0
+  flap_detection_enabled        0
+  process_perf_data             0
+  retain_status_information     1
+  retain_nonstatus_information  1
+  register                      1
+  is_volatile                   0
+  max_check_attempts            3
+  retry_check_interval          3
+  check_period                  24x7
+  notification_period           24x7
+  notification_options          w,c,r
+  notification_interval         120
+  contacts                      <%= cc['contacts'] %>
+  service_description           vip::<%= cc['vip_dns'] %>::nodes::<%= port %>
+  normal_check_interval         24x7
+  check_command                 <%= cc['node_check_command'] %>!<%= cc['node_check_command_arguments'] %>
+}
+<% end %>
+

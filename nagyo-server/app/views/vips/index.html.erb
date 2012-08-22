@@ -1,0 +1,38 @@
+<%- @page_title = 'VIPs' -%>
+
+<h1>VIPs</h1>
+
+<div id="results_table">
+<table cellspacing="0" class="styled">
+  <thead>
+    <tr>
+      <th nowrap="nowrap"></th>
+      <th>Nodegroup</th>
+      <th>Contacts</th>
+      <th>VIP DNS</th>
+      <th>Check Command</th>
+      <th>Percent Warn</th>
+      <th>Percent Crit</th>
+      <th>ECV URI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%- @vips.each do |c| -%>
+    <tr class="<%= cycle('odd', 'even') -%>">
+      <td><%= link_to 'Show', c %> | <%= link_to 'Edit', edit_vip_path(c) %> | <%= link_to 'Destroy', c, :confirm => 'Are you sure?', :method => :delete %></td>
+      <td><%= h c.nodegroup %></td>
+      <td><%= h c.contacts %></td>
+      <td><%= h c.vip_dns %></td>
+      <td><%= h c.check_command %></td>
+      <td><%= h c.percent_warn %></td>
+      <td><%= h c.percent_crit %></td>
+      <td><%= h c.ecv_uri %></td>
+    </tr>
+    <%- end -%>
+  </tbody>
+</table>
+</div> <!-- end results_table div -->
+
+<br />
+
+<%= link_to 'New VIP', new_vip_path %>

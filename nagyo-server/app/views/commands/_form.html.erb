@@ -1,0 +1,13 @@
+<div id="center_content">
+  <%= semantic_form_for @command, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+  <fieldset>
+    <legend>Required Parameters</legend>
+    <%= f.input :command_name %>
+    <%= f.input :command_line %>
+  </fieldset>
+  <%= f.actions do %>
+    <%= f.action :submit, :as => :button %>
+    <%= f.action :cancel, :as => :link %>
+  <% end %>
+<% end %>
+

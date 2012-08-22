@@ -1,0 +1,10 @@
+<center>
+<% require 'gchart' %>
+<img src="<%= Gchart.pie(:size => '600x400', 
+            :theme => :thirty7signals,
+            :title => "defined nagios objects",
+            :bg => 'ffffff',
+            :visible => true,
+            :legend => ['clusters', 'commands', 'contacts', 'hardware profiles', 'hosts', 'hostgroups', 'services', 'timeperiods', 'vips'],
+            :data => [Cluster.count, Command.count, Contact.count, Hardwareprofile.count, Host.count, Hostgroup.count, Service.count, Timeperiod.count, Vip.count]) %>">
+</center>

@@ -1,0 +1,26 @@
+<div id="center_content">
+<%= semantic_form_for @servicedependency, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+  <fieldset>
+    <legend>Required Parameters</legend>
+    <%= f.input :host_name %>
+    <%= f.input :dependent_host_name %>
+    <%= f.input :hostgroup_name %>
+    <%= f.input :dependent_hostgroup_name %>
+  </fieldset>
+  <fieldset>
+    <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
+    <div id="toggleSection" style="display:none">
+      <%= f.input :service_description %>
+      <%= f.input :dependent_service_description %>
+      <%= f.input :inherits_parent, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :execution_failure_criteria, :as => :select, :collection => options_from_array(%W(o d u p n)) %>
+      <%= f.input :notification_failure_criteria, :as => :select, :collection => options_from_array(%W(o d u p n)) %>
+      <%= f.input :dependency_period, :as => :select, :collection => Timeperiod.all.map{|i| i.timeperiod_name} %>
+    </div>
+  </fieldset>
+  <%= f.actions do %>
+    <%= f.action :submit, :as => :button %>
+    <%= f.action :cancel, :as => :link %>
+  <% end %>
+<% end %>
+

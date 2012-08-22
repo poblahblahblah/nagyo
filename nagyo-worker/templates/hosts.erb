@@ -1,0 +1,29 @@
+<% nodes.each do |node| %>
+<% if node['status']['name'] == 'setup' %>
+<% notifications_enabled = '0' %>
+<% notification_interval = '120' %>
+<% notification_period   = 'workhours' %>
+<% elsif node['status']['name'] =~ /inservice/ %>
+<% notifications_enabled = '1' %>
+<% notification_interval = '5' %>
+<% notification_period   = '24x7' %>
+<% end %>
+define host{
+  host_name                     <%= node['name'] %>
+  address                       <%= node['name'] %>
+  _nodegroups                   <% node['node_groups'].each do |v| %><%= v['name'] + ',' %><% end %>
+  notifications_enabled         <%= notifications_enabled %>
+  event_handler_enabled         1
+  flap_detection_enabled        1
+  process_perf_data             0
+  retain_status_information     1
+  retain_nonstatus_information  1
+  max_check_attempts            3
+  notification_interval         <%= notification_interval %>
+  check_period                  24x7
+  notification_period           <%= notification_period %>
+  notification_options          d,u,r
+  check_command                 check_ping!-w 100.0,20% -c 500.0,60% -p 5 -4
+  contacts                      pobrien@eharmony.com
+}
+<% end %>

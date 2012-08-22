@@ -1,0 +1,20 @@
+<div id="center_content">
+  <%= semantic_form_for @hostgroup, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+  <fieldset>
+    <legend>Required Parameters</legend>
+    <%= f.input :hostgroup_name %>
+    <%= f.input :alias %>
+  </fieldset>
+  <fieldset>
+    <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
+    <div id="toggleSection" style="display:none">
+    <%= f.input :notes %>
+    <%= f.input :notes_url %>
+    <%= f.input :action_url %>
+  </fieldset>
+  <%= f.actions do %>
+    <%= f.action :submit, :as => :button %>
+    <%= f.action :cancel, :as => :link %>
+  <% end %>
+<% end %>
+

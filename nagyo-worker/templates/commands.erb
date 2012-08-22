@@ -1,0 +1,4 @@
+define command{<% cc.each_pair do |k,v| %>
+<% next if k =~ /^id$|^created_at$|^updated_at$/ %><% next if v.to_s.empty? %>
+<%= "\s\s" %><%= k %><%= "\t" %><%= v %><% end %>
+}

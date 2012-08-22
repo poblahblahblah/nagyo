@@ -1,0 +1,57 @@
+<div id="center_content">
+<%= semantic_form_for @host, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+  <fieldset>
+    <legend>Required Parameters</legend>
+    <%= f.input :host_name %>
+    <%= f.input :contacts, :as => :select, :collection => Contact.all.map{|i| i.contact_name} %>
+    <%= f.input :max_check_attempts, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
+    <%= f.input :check_period, :as => :select, :collection => Timeperiod.all.map{|i| i.timeperiod_name}%>
+    <%= f.input :notification_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
+    <%= f.input :notification_period, :as => :select, :collection => Timeperiod.all.map{|i| i.timeperiod_name} %>
+  </fieldset>
+  <fieldset>
+    <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
+    <div id="toggleSection" style="display:none">
+      <%= f.input :members %>
+      <%= f.input :hostgroup_members %>
+      <%= f.input :notes %>
+      <%= f.input :notes_url %>
+      <%= f.input :action_url %>
+      <%= f.input :display_name %>
+      <%= f.input :parents %>
+      <%= f.input :hostgroups %>
+      <%= f.input :check_command, :as => :select, :collection => Command.all.map{|i| i.command_name} %>
+      <%= f.input :initial_state, :as => :select, :collection => options_from_array(%W(o d u)) %>
+      <%= f.input :check_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
+      <%= f.input :retry_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
+      <%= f.input :active_checks_enabled, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :passive_checks_enabled, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :obsess_over_host, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :check_freshness, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :freshness_threshold, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
+      <%= f.input :event_handler %>
+      <%= f.input :event_handler_enabled, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :low_flap_threshold, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
+      <%= f.input :high_flap_threshold, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
+      <%= f.input :flap_detection_enabled, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :flap_detection_options, :as => :select, :collection => options_from_array(%W(o d u)) %>
+      <%= f.input :process_perf_data, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :retain_status_information, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :retain_nonstatus_information, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :first_notification_delay, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]  %>
+      <%= f.input :notification_options, :as => :select, :collection => options_from_array(%W(d u r f s)) %>
+      <%= f.input :notifications_enabled, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :stalking_options, :as => :select, :collection => options_from_array(%W(o d u)) %>
+    </div>
+  </fieldset>
+  <% # we want to have alias and address be submitted, but not show up on the form %>
+  <div style="display:none">
+    <%= f.input :alias %>
+    <%= f.input :address %>
+  </div>
+  <%= f.actions do %>
+    <%= f.action :submit, :as => :button %>
+    <%= f.action :cancel, :as => :link %>
+  <% end %>
+<% end %>
+

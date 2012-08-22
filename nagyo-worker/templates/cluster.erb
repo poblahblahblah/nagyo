@@ -1,0 +1,92 @@
+<% port_list = [] %>
+<% host_list = [] %>
+<% hosts_to_check.each {|host| port_list << host.split(':')[-1]; host_list << host.split(':')[0]} %>
+
+define host{
+  _uri                          <%= cc['ecv_uri'] %>
+  _string                       <%= cc['ecv_string'] %>
+  host_name                     cluster::<%= cc['nodegroup'] %>
+  address                       cluster::<%= cc['nodegroup'] %>
+  _nodegroups                   <%= cc['nodegroup'] %>
+  notifications_enabled         1
+  event_handler_enabled         1
+  flap_detection_enabled        1
+  process_perf_data             0
+  retain_status_information     1
+  retain_nonstatus_information  1
+  max_check_attempts            3
+  notification_interval         3
+  check_period                  24x7
+  notification_period           24x7
+  notification_options          d,u,r
+  initial_state                 o
+  contacts                      <%= cc['contacts'] %>
+}
+
+define service {
+  _uri                          <%= cc['ecv_uri'] %>
+  _string                       <%= cc['ecv_string'] %>
+  name                          cluster::<%= cc['nodegroup'] %>
+  host_name                     cluster::<%= cc['nodegroup'] %>
+  active_checks_enabled         1
+  passive_checks_enabled        1
+  parallelize_check             1
+  obsess_over_service           0
+  check_freshness               0
+  freshness_threshold           1200
+  notifications_enabled         1
+  event_handler_enabled         0
+  flap_detection_enabled        0
+  process_perf_data             0
+  retain_status_information     1
+  retain_nonstatus_information  1
+  register                      1
+  is_volatile                   0
+  max_check_attempts            3
+  retry_check_interval          3
+  check_period                  24x7
+  notification_period           24x7
+  notification_options          w,c,r
+  notification_interval         120
+  contacts                      <%= cc['contacts'] %>
+  service_description           cluster::<%= cc['nodegroup'] %>
+  normal_check_interval         24x7
+  check_command                 <%= cc['check_command'] %>!<%= cc['check_command_arguments'] %>
+}
+
+<% port_list.uniq.each do |port| %>
+define service {
+  _port                           <%= port %>
+  _uri                            <%= cc['ecv_uri'] %>
+  _string                         <%= cc['ecv_string'] %>
+  name                            <%= cc['nodegroup'] %>::<%= cc['check_command'] %>::<%= port %>
+  host_name                       <%= host_list.sort.join(',') %>
+  active_checks_enabled           1
+  passive_checks_enabled          1
+  parallelize_check               1
+  obsess_over_service             0
+  check_freshness                 0
+  freshness_threshold             1200
+<% if cc['notify_on_node_service'] == true %>
+  notifications_enabled           1
+<% else %>
+  notifications_enabled           0<% end %>
+  event_handler_enabled           0
+  flap_detection_enabled          0
+  process_perf_data               0
+  retain_status_information       1
+  retain_nonstatus_information    1
+  register                        1
+  is_volatile                     0
+  max_check_attempts              3
+  retry_check_interval            3
+  check_period                    24x7
+  notification_period             24x7
+  notification_options            w,c,r
+  notification_interval           120
+  contacts                        <%= cc['contacts'] %>
+  service_description             cluster::<%= cc['nodegroup'] %>::nodes::<%= port %>
+  normal_check_interval           24x7
+  check_command                   <%= cc['node_check_command'] %>!<%= cc['node_check_command_arguments'] %>
+}
+<% end %>
