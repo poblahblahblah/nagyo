@@ -3,7 +3,7 @@ class CommandsController < ApplicationController
   has_scope :command_name
 
   def index
-    @commands = apply_scopes(Command).all
+    @commands = apply_scopes(Command).paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # new.html.erb

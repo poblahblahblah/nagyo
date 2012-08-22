@@ -2,7 +2,6 @@ require 'rubygems'
 source 'http://rubygems.org'
 
 gem 'mongo'
-gem 'will_paginate'
 gem 'execjs'
 gem 'therubyracer'
 gem 'rails', '3.1.3'
