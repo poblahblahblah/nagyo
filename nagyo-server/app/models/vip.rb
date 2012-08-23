@@ -10,6 +10,7 @@ class Vip
   scope :contacts,	proc {|contacts| where(:contacts => contacts) }
 
   validates_uniqueness_of :nodegroup, :scope => [:check_command, :contacts, :vip_dns, :vip_name]
+  before_save             :reject_empty_inputs
 
   # required:
   key :nodegroup,			String,	:required => true
@@ -21,7 +22,7 @@ class Vip
   key :percent_crit,			String,	:required => true
   key :ecv_uri,				String,	:required => true
   key :ecv_string,			String,	:required => true
-  key :contacts,			String, :required => true
+  key :contacts,			Array,  :required => true
 
   # optional:
   key :node_check_command,		String
@@ -32,5 +33,10 @@ class Vip
 
   def initialize(*params)
     super(*params)
+  end
+
+  private
+  def reject_empty_inputs
+    contacts.reject!{|i| i.nil? or i.empty?}
   end
 end

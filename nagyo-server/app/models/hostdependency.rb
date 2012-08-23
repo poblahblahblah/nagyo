@@ -29,4 +29,9 @@ class Hostdependency
   def initialize(*params)
     super(*params)
   end
+
+  private
+  def reject_empty_inputs
+    members.reject!{|i| i.nil? or i.empty?}
+  end
 end

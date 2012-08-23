@@ -21,7 +21,7 @@
     <tr class="<%= cycle('odd', 'even') -%>">
       <td><%= link_to 'Show', c %> | <%= link_to 'Edit', edit_host_path(c) %> | <%= link_to 'Destroy', c, :confirm => 'Are you sure?', :method => :delete %></td>
       <td><%= h c.host_name %></td>
-      <td><%= h c.contacts %></td>
+      <td><%= h c.contacts.join(',') %></td>
       <td><%= h c.address %></td>
       <td><%= h c.max_check_attempts %></td>
       <td><%= h c.check_period %></td>

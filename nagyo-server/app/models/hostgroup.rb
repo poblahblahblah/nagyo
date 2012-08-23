@@ -18,8 +18,6 @@ class Hostgroup
   key :notes,             String
   key :notes_url,         String
   key :action_url,        String
-
-  # these two are generated automatically from nventory so we'll just leave them out of the view.
   key :members,           String
   key :hostgroup_members, String
 

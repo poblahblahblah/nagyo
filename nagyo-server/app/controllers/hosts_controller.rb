@@ -6,8 +6,6 @@ class HostsController < ApplicationController
   has_scope :check_period
   has_scope :notification_period
   has_scope :contacts
-  has_scope :members
-  has_scope :hostgroup_members
   has_scope :parents
   has_scope :hostgroups
   has_scope :check_command

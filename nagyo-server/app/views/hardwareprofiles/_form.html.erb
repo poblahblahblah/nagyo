@@ -3,6 +3,7 @@
   <fieldset>
     <legend>Required Parameters</legend>
     <%= f.input :hardware_profile %>
+    <%= f.input :contacts, :as => :select, :collection => Contact.all.map{|i| i.contact_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
     <%= f.input :check_commands, :as => :select, :collection => Command.all.map{|i| i.command_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
   </fieldset>
   <%= f.actions do %>

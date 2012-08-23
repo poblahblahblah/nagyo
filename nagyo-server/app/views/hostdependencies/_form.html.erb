@@ -10,7 +10,6 @@
   <fieldset>
     <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
     <div id="toggleSection" style="display:none">
-      <%= f.input :members %>
       <%= f.input :inherits_parent, :as => :select, :collection => [ 0, 1 ] %>
       <%= f.input :execution_failure_criteria, :as => :select, :collection => options_from_array(%W(o d u p n)) %>
       <%= f.input :notification_failure_criteria, :as => :select, :collection => options_from_array(%W(o d u p n)) %>

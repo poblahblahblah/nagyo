@@ -2,6 +2,7 @@ class HardwareprofilesController < ApplicationController
 
   has_scope :hardware_profile
   has_scope :check_commands
+  has_scope :contacts
 
   def index
     @hardwareprofiles = apply_scopes(Hardwareprofile).paginate(:page => params[:page])

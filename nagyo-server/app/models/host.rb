@@ -7,13 +7,12 @@ class Host
   scope :check_period,		proc {|check_period| where(:check_period => check_period) }
   scope :notification_period,	proc {|notification_period| where(:notification_period => notification_period) }
   scope :contacts,		proc {|contacts| where(:contacts => contacts) }
-  scope :members,		proc {|members| where(:members => members) }
-  scope :hostgroup_members,	proc {|hostgroup_members| where(:hostgroup_members => hostgroup_members) }
   scope :parents,		proc {|parents| where(:parents => parents) }
   scope :hostgroups,		proc {|hostgroups| where(:hostgroups => hostgroups) }
   scope :check_command,		proc {|check_command| where(:check_command => check_command) }
 
   before_validation :set_alias_and_address_to_host_name
+  before_save       :reject_empty_inputs
 
   # need to figure out a good combo of uniqueness
   validates_uniqueness_of :host_name, :scope => [:check_period, :contacts, :notification_period]
@@ -24,13 +23,11 @@ class Host
   key :address,               String,  :required => true
   key :max_check_attempts,    Integer, :required => true, :default => 3
   key :check_period,          String,  :required => true, :default => "24x7"
-  key :contacts,              String,  :required => true
+  key :contacts,              Array,   :required => true
   key :notification_interval, Integer, :required => true, :default => 5
   key :notification_period,   String,  :required => true, :default => "24x7"
 
   # optional:
-  key :members,                      Array
-  key :hostgroup_members,            Array
   key :notes,                        String
   key :notes_url,                    String
   key :action_url,                   String
@@ -70,5 +67,11 @@ class Host
   def set_alias_and_address_to_host_name
     self.alias   = self.host_name if self.alias.empty?
     self.address = self.host_name if self.address.empty?
+  end
+
+  def reject_empty_inputs
+    contacts.reject!{|i| i.nil? or i.empty?}
+    parents.reject!{|i| i.nil? or i.empty?}
+    hostgroups.reject!{|i| i.nil? or i.empty?}
   end
 end

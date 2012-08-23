@@ -11,6 +11,7 @@ class Service
   # I have the key "name" not visible in the view - I would rather put this together 
   # before validation so we can have a "standard" way of naming all of our services.
   before_validation :set_name_from_input_values
+  before_save       :reject_empty_inputs
 
   validates_uniqueness_of :_nodegroup, :scope => [:check_command, :contacts, :notification_period]
 
@@ -27,12 +28,13 @@ class Service
   key :check_period,			String,		:required => true, :default => "24x7"
   key :notification_interval,		Integer,	:required => true, :default => 60
   key :notification_period,		String,		:required => true, :default => "24x7"
-  key :contacts,			String,		:required => true
+  key :contacts,			Array,		:required => true
 
   # optional:
+  key :contact_groups,			Array
   key :service_description,		String
   key :display_name,			String
-  key :servicegroups,			String
+  key :servicegroups,			Array
   key :is_volatile,			Integer,	:default => 0
   key :initial_state,			String
   key :active_checks_enabled,		Integer,	:default => 1
@@ -67,5 +69,11 @@ class Service
   private
   def set_name_from_input_values
     self.name = [self._nodegroup, self.check_command, self.contacts, self.notification_period].join('-')
+  end
+
+  def reject_empty_inputs
+    contacts.reject!{|i| i.nil? or i.empty?}
+    contact_groups.reject!{|i| i.nil? or i.empty?}
+    servicegroups.reject!{|i| i.nil? or i.empty?}
   end
 end

@@ -8,6 +8,7 @@
     <tr>
       <th nowrap="nowrap"></th>
       <th>Hardware Profile</th>
+      <th>Contacts</th>
       <th>Check Commands</th>
     </tr>
   </thead>
@@ -16,6 +17,7 @@
     <tr class="<%= cycle('odd', 'even') -%>">
       <td><%= link_to 'Show', c %> | <%= link_to 'Edit', edit_hardwareprofile_path(c) %> | <%= link_to 'Destroy', c, :confirm => 'Are you sure?', :method => :delete %></td>
       <td><%= h c.hardware_profile %></td>
+      <td><%= h c.contacts.join(',') %></td>
       <td><%= h c.check_commands.join(',') %></td>
     </tr>
     <%- end -%>
