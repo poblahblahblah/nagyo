@@ -6,7 +6,7 @@ class HostgroupsController < ApplicationController
   has_scope :hostgroup_members
 
   def index
-    @hostgroups = apply_scopes(Hostgroup).all
+    @hostgroups = apply_scopes(Hostgroup).paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # new.html.erb

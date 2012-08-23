@@ -8,7 +8,7 @@ class ServicesController < ApplicationController
   has_scope :servicegroups
 
   def index
-    @services = apply_scopes(Service).all
+    @services = apply_scopes(Service).paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # new.html.erb

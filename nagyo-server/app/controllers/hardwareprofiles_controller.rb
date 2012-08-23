@@ -4,7 +4,7 @@ class HardwareprofilesController < ApplicationController
   has_scope :check_commands
 
   def index
-    @hardwareprofiles = apply_scopes(Hardwareprofile).all
+    @hardwareprofiles = apply_scopes(Hardwareprofile).paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # new.html.erb

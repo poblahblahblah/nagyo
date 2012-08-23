@@ -5,7 +5,7 @@ class ClustersController < ApplicationController
   has_scope :contacts
 
   def index
-    @clusters = apply_scopes(Cluster).all
+    @clusters = apply_scopes(Cluster).paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # new.html.erb

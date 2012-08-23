@@ -13,7 +13,7 @@ class HostsController < ApplicationController
   has_scope :check_command
 
   def index
-    @hosts = apply_scopes(Host).all
+    @hosts = apply_scopes(Host).paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # new.html.erb
