@@ -6,9 +6,11 @@ require 'nv_helpers'
 require 'json'
 require 'tempfile'
 require 'digest/md5'
+require 'fileutils'
+require 'net/smtp'
 
 # I'll probably want to move a lot of this to config files
-nvclient        = NVentory::Client.new(:server => 'http://nventory.corp.eharmony.com')
+nvclient        = NVentory::Client.new(:server => 'http://nventory.corp.eharmony.com', :cookiefile => "/tmp/.nagyocookie")
 script_base     = "/data/svc/ops/nagios-automation"
 npvm_regex      = "npvm.+\.np\..+\.eharmony\.com"
 npssvm_regex    = "np\..+\.eharmony\.com"
@@ -17,8 +19,12 @@ node_groups     = {}
 service_ngs     = []
 gen_directories = %W(clusters commands contacts hardware hostgroups hosts services vips)
 tmpdir          = Dir.mktmpdir
+tmpfile         = Tempfile.new('nagios.cfg').path
 nagdir          = "/etc/nagios/objects"
+backup_dir      = FileUtils.mkdir_p("/var/nagyo/backup")
 reload_required = false
+nagios_user     = "root"
+nagios_group    = "nagios"
 # this should be renamed to something more meaningful:
 url             = "nagios2.np.dc1.eharmony.com:3000"
 nodes           = nvclient.get_objects(:objecttype => 'nodes',
@@ -54,6 +60,24 @@ def get_data_from_ng(ng)
   graffitis = nv_helper.get_graffitis(ng, keys, true)
   nodes     = nv_helper.get_nodes_from_group(ng).keys
   return graffitis, nodes
+end
+
+# note to self: look for something cleaner:
+def send_email(from, to, subject, message, *cc)
+  msg = <<END_OF_MESSAGE
+From: #{from}
+To: #{to}
+CC: #{cc}
+Subject: #{subject}
+
+#{message}
+END_OF_MESSAGE
+  Net::SMTP.start('localhost') do |smtp|
+    smtp.send_message msg, from, to, *cc
+  end
+  rescue => exception
+  puts "RESCUE => MAILER: unable to send mail #{exception}"
+  return false
 end
 
 # there are a few things we want to check for, the first of
@@ -244,4 +268,40 @@ else
   end
 end
 
-puts reload_required
+# if we require the configs to be updated let's first run nagios -v 
+# against a temporary nagios.cfg file to see if it passes nagios' 
+# sanity checks.
+if reload_required
+
+  nagios_cfg = ERB.new(File.open(File.join(script_base, "templates/nagios.cfg.erb")){ |f| f.read }).result(binding)
+  f = File.new(tmpfile, "wb")
+  f.puts nagios_cfg
+  f.close
+
+  # finicky permissions!
+  FileUtils.chown_R(nagios_user, nagios_group, tmpdir)
+  FileUtils.chmod_R(0655, tmpdir)
+  FileUtils.chown(nagios_user, nagios_group, tmpfile)
+  FileUtils.chmod(0655, tmpfile)
+
+  if system("/usr/sbin/nagios -v #{tmpfile}") == false
+    message = "verification of the nagios configs have failed. please investigate."
+    send_email("pobrien@eharmony.com", "pobrien@eharmony.com", "nagios config generation failed", message)
+    exit 1
+  else
+
+    # backup old configs
+    FileUtils.mv(nagdir, File.join(backup_dir, Time.now.to_i.to_s), :force => true)
+
+    # move the configs and restart nagios
+    FileUtils.mv(tmpdir, nagdir, :force => true)
+
+    # restart nagios
+    if system("/etc/init.d/nagios reload") == false
+      message = "reloading of nagios failed. nagios is down. please investigate immediately."
+      send_email("pobrien@eharmony.com", "pobrien@eharmony.com", "nagios config generation failed", message)
+      exit 1
+    end
+  end
+end
+
