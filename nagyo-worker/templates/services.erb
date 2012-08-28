@@ -1,9 +1,43 @@
-define service {
-  name                            <%= cc['_nodegroup'] %>-<%= cc['name'] %>
-  hostgroup_name                  <%= cc['_nodegroup'] %>
-  check_command                   <%= cc['check_command'] %>!<%= cc['check_command_arguments'] %>
-  service_description             <%= cc['_nodegroup'] %>-<%= cc['name'] %>
-<% cc.each_pair do |k,v| %>
-<% next if k =~ /^id$|^created_at$|^updated_at$|^name$|^check_command/ %><% next if v.to_s.empty? %>
-<%= "\s\s" %><%= k %><%= "\t" %><%= v %><% end %>
+define service{
+  _nodegroup			<%= cc['nodegroup'] %>
+  hostgroup_name		<%= cc['nodegroup'] %>
+<% unless cc['host_name'].to_s.empty? %>  host_name		<%= cc['host_name'].join(',') %><% end %>
+<% unless cc['service_description'].to_s.empty? %>  service_description		<%= cc['name'] %><% end %>
+<% unless cc['display_name'].to_s.empty? %>  display_name			<%= cc['display_name'] %><% end %>
+<% unless cc['servicegroups'].to_s.empty? %>  servicegroups			<%= cc['servicegroups'] %><% end %>
+<% unless cc['is_volatile'].to_s.empty? %>  is_volatile			<%= cc['is_volatile'] %><% end %>
+<% unless cc['check_command'].to_s.empty? %>  check_command			<%= cc['check_command'] %>!<%= cc['check_command_arguments'] %><% end %>
+<% unless cc['initial_state'].to_s.empty? %>  initial_state			<%= cc['initial_state'] %><% end %>
+<% unless cc['max_check_attempts'].to_s.empty? %>  max_check_attempts		<%= cc['max_check_attempts'] %><% end %>
+<% unless cc['check_interval'].to_s.empty? %>  check_interval		<%= cc['check_interval'] %><% end %>
+<% unless cc['retry_interval'].to_s.empty? %>  retry_interval		<%= cc['retry_interval'] %><% end %>
+<% unless cc['active_checks_enabled'].to_s.empty? %>  active_checks_enabled		<%= cc['active_checks_enabled'] %><% end %>
+<% unless cc['passive_checks_enabled'].to_s.empty? %>  passive_checks_enabled	<%= cc['passive_checks_enabled'] %><% end %>
+<% unless cc['check_period'].to_s.empty? %>  check_period			<%= cc['check_period'] %><% end %>
+<% unless cc['obsess_over_service'].to_s.empty? %>  obsess_over_service		<%= cc['obsess_over_service'] %><% end %>
+<% unless cc['check_freshness'].to_s.empty? %>  check_freshness		<%= cc['check_freshness'] %><% end %>
+<% unless cc['freshness_threshold'].to_s.empty? %>  freshness_threshold		<%= cc['freshness_threshold'] %><% end %>
+<% unless cc['event_handler'].to_s.empty? %>  event_handler			<%= cc['event_handler'] %><% end %>
+<% unless cc['event_handler_enabled'].to_s.empty? %>  event_handler_enabled		<%= cc['event_handler_enabled'] %><% end %>
+<% unless cc['low_flap_threshold'].to_s.empty? %>  low_flap_threshold		<%= cc['low_flap_threshold'] %><% end %>
+<% unless cc['high_flap_threshold'].to_s.empty? %>  high_flap_threshold		<%= cc['high_flap_threshold'] %><% end %>
+<% unless cc['flap_detection_enabled'].to_s.empty? %>  flap_detection_enabled	<%= cc['flap_detection_enabled'] %><% end %>
+<% unless cc['flap_detection_options'].to_s.empty? %>  flap_detection_options	<%= cc['flap_detection_options'] %><% end %>
+<% unless cc['process_perf_data'].to_s.empty? %>  process_perf_data		<%= cc['process_perf_data'] %><% end %>
+<% unless cc['retain_status_information'].to_s.empty? %>  retain_status_information	<%= cc['retain_status_information'] %><% end %>
+<% unless cc['retain_nonstatus_information'].to_s.empty? %>  retain_nonstatus_information	<%= cc['retain_nonstatus_information'] %><% end %>
+<% unless cc['notification_interval'].to_s.empty? %>  notification_interval		<%= cc['notification_interval'] %><% end %>
+<% unless cc['first_notification_delay'].to_s.empty? %>  first_notification_delay	<%= cc['first_notification_delay'] %><% end %>
+<% unless cc['notification_period'].to_s.empty? %>  notification_period		<%= cc['notification_period'] %><% end %>
+<% unless cc['notification_options'].to_s.empty? %>  notification_options		<%= cc['notification_options'] %><% end %>
+<% unless cc['notifications_enabled'].to_s.empty? %>  notifications_enabled		<%= cc['notifications_enabled'] %><% end %>
+<% unless cc['contacts'].to_s.empty? %>  contacts			<%= cc['contacts'].join(',') %><% end %>
+<% unless cc['contact_groups'].to_s.empty? %>  contact_groups		<%= cc['contact_groups'] %><% end %>
+<% unless cc['stalking_options'].to_s.empty? %>  stalking_options		<%= cc['stalking_options'] %><% end %>
+<% unless cc['notes'].to_s.empty? %>  notes				<%= cc['notes'] %><% end %>
+<% unless cc['notes_url'].to_s.empty? %>  notes_url			<%= cc['notes_url'] %><% end %>
+<% unless cc['action_url'].to_s.empty? %>  action_url			<%= cc['action_url'] %><% end %>
+<% unless cc['icon_image'].to_s.empty? %>  icon_image			<%= cc['icon_image'] %><% end %>
+<% unless cc['icon_image_alt'].to_s.empty? %>  icon_image_alt		<%= cc['icon_image_alt'] %><% end %>
 }
+

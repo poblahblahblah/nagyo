@@ -11,7 +11,7 @@ require 'net/smtp'
 
 # I'll probably want to move a lot of this to config files
 nvclient        = NVentory::Client.new(:server => 'http://nventory.corp.eharmony.com', :cookiefile => "/tmp/.nagyocookie")
-script_base     = "/data/svc/ops/nagios-automation"
+script_base     = "/data/svc/ops/nagyo/nagyo-worker"
 npvm_regex      = "npvm.+\.np\..+\.eharmony\.com"
 npssvm_regex    = "np\..+\.eharmony\.com"
 nodes           = {}
@@ -168,7 +168,7 @@ services_thread = Thread.new do
   JSON.parse(get_remote_json(url, "/services.json")).each do |cc|
     config = ERB.new(File.open(File.join(script_base, "templates/services.erb")){ |f| f.read }).result(binding)
     f = File.new(File.join(tmpdir, "services", cc['id'] + ".cfg"), "wb")
-    f.puts config
+    f.puts config.gsub(/^$\n/, '')
     f.close
     service_ngs << cc['_nodegroup']
   end

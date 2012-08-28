@@ -19,8 +19,8 @@
     <%- @services.each do |c| -%>
     <tr class="<%= cycle('odd', 'even') -%>">
       <td><%= link_to 'Show', c %> | <%= link_to 'Edit', edit_service_path(c) %> | <%= link_to 'Destroy', c, :confirm => 'Are you sure?', :method => :delete %></td>
-      <td><%= h c._nodegroup %></td>
-      <td><%= h c.contacts.join(',') %></td>
+      <td><%= h c.nodegroup %></td>
+      <td><%= h c.contacts %></td>
       <td><%= h c.check_command %></td>
       <td><%= h c.check_command_arguments %></td>
       <td><%= h c.check_period %></td>
@@ -30,7 +30,6 @@
   </tbody>
 </table>
 </div> <!-- end results_table div -->
-<%= will_paginate @services %>
 
 <br />
 

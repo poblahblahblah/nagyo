@@ -1,7 +1,7 @@
 class Service
   include MongoMapper::Document
 
-  scope :nodegroup,		proc {|nodegroup| where(:_nodegroup => nodegroup) } 
+  scope :nodegroup,		proc {|nodegroup| where(:nodegroup => nodegroup) } 
   scope :check_command,		proc {|check_command| where(:check_command => check_command) } 
   scope :check_period,		proc {|check_period| where(:check_period => check_period) } 
   scope :notification_period,	proc {|notification_period| where(:notification_period => notification_period) } 
@@ -10,15 +10,15 @@ class Service
 
   # I have the key "name" not visible in the view - I would rather put this together 
   # before validation so we can have a "standard" way of naming all of our services.
-  before_validation :set_name_from_input_values
-  before_save       :reject_empty_inputs
+  before_validation 	:set_name_from_input_values
+  before_save 		:reject_empty_inputs
 
-  validates_uniqueness_of :_nodegroup, :scope => [:check_command, :contacts, :notification_period]
+  validates_uniqueness_of :nodegroup, :scope => [:check_command, :contacts, :notification_period]
 
   # required:
-  # note that we use "_nodegroup" instead of hostgroup_name - this is functionally
+  # note that we use "nodegroup" instead of hostgroup_name - this is functionally
   # the same thing to us.
-  key :_nodegroup,			String,		:required => true
+  key :nodegroup,			String,		:required => true
   key :name,				String,		:required => true
   key :check_command,			String,		:required => true
   key :check_command_arguments,		String,		:required => true
@@ -31,10 +31,13 @@ class Service
   key :contacts,			Array,		:required => true
 
   # optional:
-  key :contact_groups,			Array
+  # these two are hidden in the view:
+  key :host_name,			Array
+  key :hostgroup_name,			Array
+
   key :service_description,		String
   key :display_name,			String
-  key :servicegroups,			Array
+  key :servicegroups,			String
   key :is_volatile,			Integer,	:default => 0
   key :initial_state,			String
   key :active_checks_enabled,		Integer,	:default => 1
@@ -59,6 +62,8 @@ class Service
   key :notes,				String
   key :notes_url,			String
   key :action_url,			String
+  key :icon_image,			String
+  key :icon_image_alt,			String
 
   timestamps!
 
@@ -68,12 +73,12 @@ class Service
 
   private
   def set_name_from_input_values
-    self.name = [self._nodegroup, self.check_command, self.contacts, self.notification_period].join('-')
+    self.name = [self.nodegroup, self.check_command, self.contacts, self.notification_period].join('-')
   end
 
   def reject_empty_inputs
     contacts.reject!{|i| i.nil? or i.empty?}
-    contact_groups.reject!{|i| i.nil? or i.empty?}
-    servicegroups.reject!{|i| i.nil? or i.empty?}
+    host_name.reject!{|i| i.nil? or i.empty?}
+    hostgroup_name.reject!{|i| i.nil? or i.empty?}
   end
 end
