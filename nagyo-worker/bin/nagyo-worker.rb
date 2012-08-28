@@ -170,7 +170,7 @@ services_thread = Thread.new do
     f = File.new(File.join(tmpdir, "services", cc['id'] + ".cfg"), "wb")
     f.puts config.gsub(/^$\n/, '')
     f.close
-    service_ngs << cc['_nodegroup']
+    service_ngs << cc['nodegroup']
   end
 end
 
