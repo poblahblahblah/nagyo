@@ -56,6 +56,15 @@ class Host
   key :notification_options,         String,  :default => "d,u,r"
   key :notifications_enabled,        Integer, :default => 1
   key :stalking_options,             String
+  key :contact_groups,               Array
+  key :icon_image,                   String
+  key :icon_image_alt,               String
+  key :vrml_image,                   String
+  key :statusmap_image,              String
+
+  # FIXME: these throw a syntax error for unexpected integer
+  #key :2d_coords,                    String
+  #key :3d_coords,                    String
 
   timestamps!
 

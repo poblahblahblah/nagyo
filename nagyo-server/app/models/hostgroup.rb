@@ -18,8 +18,8 @@ class Hostgroup
   key :notes,             String
   key :notes_url,         String
   key :action_url,        String
-  key :members,           String
-  key :hostgroup_members, String
+  key :members,           Array
+  key :hostgroup_members, Array
 
   timestamps!
 
