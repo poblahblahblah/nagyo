@@ -10,14 +10,14 @@
     <%= f.input :service_notification_period, :as => :select, :collection => Timeperiod.all.map{|i| i.timeperiod_name} %>
     <%= f.input :host_notification_options, :as => :select, :collection => options_from_array(%W(d u r f s n)) %>
     <%= f.input :service_notification_options, :as => :select, :collection => options_from_array(%W(w u c r f s n)) %>
-    <%= f.input :host_notification_commands, :as => :select, :collection => Command.all.map{|i| i.command_name}%>
-    <%= f.input :service_notification_commands, :as => :select, :collection => Command.all.map{|i| i.command_name}%>
+    <%= f.input :host_notification_commands, :as => :select, :collection => Command.all.map{|i| i.command_name} %>
+    <%= f.input :service_notification_commands, :as => :select, :collection => Command.all.map{|i| i.command_name} %>
   </fieldset>
   <fieldset>
     <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
     <div id="toggleSection" style="display:none">
       <%= f.input :alias %>
-      <%= f.input :contact_groups %>
+      <%= f.input :contact_groups, :as => :select, :collection => Contactgroup.all.map{|i| i.contactgroup_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
       <%= f.input :pager %>
       <%= f.input :addressx %>
       <%= f.input :can_submit_commands, :as => :select, :collection => [ 0, 1 ]  %>

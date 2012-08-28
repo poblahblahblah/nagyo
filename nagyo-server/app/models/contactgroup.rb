@@ -2,11 +2,11 @@ class Contactgroup
   include MongoMapper::Document
 
   scope :contactgroup_name,	proc {|contactgroup_name| where(:contactgroup_name => contactgroup_name) }
-  scope :alias,			proc {|alias| where(:alias => alias) }
+  scope :alias,			proc {|_alias| where(:alias => _alias) }
   scope :members,		proc {|members| where(:members => members) }
   scope :contactgroup_members,	proc {|contactgroup_members| where(:contactgroup_members => contactgroup_members) }
 
-  before_validation :set_alias_to_contact_name
+  before_validation :set_alias_to_contactgroup_name
   before_save       :reject_empty_inputs
 
   # required:
@@ -24,8 +24,11 @@ class Contactgroup
   end
 
   private
+  def set_alias_to_contactgroup_name
+    self.alias = self.contactgroup_name if self.alias.empty?
+  end
+
   def reject_empty_inputs
-    contacts.reject!{|i| i.nil? or i.empty?}
     members.reject!{|i| i.nil? or i.empty?}
     contactgroup_members.reject!{|i| i.nil? or i.empty?}
   end

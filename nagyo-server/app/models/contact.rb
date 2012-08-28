@@ -7,6 +7,7 @@ class Contact
   scope :service_notification_period,	proc {|service_notification_period| where(:service_notification_period => service_notification_period) }
 
   before_validation :set_alias_to_contact_name
+  before_save       :reject_empty_inputs
 
   # required:
   key :contact_name,			String,		:required => true, :unique => true
@@ -22,7 +23,7 @@ class Contact
 
   # optional:
   key :alias,                        String
-  key :contact_groups,               String
+  key :contact_groups,               Array
   key :pager,                        String
   key :addressx,                     String
   key :can_submit_commands,          Integer
@@ -39,4 +40,9 @@ class Contact
   def set_alias_to_contact_name
     self.alias = self.contact_name if self.alias.empty?
   end
+
+  def reject_empty_inputs
+    contact_groups.reject!{|i| i.nil? or i.empty?}
+  end
+
 end

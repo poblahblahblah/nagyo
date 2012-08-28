@@ -2,6 +2,7 @@ Nagyo::Application.routes.draw do
 
   resources :clusters
   resources :contacts
+  resources :contactgroups
   resources :hardwareprofiles
   resources :hostdependencies
   resources :hostgroups
