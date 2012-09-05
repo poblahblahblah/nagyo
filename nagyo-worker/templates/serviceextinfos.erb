@@ -1,0 +1,8 @@
+define serviceextinfo {
+<% %W(host_name service_description notes notes_url action_url icon_image icon_image_alt
+   ).each do |key| %>
+<% if cc.has_key?(key) && !cc[key].to_s.empty? %>
+  <%= key %>	<%= cc[key].to_s %>
+<% end %>
+<% end %>
+}

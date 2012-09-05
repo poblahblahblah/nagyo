@@ -1,0 +1,7 @@
+define contact {
+<% %W(contactgroup_name alias members contactgroup_members).each do |key| %>
+<% if cc.has_key?(key) && !cc[key].to_s.empty? %>
+  <%= key %>    <%= cc[key].to_s %>
+<% end %>
+<% end %>
+}

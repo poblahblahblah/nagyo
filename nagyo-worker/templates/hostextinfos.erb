@@ -1,0 +1,9 @@
+define hostextinfo {
+<% %W(host_name notes notes_url action_url icon_image icon_image_alt
+      vrml_image statusmap_image 2d_coords 3d_coords
+   ).each do |key| %>
+<% if cc.has_key?(key) && !cc[key].to_s.empty? %>
+  <%= key %>	<%= cc[key].to_s %>
+<% end %>
+<% end %>
+}

@@ -1,0 +1,9 @@
+# FIXME: I never created the model for timeperiods since I figured they would
+# be static, so this won't work properly.
+define timeperiod {
+<% %W(timeperiod_name alias exclude).each do |key| %>
+<% if cc.has_key?(key) && !cc[key].to_sempty? %>
+  <%= key %>    <%= cc[key].to_s %>
+<% end %>
+<% end %>
+}

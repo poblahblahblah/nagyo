@@ -143,7 +143,7 @@ JSON.parse(get_remote_json(url, "/contacts.json")).each do |cc|
   Thread.new do
     contact = ERB.new(File.open(File.join(script_base, "templates/contacts.erb")){ |f| f.read }).result(binding)
     f = File.new(File.join(tmpdir, "contacts", cc['id'] + ".cfg"), "wb")
-    f.puts contact
+    f.puts contact.gsub(/^$\n/, '')
     f.close
   end
 end
@@ -153,7 +153,7 @@ JSON.parse(get_remote_json(url, "/commands.json")).each do |cc|
   Thread.new do
     command = ERB.new(File.open(File.join(script_base, "templates/commands.erb")){ |f| f.read }).result(binding)
     f       = File.new(File.join(tmpdir, "commands", cc['id'] + ".cfg"), "wb")
-    f.puts command
+    f.puts command.gsub(/^$\n/, '')
     f.close
   end
 end
