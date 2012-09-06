@@ -9,7 +9,7 @@ class VipsController < ApplicationController
   has_scope :contacts
 
   def index
-    @vips = apply_scopes(Vip).paginate(:page => params[:page])
+    @vips = apply_scopes(Vip).page params[:page]
 
     respond_to do |format|
       format.html # new.html.erb
