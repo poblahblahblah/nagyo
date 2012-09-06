@@ -6,7 +6,7 @@ class ContactsController < ApplicationController
   has_scope :service_notification_period
 
   def index
-    @contacts = apply_scopes(Contact).paginate(:page => params[:page])
+    @contacts = apply_scopes(Contact).page params[:page]
 
     respond_to do |format|
       format.html # new.html.erb

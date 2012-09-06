@@ -1,36 +1,44 @@
 class Contact
-  include MongoMapper::Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
+  include Mongoid::Fields
 
+  # scopes
   scope :contact_name,			proc {|contact_name| where(:contact_name => contact_name) }
   scope :email,				proc {|email| where(:email => email) }
   scope :host_notification_period,	proc {|host_notification_period| where(:host_notification_period => host_notification_period) }
   scope :service_notification_period,	proc {|service_notification_period| where(:service_notification_period => service_notification_period) }
 
-  before_validation :set_alias_to_contact_name
-  before_save       :reject_empty_inputs
+  # validations
+  validates_uniqueness_of :contact_name
+  validates_presence_of   :contact_name, :email, :host_notifications_enabled, :service_notifications_enabled
+  validates_presence_of   :host_notification_period, :service_notification_period, :host_notification_options
+  validates_presence_of   :service_notification_options, :host_notification_commands, :service_notification_commands
+  before_validation       :set_alias_to_contact_name
+  before_save             :reject_empty_inputs
+
+  has_many :timeperiods
 
   # required:
-  key :contact_name,			String,		:required => true, :unique => true
-  key :email,				String,		:required => true
-  key :host_notifications_enabled,	Integer,	:required => true, :default => 1
-  key :service_notifications_enabled,	Integer,	:required => true, :default => 1
-  key :host_notification_period,	String,		:required => true, :default => "24x7"
-  key :service_notification_period,	String,		:required => true, :default => "24x7"
-  key :host_notification_options,	String,		:required => true, :default => "d,u,r"
-  key :service_notification_options,	String,		:required => true, :default => "w,u,c,r"
-  key :host_notification_commands,	String,		:required => true
-  key :service_notification_commands,	String,		:required => true
+  field :contact_name,			type: String
+  field :email,				type: String
+  field :host_notifications_enabled,	type: Integer
+  field :service_notifications_enabled,	type: Integer,	default:  1
+  field :host_notification_period,	type: String,	default:  "24x7"
+  field :service_notification_period,	type: String,	default:  "24x7"
+  field :host_notification_options,	type: String,	default:  "d,u,r"
+  field :service_notification_options,	type: String,	default:  "w,u,c,r"
+  field :host_notification_commands,	type: String
+  field :service_notification_commands,	type: String
 
   # optional:
-  key :alias,                        String
-  key :contact_groups,               Array
-  key :pager,                        String
-  key :addressx,                     String
-  key :can_submit_commands,          Integer
-  key :retain_status_information,    Integer
-  key :retain_nonstatus_information, Integer
-
-  timestamps!
+  field :alias,                        type: String
+  field :contact_groups,               type: Array
+  field :pager,                        type: String
+  field :addressx,                     type: String
+  field :can_submit_commands,          type: Integer
+  field :retain_status_information,    type: Integer
+  field :retain_nonstatus_information, type: Integer
 
   def initialize(*params)
     super(*params)
