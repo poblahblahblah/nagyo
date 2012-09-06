@@ -1,6 +1,9 @@
 class Host
-  include MongoMapper::Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
+  include Mongoid::Fields
 
+  # scopes
   scope :host_name,		proc {|host_name| where(:host_name => host_name) }
   scope :alias,			proc {|_alias| where(:alias => _alias) }
   scope :address,		proc {|address| where(:address => address) }
@@ -11,62 +14,65 @@ class Host
   scope :hostgroups,		proc {|hostgroups| where(:hostgroups => hostgroups) }
   scope :check_command,		proc {|check_command| where(:check_command => check_command) }
 
-  before_validation :set_alias_and_address_to_host_name
-  before_save       :reject_empty_inputs
+  # validations
+  before_validation		:set_alias_and_address_to_host_name
+  before_save			:reject_empty_inputs
 
-  # need to figure out a good combo of uniqueness
-  validates_uniqueness_of :host_name, :scope => [:check_period, :contacts, :notification_period]
+  # FIXME: it seems mongoid thinks empty array sets count as presence of value.
+  validates_presence_of		:host_name, :alias, :address, :max_check_attempts, :check_period, :contacts
+  validates_presence_of		:notification_interval, :notification_period
+
+  # FIXME: for whatever reason validations against multiple fields is not working like they did in MM
+  validates_uniqueness_of	:host_name, :scope => [:check_period, :contacts, :notification_period]
 
   # required:
-  key :host_name,             String,  :required => true
-  key :alias,                 String,  :required => true
-  key :address,               String,  :required => true
-  key :max_check_attempts,    Integer, :required => true, :default => 3
-  key :check_period,          String,  :required => true, :default => "24x7"
-  key :contacts,              Array,   :required => true
-  key :notification_interval, Integer, :required => true, :default => 5
-  key :notification_period,   String,  :required => true, :default => "24x7"
+  field :host_name,             type: String
+  field :alias,                 type: String
+  field :address,               type: String
+  field :max_check_attempts,    type: Integer,	:default => 3
+  field :check_period,          type: String,	:default => "24x7"
+  field :contacts,              type: Array
+  field :notification_interval, type: Integer,	:default => 5
+  field :notification_period,   type: String,	:default => "24x7"
 
   # optional:
-  key :notes,                        String
-  key :notes_url,                    String
-  key :action_url,                   String
-  key :display_name,                 String
-  key :parents,                      Array
-  key :hostgroups,                   Array
-  key :check_command,                String
-  key :initial_state,                String
-  key :check_interval,               Integer
-  key :retry_interval,               Integer
-  key :active_checks_enabled,        Integer, :default => 1
-  key :passive_checks_enabled,       Integer, :default => 1
-  key :obsess_over_host,             Integer
-  key :check_freshness,              Integer
-  key :freshness_threshold,          Integer
-  key :event_handler,                String
-  key :event_handler_enabled,        Integer, :default => 1
-  key :low_flap_threshold,           Integer
-  key :high_flap_threshold,          Integer
-  key :flap_detection_enabled,       Integer, :default => 1
-  key :flap_detection_options,       String
-  key :process_perf_data,            Integer, :default => 0
-  key :retain_status_information,    Integer, :default => 1
-  key :retain_nonstatus_information, Integer, :default => 1
-  key :first_notification_delay,     Integer
-  key :notification_options,         String,  :default => "d,u,r"
-  key :notifications_enabled,        Integer, :default => 1
-  key :stalking_options,             String
-  key :contact_groups,               Array
-  key :icon_image,                   String
-  key :icon_image_alt,               String
-  key :vrml_image,                   String
-  key :statusmap_image,              String
+  field :notes,				type: String
+  field :notes_url,			type: String
+  field :action_url,			type: String
+  field :display_name,			type: String
+  field :parents,			type: Array
+  field :hostgroups,			type: Array
+  field :check_command,			type: String
+  field :initial_state,			type: String
+  field :check_interval,		type: Integer
+  field :retry_interval,		type: Integer
+  field :active_checks_enabled,		type: Integer, :default => 1
+  field :passive_checks_enabled,	type: Integer, :default => 1
+  field :obsess_over_host,		type: Integer
+  field :check_freshness,		type: Integer
+  field :freshness_threshold,		type: Integer
+  field :event_handler,			type: String
+  field :event_handler_enabled,		type: Integer, :default => 1
+  field :low_flap_threshold,		type: Integer
+  field :high_flap_threshold,		type: Integer
+  field :flap_detection_enabled,	type: Integer, :default => 1
+  field :flap_detection_options,	type: String
+  field :process_perf_data,		type: Integer, :default => 0
+  field :retain_status_information,	type: Integer, :default => 1
+  field :retain_nonstatus_information,	type: Integer, :default => 1
+  field :first_notification_delay,	type: Integer
+  field :notification_options,		type: String,  :default => "d,u,r"
+  field :notifications_enabled,		type: Integer, :default => 1
+  field :stalking_options,		type: String
+  field :contact_groups,		type: Array
+  field :icon_image,			type: String
+  field :icon_image_alt,		type: String
+  field :vrml_image,			type: String
+  field :statusmap_image,		type: String
 
   # FIXME: these throw a syntax error for unexpected integer
-  #key :2d_coords,                    String
-  #key :3d_coords,                    String
-
-  timestamps!
+  #field :2d_coords,			type: String
+  #field :3d_coords,			type: String
 
   def initialize(*params)
     super(*params)
