@@ -1,27 +1,31 @@
 class Hostgroup
-  include MongoMapper::Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
+  include Mongoid::Fields
 
+  # scopes
   scope :hostgroup_name,	proc {|hostgroup_name| where(:hostgroup_name => hostgroup_name) }
   scope :alias,			proc {|_alias| where(:alias => _alias) }
   scope :members,		proc {|members| where(:members => members) }
   scope :hostgroup_members,	proc {|hostgroup_members| where(:hostgroup_members => hostgroup_members) }
 
-  before_validation :set_alias_and_address_to_host_name
+  # validations
+  before_validation		:set_alias_to_hostgroup_name
+  validates_presence_of		:hostgroup_name, :alias
+  validates_uniqueness_of	:hostgroup_name, :alias
 
   # hostgroups are functionally the same thing as nodegroups
   # in nventory.
   # required:
-  key :hostgroup_name, String, :required => true, :unique => true
-  key :alias,          String, :required => true, :unique => true
+  field :hostgroup_name,	type: String
+  field :alias,			type: String
 
   # optional:
-  key :notes,             String
-  key :notes_url,         String
-  key :action_url,        String
-  key :members,           Array
-  key :hostgroup_members, Array
-
-  timestamps!
+  field :notes,			type: String
+  field :notes_url,		type: String
+  field :action_url,		type: String
+  field :members,		type: Array
+  field :hostgroup_members,	type: Array
 
   def initialize(*params)
     super(*params)

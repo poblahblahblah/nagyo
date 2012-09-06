@@ -7,10 +7,14 @@ gem 'rails', '~> 3.2.8'
 gem 'mongo'
 gem 'execjs'
 gem 'therubyracer'
-gem 'will_paginate'
+
+# use kaminari instead of will_paginate
+gem 'kaminari'
+
 gem 'json'
 gem 'has_scope', '~> 0.5.1'
 gem 'bson_ext'
+gem "mongoid"
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -39,7 +43,6 @@ gem 'jquery-rails'
 # gem 'ruby-debug'
 
 source 'http://gemcutter.org'
-gem "mongo_mapper"
 gem "formtastic"
 
 source  'http://gems.github.com'

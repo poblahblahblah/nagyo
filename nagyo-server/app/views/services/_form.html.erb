@@ -48,6 +48,11 @@
       <%= f.input :icon_image_alt %>
     </div>
   </fieldset>
+  <% # we want to have hostgroup_name and host_name be submitted, but not show up on the form %>
+  <div style="display:none">
+    <%= f.input :hostgroup_name, :as => :select, :collection => Hostgroup.all.map{|i| i.hostgroup_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
+    <%= f.input :host_name, :as => :select, :collection => Host.all.map{|i| i.host_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
+  </div>
   <%= f.actions do %>
     <%= f.action :submit, :as => :button %>
     <%= f.action :cancel, :as => :link %>

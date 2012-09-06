@@ -1,23 +1,29 @@
 class Contactgroup
-  include MongoMapper::Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
+  include Mongoid::Fields
 
+  # scopes
   scope :contactgroup_name,	proc {|contactgroup_name| where(:contactgroup_name => contactgroup_name) }
   scope :alias,			proc {|_alias| where(:alias => _alias) }
   scope :members,		proc {|members| where(:members => members) }
   scope :contactgroup_members,	proc {|contactgroup_members| where(:contactgroup_members => contactgroup_members) }
 
-  before_validation :set_alias_to_contactgroup_name
-  before_save       :reject_empty_inputs
+  # validations
+  # FIXME: some of the validations appear to be not working as expected.
+  # FIXME: see the host model for an actual explanation.
+  validates_presence_of		:contactgroup_name, :alias
+  validates_uniqueness_of	:contactgroup_name
+  before_validation		:set_alias_to_contactgroup_name
+  before_save			:reject_empty_inputs
 
   # required:
-  key :contactgroup_name,	String,		:required => true, :unique => true
-  key :alias,			String,		:required => true
+  field :contactgroup_name,	type: String
+  field :alias,			type: String
 
   # optional:
-  key :members,			Array
-  key :contactgroup_members,	Array
-
-  timestamps!
+  field :members,		type: Array
+  field :contactgroup_members,	type: Array
 
   def initialize(*params)
     super(*params)

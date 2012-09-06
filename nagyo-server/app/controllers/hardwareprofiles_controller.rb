@@ -5,7 +5,7 @@ class HardwareprofilesController < ApplicationController
   has_scope :contacts
 
   def index
-    @hardwareprofiles = apply_scopes(Hardwareprofile).paginate(:page => params[:page])
+    @hardwareprofiles = apply_scopes(Hardwareprofile).page params[:page]
 
     respond_to do |format|
       format.html # new.html.erb

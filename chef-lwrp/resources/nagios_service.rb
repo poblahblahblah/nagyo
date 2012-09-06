@@ -1,5 +1,5 @@
 @@my_attrs = {
-  :_nodegroup =>                    {:kind_of => String,  :required => true},
+  :nodegroup =>                     {:kind_of => String,  :required => true},
   :name =>                          {:kind_of => String,  :required => true},
   :check_command =>                 {:kind_of => String,  :required => true},
   :check_command_arguments =>       {:kind_of => String,  :required => true},
@@ -53,7 +53,7 @@ actions :add
 end
 
 attribute :my_attr_keys, :kind_of => Array, :required => false, :default => @@my_attrs.keys
-attribute :get_attrs, :kind_of => Array, :required => false, :default => [:_nodegroup, :check_command, :contacts, :notification_period]
+attribute :get_attrs, :kind_of => Array, :required => false, :default => [:nodegroup, :check_command, :contacts, :notification_period]
 attribute :nagyo_url, :required => false
 attribute :model_name, :required => false, :default => "service"
 attribute :model_name_plural, :required => false, :default => "services"

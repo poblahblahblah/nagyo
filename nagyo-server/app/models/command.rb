@@ -1,13 +1,16 @@
 class Command
-  include MongoMapper::Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
+  include Mongoid::Fields
 
   scope :command_name, proc {|command_name| where(:command_name => command_name) }
 
-  # required:
-  key :command_name, String, :required => true, :unique => true
-  key :command_line, String, :required => true
+  validates_uniqueness_of :command_name
+  validates_presence_of   :command_name, :command_line
 
-  timestamps!
+  # required:
+  field :command_name, type: String
+  field :command_line, type: String
 
   def initialize(*params)
     super(*params)
