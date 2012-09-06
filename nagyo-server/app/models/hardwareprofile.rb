@@ -9,10 +9,8 @@ class Hardwareprofile
   scope :contacts,              proc {|contacts| where(:contacts => contacts) }
 
   # validations
-  # FIXME: some of the validations appear to be not working as expected.
-  # FIXME: see the host model for an actual explanation.
-  before_save 			:reject_empty_inputs
-  validates_presence_of		:hardware_profile, :check_commands, :contacts
+  before_validation		:reject_empty_inputs
+  validates_presence_of		:hardware_profile
   validates_uniqueness_of	:hardware_profile
 
   # required:
@@ -27,6 +25,9 @@ class Hardwareprofile
   private
   def reject_empty_inputs
     check_commands.reject!{|i| i.nil? or i.empty?}
+    errors.add(:check_commands, "please select at least one check_command.") if check_commands.count == 0
+
     contacts.reject!{|i| i.nil? or i.empty?}
+    errors.add(:contacts, "please select at least one contact.") if contacts.count == 0
   end
 end
