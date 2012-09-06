@@ -4,7 +4,7 @@ class TimeperiodsController < ApplicationController
   has_scope :alias
 
   def index
-    @timeperiods = apply_scopes(Timeperiod).paginate(:page => params[:page])
+    @timeperiods = apply_scopes(Timeperiod).page params[:page]
 
     respond_to do |format|
       format.html # new.html.erb
