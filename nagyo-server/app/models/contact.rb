@@ -10,6 +10,8 @@ class Contact
   scope :service_notification_period,	proc {|service_notification_period| where(:service_notification_period => service_notification_period) }
 
   # validations
+  # FIXME: some of the validations appear to be not working as expected.
+  # FIXME: see the host model for an actual explanation.
   validates_uniqueness_of :contact_name
   validates_presence_of   :contact_name, :email, :host_notifications_enabled, :service_notifications_enabled
   validates_presence_of   :host_notification_period, :service_notification_period, :host_notification_options

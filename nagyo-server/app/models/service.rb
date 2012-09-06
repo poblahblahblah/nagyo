@@ -1,6 +1,9 @@
 class Service
-  include MongoMapper::Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
+  include Mongoid::Fields
 
+  # scopes
   scope :nodegroup,		proc {|nodegroup| where(:nodegroup => nodegroup) } 
   scope :check_command,		proc {|check_command| where(:check_command => check_command) } 
   scope :check_period,		proc {|check_period| where(:check_period => check_period) } 
@@ -8,64 +11,65 @@ class Service
   scope :contacts,		proc {|contacts| where(:contacts => contacts) } 
   scope :servicegroups,		proc {|servicegroups| where(:servicegroups => servicegroups) } 
 
-  # I have the key "name" not visible in the view - I would rather put this together 
+  # validations
+  # I have the field "name" not visible in the view - I would rather put this together 
   # before validation so we can have a "standard" way of naming all of our services.
-  before_validation 	:set_name_from_input_values
-  before_save 		:reject_empty_inputs
-
-  validates_uniqueness_of :nodegroup, :scope => [:check_command, :contacts, :notification_period]
+  before_validation 		:set_name_from_input_values
+  before_save 			:reject_empty_inputs
+  validates_presence_of		:nodegroup, :name, :check_command, :check_command_arguments, :max_check_attempts
+  validates_presence_of		:check_interval, :check_period, :notification_interval, :notification_period
+  validates_presence_of		:contacts
+  validates_uniqueness_of	:nodegroup, :scope => [:check_command, :contacts, :notification_period]
 
   # required:
   # note that we use "nodegroup" instead of hostgroup_name - this is functionally
   # the same thing to us.
-  key :nodegroup,			String,		:required => true
-  key :name,				String,		:required => true
-  key :check_command,			String,		:required => true
-  key :check_command_arguments,		String,		:required => true
-  key :max_check_attempts,		Integer,	:required => true, :default => 3
-  key :check_interval,			Integer,	:required => true, :default => 3
-  key :retry_interval,			Integer,	:required => true, :default => 3
-  key :check_period,			String,		:required => true, :default => "24x7"
-  key :notification_interval,		Integer,	:required => true, :default => 60
-  key :notification_period,		String,		:required => true, :default => "24x7"
-  key :contacts,			Array,		:required => true
+  field :nodegroup,			type: String
+  field :name,				type: String
+  field :check_command,			type: String
+  field :check_command_arguments,	type: String
+  field :max_check_attempts,		type: Integer,	:default => 3
+  field :check_interval,		type: Integer,	:default => 3
+  field :retry_interval,		type: Integer,	:default => 3
+  field :check_period,			type: String,	:default => "24x7"
+  field :notification_interval,		type: Integer,	:default => 60
+  field :notification_period,		type: String,	:default => "24x7"
+  field :contacts,			type: Array
 
   # optional:
   # these two are hidden in the view:
-  key :host_name,			Array
-  key :hostgroup_name,			Array
+  field :host_name,			type: Array
+  field :hostgroup_name,		type: Array
 
-  key :service_description,		String
-  key :display_name,			String
-  key :servicegroups,			String
-  key :is_volatile,			Integer,	:default => 0
-  key :initial_state,			String
-  key :active_checks_enabled,		Integer,	:default => 1
-  key :passive_checks_enabled,		Integer,	:default => 1
-  key :obsess_over_service,		Integer,	:default => 0
-  key :check_freshness,			Integer,	:default => 0
-  key :freshness_threshold,		Integer,	:default => 1200
-  key :event_handler,			String
-  key :event_handler_enabled,		Integer,	:default => 0
-  key :low_flap_threshold,		Integer
-  key :high_flap_threshold,		Integer
-  key :flap_detection_enabled,		Integer,	:default => 0
-  key :flap_detection_options,		String
-  key :process_perf_data,		Integer,	:default => 0
-  key :retain_status_information,	Integer,	:default => 1
-  key :retain_nonstatus_information,	Integer,	:default => 1
-  key :first_notification_delay,	Integer
-  key :notification_options,		String
-  key :notifications_enabled,		Integer
-  key :stalking_options,		String
-  key :register,			Integer,	:default => 1
-  key :notes,				String
-  key :notes_url,			String
-  key :action_url,			String
-  key :icon_image,			String
-  key :icon_image_alt,			String
-
-  timestamps!
+  field :service_description,		type: String
+  field :display_name,			type: String
+  field :servicegroups,			type: String
+  field :is_volatile,			type: Integer,	:default => 0
+  field :initial_state,			type: String
+  field :active_checks_enabled,		type: Integer,	:default => 1
+  field :passive_checks_enabled,	type: Integer,	:default => 1
+  field :obsess_over_service,		type: Integer,	:default => 0
+  field :check_freshness,		type: Integer,	:default => 0
+  field :freshness_threshold,		type: Integer,	:default => 1200
+  field :event_handler,			type: String
+  field :event_handler_enabled,		type: Integer,	:default => 0
+  field :low_flap_threshold,		type: Integer
+  field :high_flap_threshold,		type: Integer
+  field :flap_detection_enabled,	type: Integer,	:default => 0
+  field :flap_detection_options,	type: String
+  field :process_perf_data,		type: Integer,	:default => 0
+  field :retain_status_information,	type: Integer,	:default => 1
+  field :retain_nonstatus_information,	type: Integer,	:default => 1
+  field :first_notification_delay,	type: Integer
+  field :notification_options,		type: String
+  field :notifications_enabled,		type: Integer
+  field :stalking_options,		type: String
+  field :register,			type: Integer,	:default => 1
+  field :notes,				type: String
+  field :notes_url,			type: String
+  field :action_url,			type: String
+  field :icon_image,			type: String
+  field :icon_image_alt,		type: String
 
   def initialize(*params)
     super(*params)

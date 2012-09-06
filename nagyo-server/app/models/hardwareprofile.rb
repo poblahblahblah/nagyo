@@ -9,6 +9,8 @@ class Hardwareprofile
   scope :contacts,              proc {|contacts| where(:contacts => contacts) }
 
   # validations
+  # FIXME: some of the validations appear to be not working as expected.
+  # FIXME: see the host model for an actual explanation.
   before_save 			:reject_empty_inputs
   validates_presence_of		:hardware_profile, :check_commands, :contacts
   validates_uniqueness_of	:hardware_profile
