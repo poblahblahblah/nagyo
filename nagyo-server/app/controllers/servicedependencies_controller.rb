@@ -11,7 +11,7 @@ class ServicedependenciesController < ApplicationController
   has_scope :dependency_period
 
   def index
-    @servicedependencies = apply_scopes(Servicedependency).paginate(:page => params[:page])
+    @servicedependencies = apply_scopes(Servicedependency).page params[:page]
 
     respond_to do |format|
       format.html # new.html.erb

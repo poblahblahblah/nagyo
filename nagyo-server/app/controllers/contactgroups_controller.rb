@@ -6,7 +6,7 @@ class ContactgroupsController < ApplicationController
   has_scope :contactgroup_members
 
   def index
-    @contactgroups = apply_scopes(Contactgroup).paginate(:page => params[:page])
+    @contactgroups = apply_scopes(Contactgroup).page params[:page]
 
     respond_to do |format|
       format.html # new.html.erb

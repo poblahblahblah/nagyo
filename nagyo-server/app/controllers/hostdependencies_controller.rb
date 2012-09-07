@@ -11,7 +11,7 @@ class HostdependenciesController < ApplicationController
   has_scope :dependency_period
 
   def index
-    @hostdependencies = apply_scopes(Hostdependency).paginate(:page => params[:page])
+    @hostdependencies = apply_scopes(Hostdependency).page params[:page]
 
     respond_to do |format|
       format.html # new.html.erb

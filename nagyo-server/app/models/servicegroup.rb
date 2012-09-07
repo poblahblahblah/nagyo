@@ -1,23 +1,24 @@
 class Servicegroup
-  include MongoMapper::Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
 
-  scope :servicegroup_name,	proc {|servicegroup_name| where(:servicegroup_name => servicegroup_name) } 
-  scope :alias,			proc {|_alias| where(:alias => _alias) } 
-  scope :members,		proc {|members| where(:members => members) } 
-  scope :servicegroup_members,	proc {|servicegroup_members| where(:servicegroup_members => servicegroup_members) } 
+  scope :servicegroup_name,    proc {|servicegroup_name| where(:servicegroup_name => servicegroup_name) } 
+  scope :alias,                proc {|_alias| where(:alias => _alias) } 
+  scope :members,              proc {|members| where(:members => members) } 
+  scope :servicegroup_members, proc {|servicegroup_members| where(:servicegroup_members => servicegroup_members) } 
 
   # required:
-  key :servicegroup_name,		String,	:required => true, :unique => true
-  key :alias,				String,	:required => true, :unique => true
+  field :servicegroup_name,    type: String  #:required => true, :unique => true
+  field :alias,                type: String  #:required => true, :unique => true
 
   # optional:
-  key :members,                         Array
-  key :servicegroup_members,		Array
-  key :notes,				String
-  key :notes_url,			String
-  key :action_url,			String
+  field :members,              type: Array
+  field :servicegroup_members, type: Array
+  field :notes,                type: String
+  field :notes_url,            type: String
+  field :action_url,           type: String
 
-  timestamps!
+  #timestamps!
 
   def initialize(*params)
     super(*params)

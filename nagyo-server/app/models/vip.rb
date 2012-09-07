@@ -1,35 +1,37 @@
 class Vip
-  include MongoMapper::Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
 
-  scope :nodegroup,	proc {|nodegroup| where(:nodegroup => nodegroup) }
-  scope :vip_name,	proc {|vip_name| where(:vip_name => vip_name) }
-  scope :vip_dns,	proc {|vip_dns| where(:vip_dns => vip_dns) }
-  scope :check_command,	proc {|check_command| where(:check_command => check_command) }
-  scope :ecv_uri,	proc {|ecv_uri| where(:ecv_uri => ecv_uri) }
-  scope :ecv_string,	proc {|ecv_string| where(:ecv_string => ecv_string) }
-  scope :contacts,	proc {|contacts| where(:contacts => contacts) }
+  scope :nodegroup,     proc {|nodegroup| where(:nodegroup => nodegroup) }
+  scope :vip_name,      proc {|vip_name| where(:vip_name => vip_name) }
+  scope :vip_dns,       proc {|vip_dns| where(:vip_dns => vip_dns) }
+  scope :check_command, proc {|check_command| where(:check_command => check_command) }
+  scope :ecv_uri,       proc {|ecv_uri| where(:ecv_uri => ecv_uri) }
+  scope :ecv_string,    proc {|ecv_string| where(:ecv_string => ecv_string) }
+  scope :contacts,      proc {|contacts| where(:contacts => contacts) }
 
   validates_uniqueness_of :nodegroup, :scope => [:check_command, :contacts, :vip_dns, :vip_name]
   before_save             :reject_empty_inputs
 
   # required:
-  key :nodegroup,			String,	:required => true
-  key :vip_name,			String, :required => true
-  key :vip_dns,				String, :required => true
-  key :check_command,			String, :required => true, :default => "check_eh_cluster-http"
-  key :node_alert_when_down,		String, :required => true, :default => 1
-  key :percent_warn,			String,	:required => true
-  key :percent_crit,			String,	:required => true
-  key :ecv_uri,				String,	:required => true
-  key :ecv_string,			String,	:required => true
-  key :contacts,			Array,  :required => true
+  field :nodegroup,            type: String  #:required => true
+  field :vip_name,             type: String  #:required => true
+  field :vip_dns,              type: String  #:required => true
+  # TODO: has_one :check_command, class: "Command", ...
+  field :check_command,        type: String  #:required => true, :default => "check_eh_cluster-http"
+  field :node_alert_when_down, type: String  #:required => true, :default => 1
+  field :percent_warn,         type: String  #:required => true
+  field :percent_crit,         type: String  #:required => true
+  field :ecv_uri,              type: String  #:required => true
+  field :ecv_string,           type: String  #:required => true
+  field :contacts,             type: Array  #  :required => true
 
   # optional:
-  key :node_check_command,		String
-  key :node_check_command_arguments,	String
-  key :notify_on_node_service,		Boolean, :default => "false"
+  field :node_check_command,           type: String
+  field :node_check_command_arguments, type: String
+  field :notify_on_node_service,       type: Boolean, default: false
 
-  timestamps!
+  #timestamps!
 
   def initialize(*params)
     super(*params)
