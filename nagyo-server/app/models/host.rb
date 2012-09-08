@@ -16,7 +16,7 @@ class Host
 
   # validations
   before_validation		:set_alias_and_address_to_host_name
-  before_save			:reject_empty_inputs
+  before_validation		:reject_empty_inputs
 
   # FIXME: it seems mongoid thinks empty array sets count as presence of value.
   validates_presence_of		:host_name, :alias, :address, :max_check_attempts, :check_period, :contacts

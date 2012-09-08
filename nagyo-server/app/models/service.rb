@@ -15,7 +15,7 @@ class Service
   # I have the field "name" not visible in the view - I would rather put this together 
   # before validation so we can have a "standard" way of naming all of our services.
   before_validation 		:set_name_from_input_values
-  before_save 			:reject_empty_inputs
+  before_validation 		:reject_empty_inputs
   validates_presence_of		:nodegroup, :name, :check_command, :check_command_arguments, :max_check_attempts
   validates_presence_of		:check_interval, :check_period, :notification_interval, :notification_period
   validates_presence_of		:contacts

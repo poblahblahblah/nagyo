@@ -23,10 +23,11 @@ development:
   options:
     # Configuration for whether or not to allow access to fields that do
     # not have a field definition on the model. (default: true)
-    # allow_dynamic_fields: true
+    allow_dynamic_fields: true
 
     # Enable the identity map, needed for eager loading. (default: false)
     # identity_map_enabled: false
+    identity_map_enabled: true
 
     # Includes the root model name in json serialization. (default: false)
     # include_root_in_json: false
@@ -36,10 +37,10 @@ development:
 
     # Preload all models in development, needed when models use
     # inheritance. (default: false)
-    # preload_models: false
+    preload_models: false
 
     # Protect id and type from mass assignment. (default: true)
-    # protect_sensitive_fields: true
+    protect_sensitive_fields: true
 
     # Raise an error when performing a #find and the document is not found.
     # (default: true)
@@ -48,6 +49,7 @@ development:
     # Raise an error when defining a scope with the same name as an
     # existing method. (default: false)
     # scope_overwrite_exception: false
+    scope_overwrite_exception: true
 
     # Skip the database version check, used when connecting to a db without
     # admin access. (default: false)
@@ -66,3 +68,4 @@ test:
         - localhost:27017
       options:
         consistency: :strong
+        identity_map_enabled: false

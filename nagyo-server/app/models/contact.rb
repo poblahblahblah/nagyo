@@ -17,7 +17,7 @@ class Contact
   validates_presence_of   :host_notification_period, :service_notification_period, :host_notification_options
   validates_presence_of   :service_notification_options, :host_notification_commands, :service_notification_commands
   before_validation       :set_alias_to_contact_name
-  before_save             :reject_empty_inputs
+  before_validation       :reject_empty_inputs
 
   has_many :timeperiods
 

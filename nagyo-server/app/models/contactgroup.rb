@@ -15,7 +15,7 @@ class Contactgroup
   validates_presence_of		:contactgroup_name, :alias
   validates_uniqueness_of	:contactgroup_name
   before_validation		:set_alias_to_contactgroup_name
-  before_save			:reject_empty_inputs
+  before_validation		:reject_empty_inputs
 
   # required:
   field :contactgroup_name,	type: String

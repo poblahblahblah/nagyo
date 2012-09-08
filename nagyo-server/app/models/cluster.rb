@@ -10,7 +10,7 @@ class Cluster
 
   validates_presence_of    :nodegroup, :check_command, :check_command_arguments, :contacts
   validates_uniqueness_of  :nodegroup, :scope => [:check_command, :contacts]
-  before_save              :reject_empty_inputs
+  before_validation        :reject_empty_inputs
 
   # required:
   field :nodegroup,               type: String

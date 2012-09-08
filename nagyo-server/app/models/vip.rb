@@ -15,7 +15,7 @@ class Vip
   validates_presence_of		:nodegroup, :vip_name, :vip_dns, :check_command, :node_alert_when_down
   validates_presence_of		:percent_warn, :percent_crit, :ecv_uri, :ecv_string, :contacts
   validates_uniqueness_of	:nodegroup, :scope => [:check_command, :contacts, :vip_dns, :vip_name]
-  before_save			:reject_empty_inputs
+  before_validation		:reject_empty_inputs
 
   # required:
   field :nodegroup,            type: String
