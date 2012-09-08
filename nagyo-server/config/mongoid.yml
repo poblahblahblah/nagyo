@@ -49,7 +49,7 @@ development:
     # Raise an error when defining a scope with the same name as an
     # existing method. (default: false)
     # scope_overwrite_exception: false
-    scope_overwrite_exception: true
+    #scope_overwrite_exception: true
 
     # Skip the database version check, used when connecting to a db without
     # admin access. (default: false)
