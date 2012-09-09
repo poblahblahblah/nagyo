@@ -26,15 +26,15 @@
 <div id="header">
 <p id="account_links">
 Welcome back, <%= session[:account_id] %>!
-| <%= link_to "Clusters", :controller => 'clusters' %>
-| <%= link_to "Commands", :controller => 'commands' %>
-| <%= link_to "Contacts", :controller => 'contacts' %>
-| <%= link_to "Hardware Profile Checks", :controller => 'hardwareprofiles' %>
-| <%= link_to "Hosts", :controller => 'hosts' %>
-| <%= link_to "HostGroups", :controller => 'hostgroups' %>
-| <%= link_to "Services", :controller => 'services' %>
-| <%= link_to "Timeperiods", :controller => 'timeperiods' %>
-| <%= link_to "Vips", :controller => 'vips' %>
+| <%= link_to "Clusters",    clusters_path %>
+| <%= link_to "Commands",    commands_path %>
+| <%= link_to "Contacts",    contacts_path %>
+| <%= link_to "Hardware Profile Checks", hardwareprofiles_path %>
+| <%= link_to "Hosts",       hosts_path %>
+| <%= link_to "HostGroups",  hostgroups_path %>
+| <%= link_to "Services",    services_path %>
+| <%= link_to "Timeperiods", timeperiods_path %>
+| <%= link_to "Vips",        vips_path %>
 </p>
 
 <h1 id="branding"><a href="/">nagyo</a></h1>

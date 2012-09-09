@@ -49,7 +49,7 @@ end
 
 
 # Auth with devise + users in mongodb
-#gem "devise"
+gem "devise"
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

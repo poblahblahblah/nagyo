@@ -1,5 +1,9 @@
 Nagyo::Application.routes.draw do
 
+  devise_for :users
+
+  root :to => "main#index"
+
   resources :clusters
   resources :contacts
   resources :contactgroups
@@ -13,8 +17,7 @@ Nagyo::Application.routes.draw do
   resources :vips
   resources :timeperiods
 
-  get "home/index"
-  root :to => "main#index"
+  #get "home/index"
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
