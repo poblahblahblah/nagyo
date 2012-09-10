@@ -6,13 +6,10 @@ class User
     :recoverable, :rememberable, :trackable, :validatable,
     :token_authenticatable, :lockable
 
+  field :name,               :type => String, :default => ""
   ## Database authenticatable
   field :email,              :type => String, :default => ""
   field :encrypted_password, :type => String, :default => ""
-
-  validates_presence_of :email
-  validates_uniqueness_of :email
-  validates_presence_of :encrypted_password
   
   ## Recoverable
   field :reset_password_token,   :type => String
@@ -41,4 +38,19 @@ class User
 
   ## Token authenticatable
   field :authentication_token, :type => String
+
+  # Mongo indices
+  index({ email: 1 }, { unique: true, background: true })
+  index({ name: 1 })
+
+  #
+  attr_accessible :name, :email, :password, :password_confirmation, :remember_me
+
+
+  ## validations
+
+  validates_presence_of :email, :name, :encrypted_password
+
+  validates_uniqueness_of :email, :case_sensitive => false
+
 end

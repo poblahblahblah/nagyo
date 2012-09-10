@@ -2,11 +2,6 @@ class Servicegroup
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  scope :servicegroup_name,    proc {|servicegroup_name| where(:servicegroup_name => servicegroup_name) } 
-  scope :alias,                proc {|_alias| where(:alias => _alias) } 
-  scope :members,              proc {|members| where(:members => members) } 
-  scope :servicegroup_members, proc {|servicegroup_members| where(:servicegroup_members => servicegroup_members) } 
-
   # required:
   field :servicegroup_name,    type: String  #:required => true, :unique => true
   field :alias,                type: String  #:required => true, :unique => true
@@ -18,15 +13,21 @@ class Servicegroup
   field :notes_url,            type: String
   field :action_url,           type: String
 
-  #timestamps!
+  scope :servicegroup_name,    proc {|servicegroup_name| where(:servicegroup_name => servicegroup_name) } 
+  scope :alias,                proc {|_alias| where(:alias => _alias) } 
+  scope :members,              proc {|members| where(:members => members) } 
+  scope :servicegroup_members, proc {|servicegroup_members| where(:servicegroup_members => servicegroup_members) } 
+
+  before_validation :reject_blank_inputs
 
   def initialize(*params)
     super(*params)
   end
 
-  private
-  def reject_empty_inputs
-    members.reject!{|i| i.nil? or i.empty?}
-    servicegroup_members.reject!{|i| i.nil? or i.empty?}
+private
+
+  def reject_blank_inputs
+    members = members.to_a.reject(&:blank?)
+    servicegroup_members = servicegroup_members.to_a.reject(&:blank?)
   end
 end

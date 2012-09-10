@@ -10,7 +10,7 @@ class Cluster
 
   validates_presence_of    :nodegroup, :check_command, :check_command_arguments, :contacts
   validates_uniqueness_of  :nodegroup, :scope => [:check_command, :contacts]
-  before_validation        :reject_empty_inputs
+  before_validation        :reject_blank_inputs
 
   # required:
   field :nodegroup,               type: String
@@ -29,7 +29,7 @@ class Cluster
   end
 
   private
-  def reject_empty_inputs
-    contacts.reject!{|i| i.nil? or i.empty?}
+  def reject_blank_inputs
+    contacts.to_a.reject!{|i| i.blank? }
   end
 end

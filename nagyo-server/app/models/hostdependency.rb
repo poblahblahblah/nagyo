@@ -32,7 +32,7 @@ class Hostdependency
   end
 
   private
-  def reject_empty_inputs
-    members.reject!{|i| i.nil? or i.empty?}
+  def reject_blank_inputs
+    members = members.to_a.reject(&:blank?)
   end
 end
