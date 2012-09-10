@@ -1,9 +1,12 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
+
+  sequence(:unique_command_name) {|n| "Test Command #{n}" }
+
   factory :command do
-    command_name "Test Command"
-    command_line "test"
+    command_name { generate(:unique_command_name) }
+    command_line "echo"
 
 
     factory :command_ls do

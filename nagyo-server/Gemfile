@@ -4,7 +4,6 @@ source 'http://rubygems.org'
 # use the latest 3.2.x rails
 gem 'rails', '~> 3.2.8'
 
-gem 'mongo'
 gem 'execjs'
 gem 'therubyracer'
 
@@ -13,8 +12,10 @@ gem 'kaminari'
 
 gem 'json'
 gem 'has_scope', '~> 0.5.1'
-gem 'bson_ext'
 gem "mongoid"
+# Not needed with mongoid > 3.x
+#gem 'mongo'
+#gem 'bson_ext'
 
 gem 'jquery-rails'
 

@@ -3,6 +3,10 @@
 FactoryGirl.define do
   factory :host do
     host_name                      "test-host"
+
+    # TODO: make this real association
+    #contacts { [FactoryGirl.create(:contact)] }
+    contacts { ["Test User"] }
   end
 end
 

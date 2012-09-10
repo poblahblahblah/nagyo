@@ -5,8 +5,11 @@ FactoryGirl.define do
     contact_name "Joe Contact"
     email "user@test.com"
 
-    host_notification_commands     []
-    service_notification_commands  []
+    # TODO: get these to be proper associations
+    #host_notification_commands     { [FactoryGirl.create(:command)] }
+    #service_notification_commands  { [FactoryGirl.create(:command)] }
+    host_notification_commands     { ["echo"] }
+    service_notification_commands  { ["echo"] }
   end
 end
 
