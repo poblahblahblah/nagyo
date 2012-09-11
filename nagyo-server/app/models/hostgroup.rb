@@ -3,11 +3,14 @@ class Hostgroup
   include Mongoid::Timestamps
   include Mongoid::Fields
 
-  # TODO: replace with associations
-  field :members,            type: Array
-  field :hostgroup_members,  type: Array
   has_and_belongs_to_many :hosts
-  has_many :hostgroups
+  has_and_belongs_to_many :hostgroups
+  has_and_belongs_to_many :service_dependencies
+  has_and_belongs_to_many :services
+
+  # TODO: replace with associations above ...
+  field :members,            type: Array   # Hosts
+  field :hostgroup_members,  type: Array   # Hostgroups
 
   # hostgroups are functionally the same thing as nodegroups
   # in nventory.

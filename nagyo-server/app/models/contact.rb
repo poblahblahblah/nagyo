@@ -3,7 +3,22 @@ class Contact
   include Mongoid::Timestamps
   include Mongoid::Fields
 
-  #has_many :timeperiods
+  #?
+  has_and_belongs_to_many :clusters
+
+  belongs_to :host_notification_period, :class_name => "Timeperiod"
+  has_and_belongs_to_many :host_notification_commands, :class_name => "Command"
+
+  belongs_to :service_notification_period, :class_name => "Timeperiod"
+  has_and_belongs_to_many :service_notification_commands, :class_name => "Command"
+
+  has_and_belongs_to_many :contact_groups, :class_name => "Contactgroup"
+
+  has_and_belongs_to_many :hardwareprofiles
+  has_and_belongs_to_many :hosts
+  has_and_belongs_to_many :services
+  has_and_belongs_to_many :vips
+
 
   # required:
   field :contact_name,                   type: String
@@ -11,16 +26,17 @@ class Contact
   # is this really a boolean? integer?
   field :host_notifications_enabled,     type: Integer,  default:  1
   field :service_notifications_enabled,  type: Integer,  default:  1
-  field :host_notification_period,       type: String,   default:  "24x7"
-  field :service_notification_period,    type: String,   default:  "24x7"
+  # TODO: convert defaults into before_validation callbacks?
+  #field :host_notification_period,       type: String,   default:  "24x7"
+  #field :service_notification_period,    type: String,   default:  "24x7"
   field :host_notification_options,      type: String,   default:  "d,u,r"
   field :service_notification_options,   type: String,   default:  "w,u,c,r"
-  field :host_notification_commands,     type: Array
-  field :service_notification_commands,  type: Array
+  #field :host_notification_commands,     type: Array
+  #field :service_notification_commands,  type: Array
 
   # optional:
   field :alias,                          type: String
-  field :contact_groups,                 type: Array
+  #field :contact_groups,                 type: Array
   field :pager,                          type: String
   field :addressx,                       type: String
   field :can_submit_commands,            type: Integer

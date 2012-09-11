@@ -1,0 +1,84 @@
+associations:
+  Timeperiods: none
+  Clusters:
+    contacts: Contact
+    check_command: Command
+    node_check_command: Command
+  Commands: none
+  Contacts:
+    host_notification_period: Timeperiod
+    service_notification_period: Timeperiod
+    host_notification_commands: Command
+    service_notification_commands: Command
+    contact_groups: Contactgroup
+  Contactgroups:
+    members: Contact
+    contactgroup_members: Contactgroup
+  Hardwareprofiles:
+    contacts: Contact
+    check_commands: Command
+  Hostdependencies:
+    dependency_period: Timeperiod
+  Hostgroups:
+    members: Host
+    hostgroup_members: Hostgroup
+  Hosts:
+    contacts: Contact
+    check_period: Timeperiod
+    notification_period: Timeperiod
+    parents: Host
+    hostgroups: Hostgroup
+    contact_groups: Contactgroup
+    check_command: Command
+    event_handler: Command
+  Servicedependencies:
+    dependent_host_name: Host
+    dependent_hostgroup_name: Hostgroup
+    dependency_period: Timeperiod
+  Services:
+    contacts: Contact
+    check_command: Commands
+    check_period: Timeperiod
+    notification_period: Timeperiod
+    event_handler: Command
+    hostgroup_name: Hostgroup
+    host_name: Host
+  Vips:
+    contacts: Contact
+    check_command: Command
+    node_check_command: Command
+
+inverse_associations:
+  Contact:
+    - Clusters
+    - Contactgroups
+    - Hardwareprofiles
+    - Hosts
+    - Services
+    - Vips
+  Command:
+    - Clusters
+    - Contacts
+    - Hardwareprofiles
+    - Hosts
+    - Services
+    - Vips
+  Contactgroup:
+    - Contacts
+    - Contactgroups
+  Host:
+    - Hostgroups
+    - Hosts
+    - Servicedependencies
+    - Services
+  Hostgroup:
+    - Hostgroups
+    - Hosts
+    - Servicedependencies
+    - Services
+  Timeperiod:
+    - Contacts
+    - Hostdependencies
+    - Hosts
+    - Servicedependencies
+    - Services

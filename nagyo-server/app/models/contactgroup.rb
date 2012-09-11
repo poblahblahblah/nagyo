@@ -3,11 +3,18 @@ class Contactgroup
   include Mongoid::Timestamps
   include Mongoid::Fields
 
-  # scopes
-  scope :contactgroup_name,     proc {|contactgroup_name| where(:contactgroup_name => contactgroup_name) }
-  scope :alias,                 proc {|_alias| where(:alias => _alias) }
-  scope :members,               proc {|members| where(:members => members) }
-  scope :contactgroup_members,  proc {|contactgroup_members| where(:contactgroup_members => contactgroup_members) }
+  #...?
+  #has_and_belongs_to_many :contacts
+  has_and_belongs_to_many :members, :class_name => "Contact"
+  has_and_belongs_to_many :contactgroup_members, :class_name => "Contactgroup"
+
+  # required:
+  field :contactgroup_name,     type: String
+  field :alias,                 type: String
+
+  # optional:
+  #field :members,               type: Array
+  #field :contactgroup_members,  type: Array
 
   # validations
   # FIXME: some of the validations appear to be not working as expected.
@@ -17,13 +24,12 @@ class Contactgroup
   before_validation             :set_alias_to_contactgroup_name
   before_validation             :reject_blank_inputs
 
-  # required:
-  field :contactgroup_name,     type: String
-  field :alias,                 type: String
+  # scopes
+  scope :contactgroup_name,     proc {|contactgroup_name| where(:contactgroup_name => contactgroup_name) }
+  scope :alias,                 proc {|_alias| where(:alias => _alias) }
+  scope :members,               proc {|members| where(:members => members) }
+  scope :contactgroup_members,  proc {|contactgroup_members| where(:contactgroup_members => contactgroup_members) }
 
-  # optional:
-  field :members,               type: Array
-  field :contactgroup_members,  type: Array
 
   def initialize(*params)
     super(*params)

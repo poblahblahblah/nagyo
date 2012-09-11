@@ -3,6 +3,18 @@ class Service
   include Mongoid::Timestamps
   include Mongoid::Fields
 
+  has_and_belongs_to_many :contacts
+
+  belongs_to :check_command, :class_name => "Command"
+  belongs_to :event_handler, :class_name => "Command"
+
+  belongs_to :check_period, :class_name => "Timeperiod"
+  belongs_to :notification_period, :class_name => "Timeperiod"
+
+  belongs_to :hostgroup  # TODO: hostgroup_name
+  belongs_to :host  # TODO: host_name
+
+
   # required:
   # note that we use "nodegroup" instead of hostgroup_name - this is functionally
   # the same thing to us.

@@ -3,6 +3,12 @@ class Timeperiod
   include Mongoid::Timestamps
   include Mongoid::Fields
 
+  has_many :contacts
+  has_many :host_dependencies
+  has_many :hosts
+  has_many :service_dependencies
+  has_many :services
+
   # scopes
   scope :timeperiod_name,	proc {|timeperiod_name| where(:timeperiod_name => timeperiod_name) }
   scope :alias,			proc {|_alias| where(:alias => _alias) }
