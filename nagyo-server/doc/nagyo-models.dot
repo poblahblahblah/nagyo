@@ -1,0 +1,55 @@
+digraph G {
+
+    node [] Cluster Contactgroup Hostgroup Servicegroup;
+    node [] Timeperiod Command Contact Host Service Vip;
+    node [] Hardwareprofile Hostdependency Servicedependency ;
+  subgraph cluster_host {
+  };
+
+  subgraph cluster_deps {
+  };
+
+  subgraph cluster_groups {
+  };
+
+  Cluster -> Contact;
+  Cluster -> Command;
+
+  Contact -> Timeperiod;
+  Contact -> Command;
+  Contact -> Contactgroup;
+  // inverse?
+  //Contact -> Cluster;
+  
+  Contactgroup -> Contact;
+  Contactgroup -> Contactgroup;
+
+  Hardwareprofile -> Contact;
+  Hardwareprofile -> Command;
+
+  Hostdependency -> Timeperiod;
+
+  Hostgroup -> Host;
+  Hostgroup -> Hostgroup;
+
+  Host -> Contact;
+  Host -> Timeperiod;
+  Host -> Host;
+  Host -> Hostgroup;
+  Host -> Contactgroup;
+  Host -> Command;
+
+  Servicedependency -> Host;
+  Servicedependency -> Hostgroup;
+  Servicedependency -> Timeperiod;
+
+
+  Service -> Contact;
+  Service -> Command;
+  Service -> Timeperiod;
+  Service -> Hostgroup;
+  Service -> Host;
+
+  Vip -> Contact;
+  Vip -> Command;
+};

@@ -28,6 +28,10 @@ class Hardwareprofile
     super(*params)
   end
 
+  def to_s
+    "#{hardware_profile}"
+  end
+
 private
 
   def reject_blank_inputs

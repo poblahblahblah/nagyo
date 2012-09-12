@@ -53,4 +53,8 @@ class User
 
   validates_uniqueness_of :email, :case_sensitive => false
 
+  def to_s
+    "#{email}"
+  end
+
 end

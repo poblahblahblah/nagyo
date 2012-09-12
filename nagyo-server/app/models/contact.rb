@@ -77,6 +77,10 @@ class Contact
     super(*params)
   end
 
+  def to_s
+    "#{contact_name}"
+  end
+
 private
 
   def set_alias_to_contact_name

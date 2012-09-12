@@ -126,6 +126,10 @@ class Host
     super(*params)
   end
 
+  def to_s
+    "#{host_name}"
+  end
+
 private
 
   def set_alias_and_address_to_host_name

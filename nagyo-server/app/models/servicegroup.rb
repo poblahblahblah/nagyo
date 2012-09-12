@@ -20,8 +20,14 @@ class Servicegroup
 
   before_validation :reject_blank_inputs
 
+  # TODO: should we validate unique :servicegroup_name?
+
   def initialize(*params)
     super(*params)
+  end
+
+  def to_s
+    "#{servicegroup_name}"
   end
 
 private

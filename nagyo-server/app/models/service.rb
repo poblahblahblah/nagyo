@@ -32,7 +32,9 @@ class Service
   # required:
   # note that we use "nodegroup" instead of hostgroup_name - this is functionally
   # the same thing to us.
+  # FIXME: TODO: make nodegroup a proper Hostgroup association
   field :nodegroup,                     type: String
+
   field :name,                          type: String
   field :check_command,                 type: String
   field :check_command_arguments,       type: String
@@ -101,6 +103,10 @@ class Service
 
   def initialize(*params)
     super(*params)
+  end
+
+  def to_s
+    "#{name}"
   end
 
 private

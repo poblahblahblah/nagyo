@@ -43,6 +43,10 @@ class Contactgroup
     super(*params)
   end
 
+  def to_s
+    "#{contactgroup_name}"
+  end
+
 private
 
   def set_alias_to_contactgroup_name

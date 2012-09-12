@@ -49,6 +49,11 @@ class Vip
     super(*params)
   end
 
+  # TODO: probably want to validate vip_name unique
+  def to_s
+    "#{vip_name}"
+  end
+
 private
 
   def reject_blank_inputs

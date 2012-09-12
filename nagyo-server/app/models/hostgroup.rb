@@ -52,6 +52,10 @@ class Hostgroup
     super(*params)
   end
 
+  def to_s
+    "#{hostgroup_name}"
+  end
+
 private
 
   def set_alias_to_hostgroup_name

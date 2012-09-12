@@ -51,4 +51,8 @@ class Command
   def initialize(*params)
     super(*params)
   end
+
+  def to_s
+    "#{command_name}"
+  end
 end

@@ -61,6 +61,13 @@ class Timeperiod
     super(*params)
   end
 
+  def to_s
+    "#{timeperiod_name}"
+  end
+
+
+  ## Class methods to pull common periods
+
   # need some handy methods to grab commonly used periods
   def self.twentyfourseven
     t = Timeperiod.find_or_create_by(:timeperiod_name => "24x7")

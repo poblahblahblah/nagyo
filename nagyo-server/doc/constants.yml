@@ -1,0 +1,17 @@
+timeperiods:
+  - 24x7
+  - workhours
+  - none
+  - us-holidays
+  - 24x7_sans_holidays
+commands:
+  - check-host-alive
+  - notify-host-by-email
+  - notify-service-by-email
+  - process-host-perfdata
+  - process-service-perfdata
+  - check_udp
+  - check_tcp
+  - check_snmp
+  - check_ping
+  - check_ssh

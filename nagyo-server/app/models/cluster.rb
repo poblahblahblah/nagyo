@@ -14,6 +14,11 @@ class Cluster
     :inverse_of => :node_check_command_clusters
 
   # required:
+  #
+  # NOTE: "the term nodegroup is from nventory, but it basically means the same 
+  # thing as hostgroup to nagios. we pull nodegroup info from nventory, so no 
+  # association is needed"
+  #
   field :nodegroup,               type: String
   # FIXME: TODO: use default type for association too  ...
   #field :check_command, type: String, default: "check_eh_cluster-http"
@@ -39,6 +44,11 @@ class Cluster
   def initialize(*params)
     super(*params)
   end
+
+  # NOTE: this will not be globally unique ... but should we expose anyway?
+  #def to_s
+  #  "#{nodegroup}"
+  #end
 
 private
 
