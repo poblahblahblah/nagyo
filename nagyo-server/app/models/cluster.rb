@@ -5,11 +5,17 @@ class Cluster
 
   # habtm?
   has_and_belongs_to_many :contacts
-  belongs_to :check_command,      :class_name => "Command"
-  belongs_to :node_check_command, :class_name => "Command"
+
+  belongs_to :check_command,
+    :class_name => "Command",
+    :inverse_of => :check_command_clusters
+  belongs_to :node_check_command,
+    :class_name => "Command",
+    :inverse_of => :node_check_command_clusters
 
   # required:
   field :nodegroup,               type: String
+  # FIXME: TODO: use default type for association too  ...
   #field :check_command, type: String, default: "check_eh_cluster-http"
   field :check_command_arguments, type: String
   #field :contacts,                type: Array
@@ -19,14 +25,15 @@ class Cluster
   field :node_check_command_arguments,    type: String
   field :notify_on_node_service,          type: Boolean, default: false
 
+  validates_presence_of    :nodegroup, :check_command, :check_command_arguments, :contacts
+  validates_uniqueness_of  :nodegroup, :scope => [:check_command, :contacts]
+  before_validation        :reject_blank_inputs
+
+
   # scopes
   scope :nodegroup,     proc {|nodegroup| where(:nodegroup => nodegroup) }
   scope :check_command, proc {|check_command| where(:check_command => check_command) }
   scope :contacts,      proc {|contacts| where(:contacts => contacts) }
-
-  validates_presence_of    :nodegroup, :check_command, :check_command_arguments, :contacts
-  validates_uniqueness_of  :nodegroup, :scope => [:check_command, :contacts]
-  before_validation        :reject_blank_inputs
 
 
   def initialize(*params)

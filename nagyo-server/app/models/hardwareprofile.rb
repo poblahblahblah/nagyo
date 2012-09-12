@@ -3,10 +3,11 @@ class Hardwareprofile
   include Mongoid::Timestamps
   include Mongoid::Fields
 
-  # habtm?
-  has_and_belongs_to_many :check_commands, :class_name => "Command"
   has_and_belongs_to_many :contacts
-
+  # habtm?
+  has_and_belongs_to_many :check_commands,
+    :class_name => "Command",
+    :inverse_of => :hardwareprofiles
 
   # required:
   field :hardware_profile,      type: String

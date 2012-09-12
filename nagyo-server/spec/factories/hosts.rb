@@ -4,9 +4,10 @@ FactoryGirl.define do
   factory :host do
     host_name                      "test-host"
 
-    # TODO: make this real association
-    #contacts { [FactoryGirl.create(:contact)] }
-    contacts { ["Test User"] }
+    contacts { [FactoryGirl.create(:contact)] }
+
+    notification_interval 5
+    notification_period { Timeperiod.twentyfourseven }
   end
 end
 

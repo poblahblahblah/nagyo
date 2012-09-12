@@ -5,8 +5,16 @@ class Contactgroup
 
   #...?
   #has_and_belongs_to_many :contacts
-  has_and_belongs_to_many :members, :class_name => "Contact"
-  has_and_belongs_to_many :contactgroup_members, :class_name => "Contactgroup"
+  has_and_belongs_to_many :members,
+    :class_name => "Contact",
+    :inverse_of => :contact_groups
+
+  has_and_belongs_to_many :contactgroup_members,
+    :class_name => "Contactgroup"
+
+  has_and_belongs_to_many :hosts,
+    :class_name => "Host",
+    :inverse_of => :contact_groups
 
   # required:
   field :contactgroup_name,     type: String

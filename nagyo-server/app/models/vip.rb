@@ -5,8 +5,12 @@ class Vip
 
   has_and_belongs_to_many :contacts
 
-  has_one :check_command, :class_name => "Command"
-  has_one :node_check_command, :class_name => "Command"
+  belongs_to :check_command,
+    :class_name => "Command",
+    :inverse_of => :check_command_vips
+  belongs_to :node_check_command,
+    :class_name => "Command",
+    :inverse_of => :node_check_command_vips
 
   # required:
   field :nodegroup,            type: String

@@ -3,14 +3,28 @@ class Hostgroup
   include Mongoid::Timestamps
   include Mongoid::Fields
 
-  has_and_belongs_to_many :hosts
-  has_and_belongs_to_many :hostgroups
-  has_and_belongs_to_many :service_dependencies
-  has_and_belongs_to_many :services
+  has_and_belongs_to_many :members,
+    :class_name => "Host",
+    :inverse_of => :hostgroups
+    
+  # self parenting -- 
+  has_and_belongs_to_many :hostgroup_members,
+    :class_name => "Hostgroup"
 
-  # TODO: replace with associations above ...
-  field :members,            type: Array   # Hosts
-  field :hostgroup_members,  type: Array   # Hostgroups
+  has_many :service_dependencies,
+    :class_name => "Servicedependency",
+    :inverse_of => :hostgroup
+
+  has_many :dependent_service_dependencies,
+    :class_name => "Servicedependency",
+    :inverse_of => :dependent_hostgroup
+
+  has_many :services
+
+  # TODO: replace with associations above ... or better to use :hosts, 
+  # :hostgroups and alias for :members?
+  #field :members,            type: Array   # Hosts
+  #field :hostgroup_members,  type: Array   # Hostgroups
 
   # hostgroups are functionally the same thing as nodegroups
   # in nventory.

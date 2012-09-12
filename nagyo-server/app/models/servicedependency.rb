@@ -2,14 +2,31 @@ class Servicedependency
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  # TODO: convert the *_name fields into proper associations? write 
-  # helper methods to get name back with same api: host_name
-  belongs_to :host
-  belongs_to :dependent_host, :class_name => "Host"
-  belongs_to :hostgroup
-  belongs_to :dependent_hostgroup, :class_name => "Hostgroup"
+  # FIXME: TODO: finish converting to associations by changing the *_name 
+  # fields into proper associations and write helper methods to get name back 
+  # with same api: host_name, service_description etc
 
-  belongs_to :dependency_period, :class_name => "Timeperiod"
+  # these are the things we are depending upon:
+  belongs_to :host,      :inverse_of => :service_dependencies
+  belongs_to :hostgroup, :inverse_of => :service_dependencies
+  belongs_to :service,   :inverse_of => :service_dependencies
+
+  # this is the dependent which depends on the items above
+  belongs_to :dependent_host,
+    :class_name => "Host",
+    :inverse_of => :dependent_service_dependencies
+
+  belongs_to :dependent_hostgroup,
+    :class_name => "Hostgroup",
+    :inverse_of => :dependent_service_dependencies
+
+  belongs_to :dependent_service,
+    :class_name => "Service",
+    :inverse_of => :dependent_service_dependencies
+
+  belongs_to :dependency_period,
+    :class_name => "Timeperiod",
+    :inverse_of => :service_dependencies
   
   # required:
   field :dependent_host_name,           type: String

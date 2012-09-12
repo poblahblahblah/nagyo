@@ -3,19 +3,39 @@ class Host
   include Mongoid::Timestamps
   include Mongoid::Fields
 
-  has_and_belongs_to_many :contacts
   # has_many :parents, :class_name => ??
   has_and_belongs_to_many :hosts  # aka parents
-  has_and_belongs_to_many :hostgroups
-  has_and_belongs_to_many :contactgroups # TODO: alias contact_groups
-  has_and_belongs_to_many :services
-  has_and_belongs_to_many :service_dependencies
 
-  belongs_to :check_command, :class_name => "Command"
-  belongs_to :event_handler, :class_name => "Command"
+  has_and_belongs_to_many :contacts
 
-  belongs_to :check_period, :class_name => "Timeperiod"
-  belongs_to :notification_period, :class_name => "Timeperiod"
+  has_and_belongs_to_many :hostgroups,
+    :class_name => "Hostgroup",
+    :inverse_of => :members
+
+  has_many :services
+
+  has_many :service_dependencies,
+    :class_name => "Servicedependency",
+    :inverse_of => :host
+  has_many :dependent_service_dependencies,
+    :class_name => "Servicedependency",
+    :inverse_of => :dependent_host
+
+  has_and_belongs_to_many :contact_groups,
+    :class_name => "Contactgroup",
+    :inverse_of => :hosts
+
+  belongs_to :check_command,
+    :class_name => "Command"
+  belongs_to :event_handler,
+    :class_name => "Command"
+
+  belongs_to :check_period,
+    :class_name => "Timeperiod",
+    :inverse_of => :check_period_hosts
+  belongs_to :notification_period,
+    :class_name => "Timeperiod",
+    :inverse_of => :notification_period_hosts
 
 
   # required:
@@ -71,6 +91,17 @@ class Host
   #field :2d_coords,            type: String
   #field :3d_coords,            type: String
 
+  # validations
+  before_validation :set_alias_and_address_to_host_name, :reject_blank_inputs
+
+  # FIXME: it seems mongoid thinks empty array sets count as presence of value.
+  validates_presence_of        :host_name, :alias, :address, :max_check_attempts, :check_period, :contacts
+  validates_presence_of        :notification_interval, :notification_period
+
+  # FIXME: for whatever reason validations against multiple fields is not working like they did in MM
+  validates_uniqueness_of    :host_name, :scope => [:check_period, :contacts, :notification_period]
+
+
   # TODO: how will has_scope scopes work with associations instead of arrays?  
   # hopefully works better!
   # scopes
@@ -90,15 +121,6 @@ class Host
   #
   scope :check_command,       proc {|check_command| where(:check_command => check_command) }
 
-  # validations
-  before_validation :set_alias_and_address_to_host_name, :reject_blank_inputs
-
-  # FIXME: it seems mongoid thinks empty array sets count as presence of value.
-  validates_presence_of        :host_name, :alias, :address, :max_check_attempts, :check_period, :contacts
-  validates_presence_of        :notification_interval, :notification_period
-
-  # FIXME: for whatever reason validations against multiple fields is not working like they did in MM
-  validates_uniqueness_of    :host_name, :scope => [:check_period, :contacts, :notification_period]
 
   def initialize(*params)
     super(*params)

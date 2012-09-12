@@ -3,21 +3,29 @@ class Contact
   include Mongoid::Timestamps
   include Mongoid::Fields
 
-  #?
   has_and_belongs_to_many :clusters
-
-  belongs_to :host_notification_period, :class_name => "Timeperiod"
-  has_and_belongs_to_many :host_notification_commands, :class_name => "Command"
-
-  belongs_to :service_notification_period, :class_name => "Timeperiod"
-  has_and_belongs_to_many :service_notification_commands, :class_name => "Command"
-
-  has_and_belongs_to_many :contact_groups, :class_name => "Contactgroup"
-
   has_and_belongs_to_many :hardwareprofiles
   has_and_belongs_to_many :hosts
   has_and_belongs_to_many :services
   has_and_belongs_to_many :vips
+
+  has_and_belongs_to_many :host_notification_commands,
+    :class_name => "Command",
+    :inverse_of => :host_notification_contacts
+  has_and_belongs_to_many :service_notification_commands,
+    :class_name => "Command",
+    :inverse_of => :service_notification_contacts
+
+  has_and_belongs_to_many :contact_groups,
+    :class_name => "Contactgroup",
+    :inverse_of => :members
+
+  belongs_to :host_notification_period,
+    :class_name => "Timeperiod",
+    :inverse_of => :host_notification_contacts
+  belongs_to :service_notification_period,
+    :class_name => "Timeperiod",
+    :inverse_of => :service_notification_contacts
 
 
   # required:
@@ -55,10 +63,11 @@ class Contact
   validates_presence_of   :contact_name, :email, :host_notifications_enabled, :service_notifications_enabled
   # FIXME: why these? shouldn't a contact be able to start empty and build? why 
   # do we need all these other things to even build a contact?
-  validates_presence_of   :host_notification_period, :service_notification_period, :host_notification_options
-  validates_presence_of   :service_notification_options, :host_notification_commands, :service_notification_commands
+  validates_presence_of   :host_notification_period, :host_notification_commands, :host_notification_options
+  validates_presence_of   :service_notification_period, :service_notification_commands, :service_notification_options
 
-  validates_numericality_of :host_notifications_enabled
+  # TODO: should these be boolean flags? need to convert to 1/0 for nagios 
+  validates_numericality_of :host_notifications_enabled, :service_notifications_enabled
 
   before_validation       :set_alias_to_contact_name
   before_validation       :reject_blank_inputs

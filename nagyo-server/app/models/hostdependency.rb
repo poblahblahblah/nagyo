@@ -2,7 +2,17 @@ class Hostdependency
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  belongs_to :dependency_period, :class_name => "Timeperiod"
+  belongs_to :dependency_period,
+    :class_name => "Timeperiod",
+    :inverse_of => :host_dependencies
+
+  # TODO: finish fixing these associations ...
+  #has_many :members, :class_name => "Host" ?
+  #belongs_to :host
+  #belongs_to :dependent_host, :class => "Host"
+
+  #belongs_to :hostgroup, :class => "Hostgroup"
+  #belongs_to :dependent_hostgroup, :class => "Hostgroup"
 
   # required:
   field :dependent_host_name, type: String
@@ -16,8 +26,6 @@ class Hostdependency
   field :execution_failure_criteria,    type: String
   field :notification_failure_criteria, type: String
   #field :dependency_period, type: String, default: "workhours"
-
-  #timestamps!
 
   scope :host_name,                     proc {|host_name| where(:host_name => host_name)}
   scope :dependent_host_name,           proc {|dependent_host_name| where(:dependent_host_name => dependent_host_name)}
@@ -34,8 +42,10 @@ class Hostdependency
     super(*params)
   end
 
-  private
+private
+
   def reject_blank_inputs
     members = members.to_a.reject(&:blank?)
   end
+
 end
