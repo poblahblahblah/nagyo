@@ -41,7 +41,7 @@ group :development, :test do
   # for running tests as files change: ./script/watchr.rb
   gem "watchr"
 
-  # generate useful model diagrams
+  # generate model diagrams: bundle exec rake diagram:all
   gem "railroady"
 end
 
