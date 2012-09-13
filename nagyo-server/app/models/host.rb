@@ -4,13 +4,20 @@ class Host
   include Mongoid::Fields
 
   # has_many :parents, :class_name => ??
-  has_and_belongs_to_many :hosts  # aka parents
+  has_and_belongs_to_many :parents, :class_name => "Host"
 
   has_and_belongs_to_many :contacts
 
   has_and_belongs_to_many :hostgroups,
     :class_name => "Hostgroup",
     :inverse_of => :members
+
+  has_many :host_dependencies,
+    :class_name => "Hostdependency",
+    :inverse_of => :host
+  has_many :dependent_host_dependencies,
+    :class_name => "Hostdependency",
+    :inverse_of => :dependent_host
 
   has_many :services
 

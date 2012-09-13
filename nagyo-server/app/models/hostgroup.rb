@@ -11,10 +11,16 @@ class Hostgroup
   has_and_belongs_to_many :hostgroup_members,
     :class_name => "Hostgroup"
 
+  has_many :host_dependencies,
+    :class_name => "Hostdependency",
+    :inverse_of => :hostgroup
+  has_many :dependent_host_dependencies,
+    :class_name => "Hostdependency",
+    :inverse_of => :dependent_hostgroup
+
   has_many :service_dependencies,
     :class_name => "Servicedependency",
     :inverse_of => :hostgroup
-
   has_many :dependent_service_dependencies,
     :class_name => "Servicedependency",
     :inverse_of => :dependent_hostgroup

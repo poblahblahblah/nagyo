@@ -7,12 +7,22 @@ class Hostdependency
     :inverse_of => :host_dependencies
 
   # TODO: finish fixing these associations ...
+  # FIXME: what is :members?
   #has_many :members, :class_name => "Host" ?
-  #belongs_to :host
-  #belongs_to :dependent_host, :class => "Host"
 
-  #belongs_to :hostgroup, :class => "Hostgroup"
-  #belongs_to :dependent_hostgroup, :class => "Hostgroup"
+  belongs_to :host,
+    :class_name => "Host",
+    :inverse_of => :host_dependencies
+  belongs_to :dependent_host,
+    :class_name => "Host",
+    :inverse_of => :dependent_host_dependencies
+
+  belongs_to :hostgroup,
+    :class_name => "Hostgroup",
+    :inverse_of => :host_dependencies
+  belongs_to :dependent_hostgroup,
+    :class_name => "Hostgroup",
+    :inverse_of => :dependent_host_dependencies
 
   # required:
   field :dependent_host_name, type: String
@@ -26,6 +36,12 @@ class Hostdependency
   field :execution_failure_criteria,    type: String
   field :notification_failure_criteria, type: String
   #field :dependency_period, type: String, default: "workhours"
+
+  # validations
+  # FIXME: TODO: need to check each side of association, but only one required 
+  #validates_presence_of :host # :unless hostgroup is set
+  #validates_presence_of :dependent_host
+
 
   scope :host_name,                     proc {|host_name| where(:host_name => host_name)}
   scope :dependent_host_name,           proc {|dependent_host_name| where(:dependent_host_name => dependent_host_name)}

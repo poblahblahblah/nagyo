@@ -57,12 +57,13 @@ Welcome back, <%= session[:account_id] %>!
 
 <% # here comes some ugliness %>
 <% options = [] %>
-<% def options_from_array(array) %>
-<% (0..array.length).to_a.combination(2).map{|i,j| array[i...j]}.sort.each do |a| %>
-<% options << a.join(',') %>
-<% end %>
-<% return options %>
-<% end %>
+<%# FIXME: wtf - why is this here and not in helper? %>
+<%# def nagios_options_from_array(array) %>
+<%# (0..array.length).to_a.combination(2).map{|i,j| array[i...j]}.sort.each do |a| %>
+<%# options << a.join(',') %>
+<%# end %>
+<%# return options %>
+<%# end %>
 
 <%- # Calling yield here triggers the insertion of the specific view -%>
 <%= yield %>

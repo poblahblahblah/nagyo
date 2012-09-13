@@ -3,41 +3,41 @@
   <fieldset>
     <legend>Required Parameters</legend>
     <%= f.input :host_name %>
-    <%= f.input :contacts, :as => :select, :collection => Contact.all.map{|i| i.contact_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
+    <%= f.input :contacts, :as => :select, :collection => Contact.all %>
     <%= f.input :max_check_attempts, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
-    <%= f.input :check_period, :as => :select, :collection => Timeperiod.all.map{|i| i.timeperiod_name}%>
+    <%= f.input :check_period, :as => :select, :collection => Timeperiod.all %>
     <%= f.input :notification_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
-    <%= f.input :notification_period, :as => :select, :collection => Timeperiod.all.map{|i| i.timeperiod_name} %>
+    <%= f.input :notification_period, :as => :select, :collection => Timeperiod.all %>
   </fieldset>
   <fieldset>
     <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
     <div id="toggleSection" style="display:none">
       <%= f.input :display_name %>
-      <%= f.input :parents, :as => :select, :collection => Host.all.map{|i| i.host_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
-      <%= f.input :hostgroups, :as => :select, :collection => Hostgroup.all.map{|i| i.hostgroup_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
-      <%= f.input :contact_groups, :as => :select, :collection => Contactgroup.all.map{|i| i.contactgroup_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
-      <%= f.input :check_command, :as => :select, :collection => Command.all.map{|i| i.command_name} %>
-      <%= f.input :initial_state, :as => :select, :collection => options_from_array(%W(o d u)) %>
+      <%= f.input :parents, :as => :select, :collection => Host.all %>
+      <%= f.input :hostgroups, :as => :select, :collection => Hostgroup.all %>
+      <%= f.input :contact_groups, :as => :select, :collection => Contactgroup.all %>
+      <%= f.input :check_command, :as => :select, :collection => Command.all %>
+      <%= f.input :initial_state, :as => :select, :collection => nagios_options_from_array(%W(o d u)) %>
       <%= f.input :check_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
       <%= f.input :retry_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
-      <%= f.input :active_checks_enabled, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :passive_checks_enabled, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :obsess_over_host, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :check_freshness, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :active_checks_enabled, :as => :boolean %>
+      <%= f.input :passive_checks_enabled, :as => :boolean %>
+      <%= f.input :obsess_over_host, :as => :boolean %>
+      <%= f.input :check_freshness, :as => :boolean %>
       <%= f.input :freshness_threshold, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
-      <%= f.input :event_handler, :as => :select, :collection => Command.all.map{|i| i.command_name} %>
-      <%= f.input :event_handler_enabled, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :event_handler, :as => :select, :collection => Command.all %>
+      <%= f.input :event_handler_enabled, :as => :boolean %>
       <%= f.input :low_flap_threshold, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
       <%= f.input :high_flap_threshold, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
-      <%= f.input :flap_detection_enabled, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :flap_detection_options, :as => :select, :collection => options_from_array(%W(o d u)) %>
-      <%= f.input :process_perf_data, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :retain_status_information, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :retain_nonstatus_information, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :flap_detection_enabled, :as => :boolean %>
+      <%= f.input :flap_detection_options, :as => :select, :collection => nagios_options_from_array(%W(o d u)) %>
+      <%= f.input :process_perf_data, :as => :boolean %>
+      <%= f.input :retain_status_information, :as => :boolean %>
+      <%= f.input :retain_nonstatus_information, :as => :boolean %>
       <%= f.input :first_notification_delay, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]  %>
-      <%= f.input :notification_options, :as => :select, :collection => options_from_array(%W(d u r f s)) %>
-      <%= f.input :notifications_enabled, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :stalking_options, :as => :select, :collection => options_from_array(%W(o d u)) %>
+      <%= f.input :notification_options, :as => :select, :collection => nagios_options_from_array(%W(d u r f s)) %>
+      <%= f.input :notifications_enabled, :as => :boolean %>
+      <%= f.input :stalking_options, :as => :select, :collection => nagios_options_from_array(%W(o d u)) %>
       <%= f.input :notes %>
       <%= f.input :notes_url %>
       <%= f.input :action_url %>

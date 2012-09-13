@@ -3,42 +3,42 @@
   <fieldset>
     <legend>Required Parameters</legend>
     <%= f.input :nodegroup %>
-    <%= f.input :contacts, :as => :select, :collection => Contact.all.map{|i| i.contact_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
-    <%= f.input :check_command, :as => :select, :collection => Command.all.map{|i| i.command_name} %>
+    <%= f.input :contacts, :as => :select, :collection => Contact.all %>
+    <%= f.input :check_command, :as => :select, :collection => Command.all %>
     <%= f.input :check_command_arguments %>
     <%= f.input :max_check_attempts, :as => :select, :collection => [ 1, 2, 3, 4, 5] %>
     <%= f.input :check_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5] %>
     <%= f.input :retry_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5] %>
     <%= f.input :notification_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5] %>
-    <%= f.input :check_period, :as => :select, :collection => Timeperiod.all.map{|i| i.timeperiod_name} %>
-    <%= f.input :notification_period, :as => :select, :collection => Timeperiod.all.map{|i| i.timeperiod_name} %>
+    <%= f.input :check_period, :as => :select, :collection => Timeperiod.all %>
+    <%= f.input :notification_period, :as => :select, :collection => Timeperiod.all %>
   </fieldset>
   <fieldset>
     <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
     <div id="toggleSection" style="display:none">
       <%= f.input :display_name %>
       <%= f.input :servicegroups %>
-      <%= f.input :is_volatile, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :initial_state, :as => :select, :collection => options_from_array(%W(o w u c)) %>
-      <%= f.input :active_checks_enabled, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :passive_checks_enabled, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :obsess_over_service, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :check_freshness, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :is_volatile, :as => :boolean %>
+      <%= f.input :initial_state, :as => :select, :collection => nagios_options_from_array(%W(o w u c)) %>
+      <%= f.input :active_checks_enabled, :as => :boolean %>
+      <%= f.input :passive_checks_enabled, :as => :boolean %>
+      <%= f.input :obsess_over_service, :as => :boolean %>
+      <%= f.input :check_freshness, :as => :boolean %>
       <%= f.input :freshness_threshold %>
-      <%= f.input :event_handler, :as => :select, :collection => Command.all.map{|i| i.command_name} %>
-      <%= f.input :event_handler_enabled, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :event_handler, :as => :select, :collection => Command.all %>
+      <%= f.input :event_handler_enabled, :as => :boolean %>
       <%= f.input :low_flap_threshold %>
       <%= f.input :high_flap_threshold %>
-      <%= f.input :flap_detection_enabled, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :flap_detection_options, :as => :select, :collection => options_from_array(%W(o w u c)) %>
-      <%= f.input :process_perf_data, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :retain_status_information, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :retain_nonstatus_information, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :flap_detection_enabled, :as => :boolean %>
+      <%= f.input :flap_detection_options, :as => :select, :collection => nagios_options_from_array(%W(o w u c)) %>
+      <%= f.input :process_perf_data, :as => :boolean %>
+      <%= f.input :retain_status_information, :as => :boolean %>
+      <%= f.input :retain_nonstatus_information, :as => :boolean %>
       <%= f.input :first_notification_delay, :as => :select, :collection => [ 1, 2, 3, 4, 5] %>
-      <%= f.input :notification_options, :as => :select, :collection => options_from_array(%W(w u c r f s n)) %>
-      <%= f.input :notifications_enabled, :as => :select, :collection => [ 0, 1 ] %>
-      <%= f.input :stalking_options, :as => :select, :collection => options_from_array(%W(o w u c)) %>
-      <%= f.input :register, :as => :select, :collection => [ 0, 1 ] %>
+      <%= f.input :notification_options, :as => :select, :collection => nagios_options_from_array(%W(w u c r f s n)) %>
+      <%= f.input :notifications_enabled, :as => :boolean %>
+      <%= f.input :stalking_options, :as => :select, :collection => nagios_options_from_array(%W(o w u c)) %>
+      <%= f.input :register, :as => :boolean %>
       <% f.input :service_description %>
       <% f.input :name %>
       <%= f.input :notes %>
@@ -50,8 +50,9 @@
   </fieldset>
   <% # we want to have hostgroup_name and host_name be submitted, but not show up on the form %>
   <div style="display:none">
-    <%= f.input :hostgroup_name, :as => :select, :collection => Hostgroup.all.map{|i| i.hostgroup_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
-    <%= f.input :host_name, :as => :select, :collection => Host.all.map{|i| i.host_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
+    <%# FIXME: make these hostgroup, host instead of *_name %>
+    <%= f.input :hostgroup_name, :as => :select, :collection => Hostgroup.all %>
+    <%= f.input :host_name, :as => :select, :collection => Host.all %>
   </div>
   <%= f.actions do %>
     <%= f.action :submit, :as => :button %>

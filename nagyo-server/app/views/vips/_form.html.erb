@@ -3,10 +3,10 @@
   <fieldset>
     <legend>Required Parameters</legend>
     <%= f.input :nodegroup %>
-    <%= f.input :contacts, :as => :select, :collection => Contact.all.map{|i| i.contact_name}, :include_blank => false, :input_html => { :multiple => true, :include_blank => false } %>
+    <%= f.input :contacts, :as => :select, :collection => Contact.all %>
     <%= f.input :vip_name %>
     <%= f.input :vip_dns %>
-    <%= f.input :check_command, :as => :select, :collection => Command.all.map{|i| i.command_name} %>
+    <%= f.input :check_command, :as => :select, :collection => Command.all %>
     <%= f.input :percent_warn %>
     <%= f.input :percent_crit %>
     <%= f.input :ecv_uri %>
@@ -15,9 +15,9 @@
   <fieldset>
     <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
     <div id="toggleSection" style="display:none">
-      <%= f.input :node_check_command, :as => :select, :collection => Command.all.map{|i| i.command_name} %>
+      <%= f.input :node_check_command, :as => :select, :collection => Command.all %>
       <%= f.input :node_check_command_arguments %>
-      <%= f.input :notify_on_node_service, :as => :select, :collection => [ "true", "false" ] %>
+      <%= f.input :notify_on_node_service, :as => :boolean %>
     </div>
   </fieldset>
   <%= f.actions do %>
