@@ -1,3 +1,4 @@
+# TODO: merge this model into Cluster
 class Vip
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -12,8 +13,10 @@ class Vip
     :class_name => "Command",
     :inverse_of => :node_check_command_vips
 
+  belongs_to :hostgroup
+
   # required:
-  field :nodegroup,            type: String
+  #field :nodegroup,            type: String
   field :vip_name,             type: String
   field :vip_dns,              type: String
   # TODO: has_one :check_command, class: "Command", ...
@@ -31,13 +34,13 @@ class Vip
   field :notify_on_node_service,       type: Boolean, default: false
 
   # validations
-  validates_presence_of         :nodegroup, :vip_name, :vip_dns, :check_command, :node_alert_when_down
+  validates_presence_of         :hostgroup, :vip_name, :vip_dns, :check_command, :node_alert_when_down
   validates_presence_of         :percent_warn, :percent_crit, :ecv_uri, :ecv_string, :contacts
-  validates_uniqueness_of       :nodegroup, :scope => [:check_command, :contacts, :vip_dns, :vip_name]
+  validates_uniqueness_of       :hostgroup, :scope => [:check_command, :contacts, :vip_dns, :vip_name]
   before_validation             :reject_blank_inputs
 
 
-  scope :nodegroup,     proc {|nodegroup| where(:nodegroup => nodegroup) }
+  scope :hostgroup,     proc {|hostgroup| where(:hostgroup => hostgroup) }
   scope :vip_name,      proc {|vip_name| where(:vip_name => vip_name) }
   scope :vip_dns,       proc {|vip_dns| where(:vip_dns => vip_dns) }
   scope :check_command, proc {|check_command| where(:check_command => check_command) }

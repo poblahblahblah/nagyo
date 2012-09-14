@@ -7,7 +7,7 @@
   <thead>
     <tr>
       <th nowrap="nowrap"></th>
-      <th>Nodegroup</th>
+      <th>Hostgroup</th>
       <th>Contacts</th>
       <th>VIP DNS</th>
       <th>Check Command</th>
@@ -20,7 +20,7 @@
     <%- @vips.each do |c| -%>
     <tr class="<%= cycle('odd', 'even') -%>">
       <td><%= link_to 'Show', c %> | <%= link_to 'Edit', edit_vip_path(c) %> | <%= link_to 'Destroy', c, :confirm => 'Are you sure?', :method => :delete %></td>
-      <td><%= h c.nodegroup %></td>
+      <td><%= h c.hostgroup %></td>
       <td><%= h c.contacts.join(',') %></td>
       <td><%= h c.vip_dns %></td>
       <td><%= h c.check_command %></td>

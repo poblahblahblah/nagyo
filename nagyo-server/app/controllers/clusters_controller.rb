@@ -1,6 +1,6 @@
 class ClustersController < ApplicationController
 
-  has_scope :nodegroup
+  has_scope :hostgroup
   has_scope :check_command
   has_scope :contacts
 
@@ -30,6 +30,7 @@ class ClustersController < ApplicationController
   end
 
   def show
+    # ... need to convert model ids into strings
     @cluster = Cluster.find(params[:id])
     render :json => @cluster
   end

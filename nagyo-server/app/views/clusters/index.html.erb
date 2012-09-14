@@ -7,7 +7,7 @@
   <thead>
     <tr>
       <th nowrap="nowrap"></th>
-      <th>Nodegroup</th>
+      <th>Hostgroup</th>
       <th>Contacts</th>
       <th>Check Command</th>
       <th>Check Command Arguments</th>
@@ -17,7 +17,7 @@
     <%- @clusters.each do |c| -%>
     <tr class="<%= cycle('odd', 'even') -%>">
       <td><%= link_to 'Show', c %> | <%= link_to 'Edit', edit_cluster_path(c) %> | <%= link_to 'Destroy', c, :confirm => 'Are you sure?', :method => :delete %></td>
-      <td><%= h c.nodegroup %></td>
+      <td><%= h c.hostgroup %></td>
       <td><%= h c.contacts.join(',') %></td>
       <td><%= h c.check_command %></td>
       <td><%= h c.check_command_arguments %></td>

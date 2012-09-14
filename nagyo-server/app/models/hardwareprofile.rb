@@ -1,3 +1,5 @@
+# EH specific model ...
+#
 class Hardwareprofile
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -36,10 +38,7 @@ private
 
   def reject_blank_inputs
     check_commands = check_commands.to_a.reject(&:blank?)
-    errors.add(:check_commands, "please select at least one check_command.") if check_commands.count == 0
-
     contacts = contacts.to_a.reject(&:blank?)
-    errors.add(:contacts, "please select at least one contact.") if contacts.count == 0
   end
 
 end

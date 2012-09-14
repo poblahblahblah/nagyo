@@ -31,8 +31,8 @@
       <td><%= h c.service_notification_period %></td>
       <td><%= h c.host_notification_options %></td>
       <td><%= h c.service_notification_options %></td>
-      <td><%= h c.host_notification_commands %></td>
-      <td><%= h c.service_notification_commands %></td>
+      <td><%= h c.host_notification_commands.collect(&:to_s) %></td>
+      <td><%= h c.service_notification_commands.collect(&:to_s) %></td>
     </tr>
     <%- end -%>
   </tbody>

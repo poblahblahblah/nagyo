@@ -2,7 +2,7 @@
   <%= semantic_form_for @vip, :html => { :class => 'myform', :id => 'myform' } do |f| %>
   <fieldset>
     <legend>Required Parameters</legend>
-    <%= f.input :nodegroup %>
+    <%= f.input :hostgroup %>
     <%= f.input :contacts, :as => :select, :collection => Contact.all %>
     <%= f.input :vip_name %>
     <%= f.input :vip_dns %>

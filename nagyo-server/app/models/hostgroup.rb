@@ -1,3 +1,5 @@
+# NOTE: hostgroups are functionally the same thing as nodegroups in 
+# nventory.
 class Hostgroup
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -25,15 +27,9 @@ class Hostgroup
     :class_name => "Servicedependency",
     :inverse_of => :dependent_hostgroup
 
+  has_many :clusters
   has_many :services
 
-  # TODO: replace with associations above ... or better to use :hosts, 
-  # :hostgroups and alias for :members?
-  #field :members,            type: Array   # Hosts
-  #field :hostgroup_members,  type: Array   # Hostgroups
-
-  # hostgroups are functionally the same thing as nodegroups
-  # in nventory.
   # required:
   field :hostgroup_name,  type: String
   field :alias,           type: String

@@ -1,8 +1,10 @@
 <div id="center_content">
 <%= semantic_form_for @service, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+  <%= f.semantic_errors %>
   <fieldset>
     <legend>Required Parameters</legend>
-    <%= f.input :nodegroup %>
+    <%= f.input :host, :as => :select, :collection => Host.all %>
+    <%= f.input :hostgroup, :as => :select, :collection => Hostgroup.all %>
     <%= f.input :contacts, :as => :select, :collection => Contact.all %>
     <%= f.input :check_command, :as => :select, :collection => Command.all %>
     <%= f.input :check_command_arguments %>

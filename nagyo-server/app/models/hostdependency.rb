@@ -39,6 +39,8 @@ class Hostdependency
 
   # validations
   # FIXME: TODO: need to check each side of association, but only one required 
+  # "The dependent_hostgroup_name may be used instead of, or in addition to, 
+  # the dependent_host_name directive."
   #validates_presence_of :host # :unless hostgroup is set
   #validates_presence_of :dependent_host
 

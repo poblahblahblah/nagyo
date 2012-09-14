@@ -1,6 +1,6 @@
 class ServicesController < ApplicationController
 
-  has_scope :nodegroup
+  has_scope :hostgroup
   has_scope :check_command
   has_scope :check_period
   has_scope :notification_period
@@ -24,7 +24,7 @@ class ServicesController < ApplicationController
     @service = Service.new(params[:service])
 
     respond_to do |format|
-      if @service.save
+      if @service && @service.save
         format.html { redirect_to(@service) }
       else
         format.html { render :action => "new" }

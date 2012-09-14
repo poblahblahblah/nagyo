@@ -32,6 +32,8 @@ class Contactgroup
   before_validation             :set_alias_to_contactgroup_name
   before_validation             :reject_blank_inputs
 
+  # FIXME: add validation for not adding contactgroup to itself
+
   # scopes
   scope :contactgroup_name,     proc {|contactgroup_name| where(:contactgroup_name => contactgroup_name) }
   scope :alias,                 proc {|_alias| where(:alias => _alias) }

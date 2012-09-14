@@ -1,6 +1,6 @@
 class VipsController < ApplicationController
 
-  has_scope :nodegroup
+  has_scope :hostgroup
   has_scope :vip_name
   has_scope :vip_dns
   has_scope :check_command
