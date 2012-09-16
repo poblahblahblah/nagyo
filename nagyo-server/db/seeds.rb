@@ -5,3 +5,15 @@
 #
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Mayor.create(:name => 'Emanuel', :city => cities.first)
+#
+
+# This creates a default User called user@test.com, password: please
+#     not friendly with duplicates
+
+begin
+  FactoryGirl.create(:user)
+rescue
+  puts "Unable to create or have already created default user: #{$!}"
+end
+
+
