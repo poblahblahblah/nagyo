@@ -4,6 +4,7 @@ class Hardwareprofile
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Extensions::DereferencedJson
 
   has_and_belongs_to_many :contacts
   # habtm?
@@ -17,7 +18,6 @@ class Hardwareprofile
   #field :contacts,              type: Array
 
   # validations
-  before_validation             :reject_blank_inputs
   validates_presence_of         :hardware_profile
   validates_uniqueness_of       :hardware_profile
 
@@ -35,10 +35,5 @@ class Hardwareprofile
   end
 
 private
-
-  def reject_blank_inputs
-    check_commands = check_commands.to_a.reject(&:blank?)
-    contacts = contacts.to_a.reject(&:blank?)
-  end
 
 end

@@ -1,27 +1,33 @@
 
-  - Devise auth: 
-      - anyone can show action
-      - only logged in Users can update/create records
+  - refactor: merge Vip into Cluster model to simplify/dry it up
 
-  - nodegroup === hostgroup ...
-    (nventory)    (nagios)
-
-  - fix the Show action to reconvert associated-ids into nagios strings
-
-  - take a contact and traverse the associations pulling all 
-    services/hosts/etc that contact would be alerted for 
-
-  - add a warning message when deleting objects to show what the 
-    dependent object chain destruction would do 
-
-  - merge Vip into Cluster model to simplify/dry it up
-
-  - fix up index pages to show object association strings instead of 
-    object ids: http://0.0.0.0:3000/contacts
-
-  - fix application_helper nagios_options_from_array
+  - Feature Request: take a contact and traverse the associations 
+    pulling all services/hosts/etc that contact would be alerted for 
 
   - write up a doc on order of operations for creating .... e.g. Contact 
     or other optimal flows
 
   - look into active-admin-mongoid?
+
+  - BOH Feature: add a warning message when deleting objects to show 
+    what the dependent object chain destruction would do 
+
+  - cleanup: fix index pages to show object association strings instead 
+    of object ids: http://0.0.0.0:3000/contacts
+
+
+Done
+----
+
+  x fix application_helper nagios_options_from_array
+
+  x Devise auth: 
+      x anyone can show action
+      x only logged in Users can update/create records
+
+  x nodegroup === hostgroup ...
+    (nventory)    (nagios)
+
+  x fix the Show action to reconvert associated-ids into nagios strings
+    - use Extensions::DereferencedJson
+

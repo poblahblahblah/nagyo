@@ -1,6 +1,9 @@
+# NOTE: we are going to ignore this model for now ...
+#
 class Servicegroup
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Extensions::DereferencedJson
 
   # required:
   field :servicegroup_name,    type: String  #:required => true, :unique => true
@@ -18,8 +21,6 @@ class Servicegroup
   scope :members,              proc {|members| where(:members => members) } 
   scope :servicegroup_members, proc {|servicegroup_members| where(:servicegroup_members => servicegroup_members) } 
 
-  before_validation :reject_blank_inputs
-
   # TODO: should we validate unique :servicegroup_name?
 
   def initialize(*params)
@@ -32,8 +33,4 @@ class Servicegroup
 
 private
 
-  def reject_blank_inputs
-    members = members.to_a.reject(&:blank?)
-    servicegroup_members = servicegroup_members.to_a.reject(&:blank?)
-  end
 end

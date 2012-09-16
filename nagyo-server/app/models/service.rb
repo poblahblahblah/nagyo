@@ -2,6 +2,7 @@ class Service
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Extensions::DereferencedJson
 
   belongs_to :host
   belongs_to :hostgroup
@@ -89,10 +90,9 @@ class Service
   # I have the field "name" not visible in the view - I would rather put this together 
   # before validation so we can have a "standard" way of naming all of our services.
   before_validation             :set_name_from_input_values
-  before_validation             :reject_blank_inputs
 
   # custom validation : one of Host or Hostgroup needs to be present
-  validates_with HostOrHostgroupValidator
+  validates_with EitherOrValidator, :fields => [:host, :hostgroup]
 
   validates_presence_of  :name, :check_command, 
     :check_command_arguments, :max_check_attempts, :check_interval, 
@@ -126,10 +126,4 @@ private
     self.name = [self.hostgroup, self.check_command, self.contacts, self.notification_period].join('-')
   end
 
-  # TODO: do we still need this?
-  def reject_blank_inputs
-    contacts = contacts.to_a.reject(&:blank?)
-    #host_name = host_name.to_a.reject(&:blank?)
-    #hostgroup_name = hostgroup_name.to_a.reject(&:blank?)
-  end
 end

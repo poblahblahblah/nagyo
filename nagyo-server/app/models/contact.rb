@@ -2,12 +2,13 @@ class Contact
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Extensions::DereferencedJson
 
   has_and_belongs_to_many :clusters
   has_and_belongs_to_many :hardwareprofiles
   has_and_belongs_to_many :hosts
   has_and_belongs_to_many :services
-  has_and_belongs_to_many :vips
+  #has_and_belongs_to_many :vips
 
   has_and_belongs_to_many :host_notification_commands,
     :class_name => "Command",
@@ -61,8 +62,8 @@ class Contact
   # FIXME: see the host model for an actual explanation.
   validates_uniqueness_of :contact_name
   validates_presence_of   :contact_name, :email, :host_notifications_enabled, :service_notifications_enabled
-  # FIXME: why these? shouldn't a contact be able to start empty and build? why 
-  # do we need all these other things to even build a contact?
+  # TODO: should we use these to validate associations or doesn't mongoid 
+  # validate automatically?
   validates_presence_of   :host_notification_period, :host_notification_commands, :host_notification_options
   validates_presence_of   :service_notification_period, :service_notification_commands, :service_notification_options
 
@@ -70,8 +71,6 @@ class Contact
   validates_numericality_of :host_notifications_enabled, :service_notifications_enabled
 
   before_validation       :set_alias_to_contact_name
-  before_validation       :reject_blank_inputs
-
 
   def initialize(*params)
     super(*params)
@@ -85,10 +84,6 @@ private
 
   def set_alias_to_contact_name
     self.alias = self.contact_name if self.alias.blank?
-  end
-
-  def reject_blank_inputs
-    contact_groups = contact_groups.to_a.reject(&:blank?)
   end
 
 end

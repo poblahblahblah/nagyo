@@ -1,6 +1,7 @@
 class Servicedependency
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Extensions::DereferencedJson
 
   # FIXME: TODO: finish converting to associations by changing the *_name 
   # fields into proper associations and write helper methods to get name back 
@@ -41,6 +42,11 @@ class Servicedependency
   field :execution_failure_criteria,    type: String
   field :notification_failure_criteria, type: String
   #field :dependency_period,             type: String
+
+  # FIXME: finish adding validations for dependent/depended upon
+  validates_presence_of :service, :dependent_service
+  validates_with EitherOrValidator, :fields => [:host, :hostgroup]
+  validates_with EitherOrValidator, :fields => [:dependent_host, :dependent_hostgroup]
 
 
   scope :host_name,                     proc {|host_name| where(:host_name => host_name)}

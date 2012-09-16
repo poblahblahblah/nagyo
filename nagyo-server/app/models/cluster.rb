@@ -4,6 +4,7 @@ class Cluster
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Extensions::DereferencedJson
 
   # habtm?
   has_and_belongs_to_many :contacts
@@ -28,16 +29,17 @@ class Cluster
   # FIXME: TODO: use default type for association too  ...
   #field :check_command, type: String, default: "check_eh_cluster-http"
   field :check_command_arguments, type: String
-  #field :contacts,                type: Array
 
   # optional:
   #field :node_check_command,              type: String
   field :node_check_command_arguments,    type: String
-  field :notify_on_node_service,          type: Boolean, default: false
+  # ??
+  #field :notify_on_node_service,          type: Boolean, default: false
+  field :notify_on_node_service,          type: Integer, default: 0
 
   validates_presence_of    :hostgroup, :check_command, :check_command_arguments, :contacts
-  validates_uniqueness_of  :hostgroup, :scope => [:check_command, :contacts]
-  before_validation        :reject_blank_inputs
+  # FIXME: cannot validate uniqueness when nil or one of others is array ? or 
+  #validates_uniqueness_of  :hostgroup, :scope => [:check_command, :contacts]
 
 
   # scopes
@@ -54,11 +56,5 @@ class Cluster
   #def to_s
   #  "#{nodegroup}"
   #end
-
-private
-
-  def reject_blank_inputs
-    contacts = contacts.to_a.reject{|i| i.blank? }
-  end
 
 end

@@ -37,7 +37,6 @@ class Vip
   validates_presence_of         :hostgroup, :vip_name, :vip_dns, :check_command, :node_alert_when_down
   validates_presence_of         :percent_warn, :percent_crit, :ecv_uri, :ecv_string, :contacts
   validates_uniqueness_of       :hostgroup, :scope => [:check_command, :contacts, :vip_dns, :vip_name]
-  before_validation             :reject_blank_inputs
 
 
   scope :hostgroup,     proc {|hostgroup| where(:hostgroup => hostgroup) }
@@ -59,8 +58,5 @@ class Vip
 
 private
 
-  def reject_blank_inputs
-    contacts = contacts.to_a.reject(&:blank?)
-  end
 
 end

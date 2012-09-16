@@ -2,6 +2,7 @@ class Contactgroup
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Extensions::DereferencedJson
 
   #...?
   #has_and_belongs_to_many :contacts
@@ -30,7 +31,6 @@ class Contactgroup
   validates_presence_of         :contactgroup_name, :alias
   validates_uniqueness_of       :contactgroup_name
   before_validation             :set_alias_to_contactgroup_name
-  before_validation             :reject_blank_inputs
 
   # FIXME: add validation for not adding contactgroup to itself
 
@@ -53,11 +53,6 @@ private
 
   def set_alias_to_contactgroup_name
     self.alias = self.contactgroup_name if self.alias.blank?
-  end
-
-  def reject_blank_inputs
-    members = members.to_a.reject(&:blank?)
-    contactgroup_members = contactgroup_members.to_a.reject(&:blank?)
   end
 
 end

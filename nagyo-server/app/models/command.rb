@@ -2,6 +2,7 @@ class Command
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Extensions::DereferencedJson
 
   # required:
   field :command_name, type: String

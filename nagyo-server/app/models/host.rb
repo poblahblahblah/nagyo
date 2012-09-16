@@ -2,6 +2,8 @@ class Host
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Extensions::DereferencedJson
+
 
   # has_many :parents, :class_name => ??
   has_and_belongs_to_many :parents, :class_name => "Host"
@@ -99,7 +101,7 @@ class Host
   #field :3d_coords,            type: String
 
   # validations
-  before_validation :set_alias_and_address_to_host_name, :reject_blank_inputs
+  before_validation :set_alias_and_address_to_host_name
 
   # FIXME: it seems mongoid thinks empty array sets count as presence of value.
   validates_presence_of        :host_name, :alias, :address, :max_check_attempts, :check_period, :contacts
@@ -142,12 +144,5 @@ private
   def set_alias_and_address_to_host_name
     self.alias   = self.host_name if self.alias.blank?
     self.address = self.host_name if self.address.blank?
-  end
-
-  # this also sets to empty array if not set/nil
-  def reject_blank_inputs
-    self.contacts   = self.contacts.to_a.reject(&:blank?)
-    self.parents    = self.parents.to_a.reject(&:blank?)
-    self.hostgroups = self.hostgroups.to_a.reject(&:blank?)
   end
 end

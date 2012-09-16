@@ -1,6 +1,7 @@
 class Hostdependency
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Extensions::DereferencedJson
 
   belongs_to :dependency_period,
     :class_name => "Timeperiod",
@@ -44,6 +45,8 @@ class Hostdependency
   #validates_presence_of :host # :unless hostgroup is set
   #validates_presence_of :dependent_host
 
+  validates_with EitherOrValidator, :fields => [:host, :hostgroup]
+  validates_with EitherOrValidator, :fields => [:dependent_host, :dependent_hostgroup]
 
   scope :host_name,                     proc {|host_name| where(:host_name => host_name)}
   scope :dependent_host_name,           proc {|dependent_host_name| where(:dependent_host_name => dependent_host_name)}
@@ -61,9 +64,5 @@ class Hostdependency
   end
 
 private
-
-  def reject_blank_inputs
-    members = members.to_a.reject(&:blank?)
-  end
 
 end
