@@ -14,7 +14,6 @@ Nagyo::Application.routes.draw do
   resources :commands
   resources :servicedependencies
   resources :services
-  resources :vips
   resources :timeperiods
 
   #get "home/index"

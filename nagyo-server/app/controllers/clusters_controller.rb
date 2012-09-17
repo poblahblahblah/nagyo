@@ -3,6 +3,10 @@ class ClustersController < ApplicationController
   has_scope :hostgroup
   has_scope :check_command
   has_scope :contacts
+  has_scope :vip_name
+  has_scope :vip_dns
+  has_scope :ecv_uri
+  has_scope :ecv_string
 
   def index
     @clusters = apply_scopes(Cluster).page params[:page]

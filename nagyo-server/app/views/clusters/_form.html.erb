@@ -2,10 +2,20 @@
   <%= semantic_form_for @cluster, :html => { :class => 'myform', :id => 'myform' } do |f| %>
   <fieldset>
     <legend>Required Parameters</legend>
+    <%= f.input :vip_name %>
+    <%= f.input :vip_dns %>
+
     <%= f.input :hostgroup %>
-    <%= f.input :contacts, :as => :select, :collection => Contact.all %>
+
     <%= f.input :check_command, :as => :select, :collection => Command.all %>
     <%= f.input :check_command_arguments %>
+
+    <%= f.input :contacts, :as => :select, :collection => Contact.all %>
+
+    <%= f.input :percent_warn %>
+    <%= f.input :percent_crit %>
+    <%= f.input :ecv_uri %>
+    <%= f.input :ecv_string %>
   </fieldset>
   <fieldset>
     <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>

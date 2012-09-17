@@ -37,13 +37,6 @@ class Command
     :class_name => "Service",
     :inverse_of => :event_handler
 
-  has_many :check_command_vips,
-    :class_name => "Vip",
-    :inverse_of => :check_command
-  has_many :node_check_command_vips,
-    :class_name => "Vip",
-    :inverse_of => :node_check_command
-
   validates_uniqueness_of :command_name
   validates_presence_of   :command_name, :command_line
 
