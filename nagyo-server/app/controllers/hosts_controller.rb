@@ -1,5 +1,12 @@
 class HostsController < ApplicationController
 
+  before_filter(:only => [:create, :update]) do |controller|
+    [:initial_state, :flap_detection_options,
+      :notification_options, :stalking_options].each do |key|
+        stringify_controller_params(controller, 'host', key)
+    end
+  end
+
   has_scope :host_name
   has_scope :alias
   has_scope :address

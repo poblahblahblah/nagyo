@@ -1,5 +1,11 @@
 class ContactsController < ApplicationController
 
+  before_filter(:only => [:create, :update]) do |controller|
+    [:host_notification_options, :service_notification_options].each do |key|
+      stringify_controller_params(controller, 'contact', key)
+    end
+  end
+
   has_scope :contact_name
   has_scope :email
   has_scope :host_notification_period

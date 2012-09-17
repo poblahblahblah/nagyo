@@ -1,5 +1,11 @@
 class ServicedependenciesController < ApplicationController
 
+  before_filter(:only => [:create, :update]) do |controller|
+    [:execution_failure_criteria, :notification_failure_criteria].each do |key|
+      stringify_controller_params(controller, 'servicedependency', key)
+    end
+  end
+
   has_scope :service_name
   has_scope :dependent_service_name
   has_scope :members

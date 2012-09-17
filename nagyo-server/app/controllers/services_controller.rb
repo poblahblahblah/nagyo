@@ -1,5 +1,12 @@
 class ServicesController < ApplicationController
 
+  before_filter(:only => [:create, :update]) do |controller|
+    [:initial_state, :flap_detection_options,
+      :notification_options, :stalking_options].each do |key|
+        stringify_controller_params(controller, 'service', key)
+    end
+  end
+
   has_scope :hostgroup
   has_scope :check_command
   has_scope :check_period

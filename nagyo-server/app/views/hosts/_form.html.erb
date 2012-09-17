@@ -17,7 +17,7 @@
       <%= f.input :hostgroups, :as => :select, :collection => Hostgroup.all %>
       <%= f.input :contact_groups, :as => :select, :collection => Contactgroup.all %>
       <%= f.input :check_command, :as => :select, :collection => Command.all %>
-      <%= f.input :initial_state, :as => :select, :collection => nagios_options_from_array(%W(o d u)) %>
+      <%= f.input :initial_state, :as => :nagios_options, :collection => %W(o d u) %>
       <%= f.input :check_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
       <%= f.input :retry_interval, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
       <%= f.input :active_checks_enabled, :as => :boolean %>
@@ -30,14 +30,14 @@
       <%= f.input :low_flap_threshold, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
       <%= f.input :high_flap_threshold, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] %>
       <%= f.input :flap_detection_enabled, :as => :boolean %>
-      <%= f.input :flap_detection_options, :as => :select, :collection => nagios_options_from_array(%W(o d u)) %>
+      <%= f.input :flap_detection_options, :as => :nagios_options, :collection => %W(o d u) %>
       <%= f.input :process_perf_data, :as => :boolean %>
       <%= f.input :retain_status_information, :as => :boolean %>
       <%= f.input :retain_nonstatus_information, :as => :boolean %>
       <%= f.input :first_notification_delay, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]  %>
-      <%= f.input :notification_options, :as => :select, :collection => nagios_options_from_array(%W(d u r f s)) %>
+      <%= f.input :notification_options, :as => :nagios_options, :collection => %W(d u r f s) %>
       <%= f.input :notifications_enabled, :as => :boolean %>
-      <%= f.input :stalking_options, :as => :select, :collection => nagios_options_from_array(%W(o d u)) %>
+      <%= f.input :stalking_options, :as => :nagios_options, :collection => %W(o d u) %>
       <%= f.input :notes %>
       <%= f.input :notes_url %>
       <%= f.input :action_url %>

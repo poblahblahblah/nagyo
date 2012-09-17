@@ -11,8 +11,8 @@
     <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
     <div id="toggleSection" style="display:none">
       <%= f.input :inherits_parent, :as => :boolean %>
-      <%= f.input :execution_failure_criteria, :as => :select, :collection => nagios_options_from_array(%W(o d u p n)) %>
-      <%= f.input :notification_failure_criteria, :as => :select, :collection => nagios_options_from_array(%W(o d u p n)) %>
+      <%= f.input :execution_failure_criteria, :as => :nagios_options, :collection => %W(o d u p n) %>
+      <%= f.input :notification_failure_criteria, :as => :nagios_options, :collection => %W(o d u p n) %>
       <%= f.input :dependency_period, :as => :select, :collection => Timeperiod.all %>
     </div>
   </fieldset>

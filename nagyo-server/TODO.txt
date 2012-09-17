@@ -1,20 +1,18 @@
 
-  - refactor: merge Vip into Cluster model to simplify/dry it up
-
   - Feature Request: take a contact and traverse the associations 
     pulling all services/hosts/etc that contact would be alerted for 
 
   - write up a doc on order of operations for creating .... e.g. Contact 
     or other optimal flows
 
-  - look into active-admin-mongoid?
-
+  - rails_admin works with mongoid - do we need it? has below feature
   - BOH Feature: add a warning message when deleting objects to show 
     what the dependent object chain destruction would do 
 
   - cleanup: fix index pages to show object association strings instead 
     of object ids: http://0.0.0.0:3000/contacts
 
+  - try out bootstrap if we keep our own templates/html
 
 Done
 ----
@@ -31,3 +29,7 @@ Done
   x fix the Show action to reconvert associated-ids into nagios strings
     - use Extensions::DereferencedJson
 
+  x refactor: merge Vip into Cluster model to simplify/dry it up
+
+  x look into active-admin-mongoid?
+     - uses older mongoid 2.x

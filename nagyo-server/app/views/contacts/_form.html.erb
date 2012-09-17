@@ -8,8 +8,9 @@
     <%= f.input :service_notifications_enabled, :as => :select, :collection => [ 0, 1 ] %>
     <%= f.input :host_notification_period, :as => :select, :collection => Timeperiod.all %>
     <%= f.input :service_notification_period, :as => :select, :collection => Timeperiod.all %>
-    <%= f.input :host_notification_options, :as => :select, :collection => nagios_options_from_array(%W(d u r f s n)) %>
-    <%= f.input :service_notification_options, :as => :select, :collection => nagios_options_from_array(%W(w u c r f s n)) %>
+
+    <%= f.input :host_notification_options, :as => :nagios_options, :collection => %W(d u r f s n) %>
+    <%= f.input :service_notification_options, :as => :nagios_options, :collection => %W(w u c r f s n) %>
     <%= f.input :host_notification_commands, :as => :select, :collection => Command.all %>
     <%= f.input :service_notification_commands, :as => :select, :collection => Command.all %>
   </fieldset>

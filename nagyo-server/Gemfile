@@ -71,9 +71,16 @@ gem "devise"
 # To use debugger (only for 1.8.7)
 # gem 'ruby-debug'
 
-source 'http://gemcutter.org'
+#source 'http://gemcutter.org'
 gem "formtastic"
 
-source  'http://gems.github.com'
+#source  'http://gems.github.com'
 gem 'mattetti-googlecharts'
 
+# let's try this ... elia/activeadmin-mongoid
+# hmm :\ needs older mongoid lib
+#
+#gem 'activeadmin-mongoid'
+#
+# rails_admin seems to work, but do we need it?
+#gem "rails_admin"

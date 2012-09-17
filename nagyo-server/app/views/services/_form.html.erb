@@ -21,7 +21,7 @@
       <%= f.input :display_name %>
       <%= f.input :servicegroups %>
       <%= f.input :is_volatile, :as => :boolean %>
-      <%= f.input :initial_state, :as => :select, :collection => nagios_options_from_array(%W(o w u c)) %>
+      <%= f.input :initial_state, :as => :nagios_options, :collection => %W(o w u c) %>
       <%= f.input :active_checks_enabled, :as => :boolean %>
       <%= f.input :passive_checks_enabled, :as => :boolean %>
       <%= f.input :obsess_over_service, :as => :boolean %>
@@ -32,14 +32,14 @@
       <%= f.input :low_flap_threshold %>
       <%= f.input :high_flap_threshold %>
       <%= f.input :flap_detection_enabled, :as => :boolean %>
-      <%= f.input :flap_detection_options, :as => :select, :collection => nagios_options_from_array(%W(o w u c)) %>
+      <%= f.input :flap_detection_options, :as => :nagios_options, :collection => %W(o w u c) %>
       <%= f.input :process_perf_data, :as => :boolean %>
       <%= f.input :retain_status_information, :as => :boolean %>
       <%= f.input :retain_nonstatus_information, :as => :boolean %>
       <%= f.input :first_notification_delay, :as => :select, :collection => [ 1, 2, 3, 4, 5] %>
-      <%= f.input :notification_options, :as => :select, :collection => nagios_options_from_array(%W(w u c r f s n)) %>
+      <%= f.input :notification_options, :as => :nagios_options, :collection => %W(w u c r f s n) %>
       <%= f.input :notifications_enabled, :as => :boolean %>
-      <%= f.input :stalking_options, :as => :select, :collection => nagios_options_from_array(%W(o w u c)) %>
+      <%= f.input :stalking_options, :as => :nagios_options, :collection => %W(o w u c) %>
       <%= f.input :register, :as => :boolean %>
       <% f.input :service_description %>
       <% f.input :name %>

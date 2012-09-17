@@ -1,5 +1,12 @@
 class HostdependenciesController < ApplicationController
 
+  before_filter(:only => [:create, :update]) do |controller|
+    [:execution_failure_criteria, :notification_failure_criteria].each do |key|
+      stringify_controller_params(controller, 'hostdependency', key)
+    end
+  end
+
+
   has_scope :host_name
   has_scope :dependent_host_name
   has_scope :members
