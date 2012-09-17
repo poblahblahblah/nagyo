@@ -3,7 +3,8 @@
   <%= f.semantic_errors %>
   <fieldset>
     <legend>Required Parameters</legend>
-    <%= f.input :host, :as => :select, :collection => Host.all %>
+    <%# host_name wasn't showing in selection, formtastic using wrong field? so specify explicitly %>
+    <%= f.input :host, :as => :select, :collection => Host.all, :member_label => :host_name %>
     <%= f.input :hostgroup, :as => :select, :collection => Hostgroup.all %>
     <%= f.input :contacts, :as => :select, :collection => Contact.all %>
     <%= f.input :check_command, :as => :select, :collection => Command.all %>
@@ -50,12 +51,15 @@
       <%= f.input :icon_image_alt %>
     </div>
   </fieldset>
-  <% # we want to have hostgroup_name and host_name be submitted, but not show up on the form %>
-  <div style="display:none">
-    <%# FIXME: make these hostgroup, host instead of *_name %>
-    <%= f.input :hostgroup_name, :as => :select, :collection => Hostgroup.all %>
-    <%= f.input :host_name, :as => :select, :collection => Host.all %>
-  </div>
+  <%# we want to have hostgroup_name and host_name be submitted, but not show up on the form  %>
+  <%# FIXME: why? ^^ if so you can make them hidden fields %>
+  <% if false %>
+    <div style="display:none">
+      <%# FIXME: make these hostgroup, host instead of *_name %>
+      <%= f.input :hostgroup_name, :as => :select, :collection => Hostgroup.all %>
+      <%= f.input :host_name, :as => :select, :collection => Host.all %>
+    </div>
+  <% end %>
   <%= f.actions do %>
     <%= f.action :submit, :as => :button %>
     <%= f.action :cancel, :as => :link %>

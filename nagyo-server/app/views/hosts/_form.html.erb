@@ -13,7 +13,7 @@
     <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
     <div id="toggleSection" style="display:none">
       <%= f.input :display_name %>
-      <%= f.input :parents, :as => :select, :collection => Host.all %>
+      <%= f.input :parents, :as => :select, :collection => Host.all, :member_label => :host_name %>
       <%= f.input :hostgroups, :as => :select, :collection => Hostgroup.all %>
       <%= f.input :contact_groups, :as => :select, :collection => Contactgroup.all %>
       <%= f.input :check_command, :as => :select, :collection => Command.all %>
