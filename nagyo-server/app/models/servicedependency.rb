@@ -30,18 +30,22 @@ class Servicedependency
     :inverse_of => :service_dependencies
   
   # required:
-  field :dependent_host_name,           type: String
-  field :host_name,                     type: String
   field :dependent_service_description, type: String
   field :service_description,           type: String
 
   # optional:
-  field :dependent_hostgroup_name,      type: String
-  field :hostgroup_name,                type: String
   field :inherits_parent,               type: Integer
   field :execution_failure_criteria,    type: String
   field :notification_failure_criteria, type: String
   #field :dependency_period,             type: String
+
+  # these fields are generated from association values
+  field :dependent_host_name,           type: String
+  field :host_name,                     type: String
+  field :dependent_hostgroup_name,      type: String
+  field :hostgroup_name,                type: String
+
+  before_save :copy_name_fields
 
   # FIXME: finish adding validations for dependent/depended upon
   validates_presence_of :service, :dependent_service
@@ -63,4 +67,17 @@ class Servicedependency
   def initialize(*params)
     super(*params)
   end
+
+protected
+
+
+  def copy_name_fields
+    host_name           = self.host.host_name rescue nil
+    hostgroup_name      = self.hostgroup.hostgroup_name rescue nil
+    service_description = self.service.name rescue nil
+    dependent_host_name           = self.dependent_host.host_name rescue nil
+    dependent_hostgroup_name      = self.dependent_hostgroup.hostgroup_name rescue nil
+    dependent_service_description = self.dependent_service.name rescue nil
+  end
+
 end

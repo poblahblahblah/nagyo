@@ -44,11 +44,8 @@ class Service
   field :notification_interval,         type: Integer,  :default => 60
 
   # optional:
-  # these two are hidden in the view:
-  #field :host_name,                     type: Array
-  #field :hostgroup_name,                type: Array
-
   field :service_description,           type: String
+
   field :display_name,                  type: String
   # TODO: finish servicegroups model impl?
   field :servicegroups,                 type: String
@@ -78,17 +75,16 @@ class Service
   field :icon_image,                    type: String
   field :icon_image_alt,                type: String
 
-  # scopes
-  scope :hostgroup,             proc {|hostgroup| where(:hostgroup => hostgroup) } 
-  scope :check_command,         proc {|check_command| where(:check_command => check_command) } 
-  scope :check_period,          proc {|check_period| where(:check_period => check_period) } 
-  scope :notification_period,   proc {|notification_period| where(:notification_period => notification_period) } 
-  scope :contacts,              proc {|contacts| where(:contacts => contacts) } 
-  scope :servicegroups,         proc {|servicegroups| where(:servicegroups => servicegroups) } 
+  # these two are generated from association
+  field :host_name,                     type: Array
+  field :hostgroup_name,                type: Array
+
+  before_save :copy_name_fields
 
   # validations
-  # I have the field "name" not visible in the view - I would rather put this together 
-  # before validation so we can have a "standard" way of naming all of our services.
+  # TODO: Pat: I have the field "name" not visible in the view - I would 
+  # rather put this together before validation so we can have a 
+  # "standard" way of naming all of our services.
   before_validation             :set_name_from_input_values
 
   # custom validation : one of Host or Hostgroup needs to be present
@@ -102,6 +98,13 @@ class Service
   #validates_uniqueness_of :hostgroup, :scope => [:check_command, :contacts, 
   #:notification_period]
 
+  # scopes
+  scope :hostgroup,             proc {|hostgroup| where(:hostgroup => hostgroup) } 
+  scope :check_command,         proc {|check_command| where(:check_command => check_command) } 
+  scope :check_period,          proc {|check_period| where(:check_period => check_period) } 
+  scope :notification_period,   proc {|notification_period| where(:notification_period => notification_period) } 
+  scope :contacts,              proc {|contacts| where(:contacts => contacts) } 
+  scope :servicegroups,         proc {|servicegroups| where(:servicegroups => servicegroups) } 
 
   def initialize(*params)
     super(*params)
@@ -112,15 +115,14 @@ class Service
     "#{name}"
   end
 
-  def hostgroup_name
-    hostgroup.to_s
-  end
-
-  def host_name
-    host.to_s
-  end
-
 private
+
+  # by making these fields instead of methods, they will get sent in 
+  # json output
+  def copy_name_fields
+    host_name      = self.host.host_name rescue nil
+    hostgroup_name = self.hostgroup.hostgroup_name rescue nil
+  end
 
   def set_name_from_input_values
     self.name = [self.hostgroup, self.check_command, self.contacts, self.notification_period].join('-')

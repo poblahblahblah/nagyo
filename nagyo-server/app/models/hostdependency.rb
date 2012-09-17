@@ -26,25 +26,24 @@ class Hostdependency
     :inverse_of => :dependent_host_dependencies
 
   # required:
-  field :dependent_host_name, type: String
-  field :host_name,           type: String
 
   # optional:
   field :members,                       type: Array
-  field :dependent_hostgroup_name,      type: String
-  field :hostgroup_name,                type: String
   field :inherits_parent,               type: Integer
   field :execution_failure_criteria,    type: String
   field :notification_failure_criteria, type: String
   #field :dependency_period, type: String, default: "workhours"
 
-  # validations
-  # FIXME: TODO: need to check each side of association, but only one required 
-  # "The dependent_hostgroup_name may be used instead of, or in addition to, 
-  # the dependent_host_name directive."
-  #validates_presence_of :host # :unless hostgroup is set
-  #validates_presence_of :dependent_host
+  # these fields copied from association
+  field :dependent_host_name, type: String
+  field :host_name,           type: String
+  field :dependent_hostgroup_name,      type: String
+  field :hostgroup_name,                type: String
 
+  before_save :copy_name_fields
+
+  # validations
+  # TODO: does this work to use same class twice?
   validates_with EitherOrValidator, :fields => [:host, :hostgroup]
   validates_with EitherOrValidator, :fields => [:dependent_host, :dependent_hostgroup]
 
@@ -65,4 +64,10 @@ class Hostdependency
 
 private
 
+  def copy_name_fields
+    host_name           = self.host.host_name rescue nil
+    dependent_host_name = self.dependent_host.host_name rescue nil
+    hostgroup_name           = self.hostgroup.hostgroup_name rescue nil
+    dependent_hostgroup_name = self.dependent_hostgroup.hostgroup_name rescue nil
+  end
 end
