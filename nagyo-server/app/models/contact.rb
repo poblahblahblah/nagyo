@@ -7,7 +7,9 @@ class Contact
   has_and_belongs_to_many :clusters
   has_and_belongs_to_many :hardwareprofiles
   has_and_belongs_to_many :hosts
+  has_and_belongs_to_many :hostescalations
   has_and_belongs_to_many :services
+  has_and_belongs_to_many :serviceescalations
 
   has_and_belongs_to_many :host_notification_commands,
     :class_name => "Command",

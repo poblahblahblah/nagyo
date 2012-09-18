@@ -47,6 +47,13 @@ class Timeperiod
     :class_name => "Servicedependency",
     :inverse_of => :dependency_period
 
+  has_many :hostescalations,
+    :class_name => "Hostescalation",
+    :inverse_of => :escalation_period
+  has_many :serviceescalations,
+    :class_name => "Serviceescalation",
+    :inverse_of => :escalation_period
+
 
   before_validation :ensure_alias_label
   # validations

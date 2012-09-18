@@ -46,6 +46,9 @@ class Host
     :class_name => "Timeperiod",
     :inverse_of => :notification_period_hosts
 
+  has_many :hostescalations
+  has_many :serviceescalations
+
 
   # required:
   field :host_name,             type: String

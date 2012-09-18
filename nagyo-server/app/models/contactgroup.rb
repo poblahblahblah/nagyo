@@ -17,6 +17,11 @@ class Contactgroup
     :class_name => "Host",
     :inverse_of => :contact_groups
 
+  has_and_belongs_to_many :hostescalations,
+    :inverse_of => :contact_groups
+  has_and_belongs_to_many :serviceescalations,
+    :inverse_of => :contact_groups
+
   # required:
   field :contactgroup_name,     type: String
   field :alias,                 type: String

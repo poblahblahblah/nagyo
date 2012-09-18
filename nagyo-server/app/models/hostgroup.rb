@@ -30,6 +30,8 @@ class Hostgroup
 
   has_many :clusters
   has_many :services
+  has_many :hostescalations
+  has_many :serviceescalations
 
   # required:
   field :hostgroup_name,  type: String
