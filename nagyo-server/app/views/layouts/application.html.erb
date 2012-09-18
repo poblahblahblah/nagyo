@@ -1,82 +1,98 @@
 <!DOCTYPE html>
 <html lang="en"> 
-<head> 
-<title>nagyo: <%= controller.action_name %></title> 
+    <head> 
+        <title>nagyo: <%= controller.action_name %></title> 
 
-<%= stylesheet_link_tag    "application", :media => "all" %>
-<%= javascript_include_tag 'application' %>
-<%= csrf_meta_tag %>
+        <%= stylesheet_link_tag    "application", :media => "all" %>
+        <%= javascript_include_tag 'application' %>
+        <%= csrf_meta_tag %>
 
-</head> 
+    </head> 
 
-<script>
-  $(document).ready(function() {
-    $('#toggleButton').click(function() {
-      if ($('#toggleSection').is(":hidden"))
-    {
-      $('#toggleSection').slideDown("slow");
-    } else {
-      $('#toggleSection').slideUp("slow");
-    }
-      return false;
-    });
-  });
-</script>
+    <script>
+        $(document).ready(function() {
+            $('#toggleButton').click(function() {
+                if ($('#toggleSection').is(":hidden"))
+                {
+                    $('#toggleSection').slideDown("slow");
+                    } else {
+                    $('#toggleSection').slideUp("slow");
+                }
+                return false;
+            });
+        });
+    </script>
 
-<body> 
-<div id="header">
-<p id="account_links">
-Welcome back, <%= session[:account_id] %>!
-| <%= link_to "Clusters",    clusters_path %>
-| <%= link_to "Commands",    commands_path %>
-| <%= link_to "Contacts",    contacts_path %>
-| <%= link_to "Hardware Profile Checks", hardwareprofiles_path %>
-| <%= link_to "Hosts",       hosts_path %>
-| <%= link_to "HostGroups",  hostgroups_path %>
-| <%= link_to "Services",    services_path %>
-| <%= link_to "Timeperiods", timeperiods_path %>
-</p>
+    <body> 
 
-<h1 id="branding"><a href="/">nagyo</a></h1>
-<hr />
-</div> <!-- end header -->
-<div id="content">
-<% if flash[:notice] -%>
-<div id="notice"><%= flash[:notice] %></div>
-  <script type="text/javascript">
-    new Effect.Pulsate('notice', {pulses:1, duration:1});
-  </script>
-<% end -%>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="/">nagyo</a>
+                <ul class="nav">
+                    <%
+                        nav_links = [
+                            :commands,
+                            :contacts,
+                            :clusters,
+                            :hardwareprofiles,
+                            :hosts,
+                            :hostgroups,
+                            :services,
+                            :timeperiods,
+                        ]
+                    %>
+                    <% nav_links.each do |nl| %>
+                        <li class="<%= current_page?(send("#{nl}_path")) ? 'active' : nil %>">
+                        <%= link_to nl.to_s.humanize, send("#{nl}_path") %>
+                        </li>
+                    <% end %>
+                </ul>
+            </div>
+        </div>
 
-<% if flash[:error] -%>
-<div id="error"><%= flash[:error] %></div>
-  <script type="text/javascript">
-    new Effect.Shake('error', {distance:5});
-  </script>
-<% end -%>
+        <div id="content">
 
-<% # here comes some ugliness %>
-<% options = [] %>
-<%# FIXME: wtf - why is this here and not in helper? %>
-<%# def nagios_options_from_array(array) %>
-<%# (0..array.length).to_a.combination(2).map{|i,j| array[i...j]}.sort.each do |a| %>
-<%# options << a.join(',') %>
-<%# end %>
-<%# return options %>
-<%# end %>
+            <!-- dropdown menu links -->
+            <!--
+            <div class="btn-group">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    Action
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a tabindex="-1" href="#">Action</a></li>
+                    <li><a tabindex="-1" href="#">Another action</a></li>
+                    <li><a tabindex="-1" href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li><a tabindex="-1" href="#">Separated link</a></li>
+                </ul>
+            </div>
+            -->
 
-<%- # Calling yield here triggers the insertion of the specific view -%>
-<%= yield %>
+            <% if flash[:notice] -%>
+                <div id="notice"><%= flash[:notice] %></div>
+                <script type="text/javascript">
+                    new Effect.Pulsate('notice', {pulses:1, duration:1});
+                </script>
+            <% end -%>
 
-</div>
-<hr />
+            <% if flash[:error] -%>
+                <div id="error"><%= flash[:error] %></div>
+                <script type="text/javascript">
+                    new Effect.Shake('error', {distance:5});
+                </script>
+            <% end -%>
 
-<% if false -%>
-<div id="footer">
-<p>Some cool footer here.</p>
-</div> <!-- end footer -->
-<% end -%>
-</body>
-</body> 
-</html> 
+            <%- # Calling yield here triggers the insertion of the specific view -%>
+            <%= yield %>
 
+        </div>
+        <hr />
+
+        <% if false -%>
+            <div id="footer">
+                <p>Some cool footer here.</p>
+            </div> <!-- end footer -->
+        <% end -%>
+    </body>
+</html>
