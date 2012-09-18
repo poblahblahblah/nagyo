@@ -33,7 +33,6 @@ class Contact
   # required:
   field :contact_name,                   type: String
   field :email,                          type: String
-  # is this really a boolean? integer?
   field :host_notifications_enabled,     type: Integer,  default:  1
   field :service_notifications_enabled,  type: Integer,  default:  1
   # TODO: convert defaults into before_validation callbacks?
@@ -41,12 +40,9 @@ class Contact
   #field :service_notification_period,    type: String,   default:  "24x7"
   field :host_notification_options,      type: String,   default:  "d,u,r"
   field :service_notification_options,   type: String,   default:  "w,u,c,r"
-  #field :host_notification_commands,     type: Array
-  #field :service_notification_commands,  type: Array
 
   # optional:
   field :alias,                          type: String
-  #field :contact_groups,                 type: Array
   field :pager,                          type: String
   field :addressx,                       type: String
   field :can_submit_commands,            type: Integer
@@ -68,7 +64,6 @@ class Contact
   validates_presence_of   :host_notification_period, :host_notification_commands, :host_notification_options
   validates_presence_of   :service_notification_period, :service_notification_commands, :service_notification_options
 
-  # TODO: should these be boolean flags? need to convert to 1/0 for nagios 
   validates_numericality_of :host_notifications_enabled, :service_notifications_enabled
 
   before_validation       :set_alias_to_contact_name

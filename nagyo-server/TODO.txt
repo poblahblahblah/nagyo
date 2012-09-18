@@ -2,6 +2,8 @@
   - replace misc *_name fields with method or field generated from data
      - e.g. Service.host_name will come from Service.host.host_name 
 
+  - convert old field defaults (e.g. "24x7") into association defaults
+
   - Feature Request: take a contact and traverse the associations 
     pulling all services/hosts/etc that contact would be alerted for 
 

@@ -35,8 +35,6 @@ class Cluster
 
   # optional:
   field :node_check_command_arguments,    type: String
-  # Integer or Boolean??
-  #field :notify_on_node_service,          type: Boolean, default: false
   field :notify_on_node_service,          type: Integer, default: 0
 
 
