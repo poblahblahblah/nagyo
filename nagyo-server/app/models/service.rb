@@ -30,12 +30,11 @@ class Service
     :class_name => "Servicedependency",
     :inverse_of => :dependent_service
 
-  # required:
-  # note that we use "nodegroup" instead of hostgroup_name - this is functionally
-  # the same thing to us.
-  # TODO: finish making nodegroup a proper Hostgroup association
-  #field :nodegroup,                     type: String
+  has_and_belongs_to_many :servicegroups,
+    :class_name => "Servicegroup",
+    :inverse_of => :members
 
+  # required:
   field :name,                          type: String
   field :check_command_arguments,       type: String
   field :max_check_attempts,            type: Integer,  :default => 3
@@ -47,8 +46,6 @@ class Service
   field :service_description,           type: String
 
   field :display_name,                  type: String
-  # TODO: finish servicegroups model impl?
-  field :servicegroups,                 type: String
   field :is_volatile,                   type: Integer,  :default => 0
   field :initial_state,                 type: String
   field :active_checks_enabled,         type: Integer,  :default => 1

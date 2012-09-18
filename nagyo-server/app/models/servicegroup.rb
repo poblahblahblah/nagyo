@@ -5,13 +5,18 @@ class Servicegroup
   include Mongoid::Timestamps
   include Extensions::DereferencedJson
 
+  has_and_belongs_to_many :members,
+    :class_name => "Service",
+    :inverse_of => :servicegroups
+
+  has_and_belongs_to_many :servicegroup_members,
+    :class_name => "Servicegroup"
+
   # required:
   field :servicegroup_name,    type: String  #:required => true, :unique => true
   field :alias,                type: String  #:required => true, :unique => true
 
   # optional:
-  field :members,              type: Array
-  field :servicegroup_members, type: Array
   field :notes,                type: String
   field :notes_url,            type: String
   field :action_url,           type: String
@@ -30,7 +35,5 @@ class Servicegroup
   def to_s
     "#{servicegroup_name}"
   end
-
-private
 
 end
