@@ -37,7 +37,8 @@ RailsAdmin.config do |config|
   # config.included_models = [Cluster, Command, Contact, Contactgroup, Hardwareprofile, Host, Hostdependency, Hostescalation, Hostgroup, Service, Servicedependency, Serviceescalation, Servicegroup, Timeperiod, User]
 
   # Application wide tried label methods for models' instances
-  # config.label_methods << :description # Default is [:name, :title]
+  config.label_methods << :description # Default is [:name, :title]
+  config.label_methods << :to_s
 
   #  ==> Global models configuration
   # config.models do
