@@ -83,4 +83,4 @@ gem 'mattetti-googlecharts'
 #gem 'activeadmin-mongoid'
 #
 # rails_admin seems to work, but do we need it?
-#gem "rails_admin"
+gem "rails_admin"
