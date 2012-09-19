@@ -3,10 +3,6 @@ class Servicedependency
   include Mongoid::Timestamps
   include Extensions::DereferencedJson
 
-  # FIXME: TODO: finish converting to associations by changing the *_name 
-  # fields into proper associations and write helper methods to get name back 
-  # with same api: host_name, service_description etc
-
   # these are the things we are depending upon:
   belongs_to :host,      :inverse_of => :service_dependencies
   belongs_to :hostgroup, :inverse_of => :service_dependencies
@@ -47,7 +43,6 @@ class Servicedependency
 
   before_save :copy_name_fields
 
-  # FIXME: finish adding validations for dependent/depended upon
   validates_presence_of :service, :dependent_service
   validates_with EitherOrValidator, :fields => [:host, :hostgroup]
   validates_with EitherOrValidator, :fields => [:dependent_host, :dependent_hostgroup]

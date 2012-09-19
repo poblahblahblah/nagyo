@@ -1,14 +1,15 @@
 <div id="center_content">
 <%= semantic_form_for @servicedependency, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+  <%= f.semantic_errors %>
     <%= f.inputs :name => "What is being Depended upon" do %>
       <%= f.input :host, :member_label => :host_name %>
       <%= f.input :hostgroup %>
-      <%= f.input :service %>
+      <%= f.input :service, :member_label => :name %>
     <% end %>
     <%= f.inputs :name => "Dependent" do %>
       <%= f.input :dependent_host, :member_label => :host_name %>
       <%= f.input :dependent_hostgroup %>
-      <%= f.input :dependent_service %>
+      <%= f.input :dependent_service, :member_label => :name %>
     <% end %>
   <fieldset>
     <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>

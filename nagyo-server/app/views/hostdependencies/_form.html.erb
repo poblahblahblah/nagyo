@@ -1,5 +1,6 @@
 <div id="center_content">
 <%= semantic_form_for @hostdependency, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+  <%= f.semantic_errors %>
   <%= f.inputs :name => "Required" do %>
     <%= f.inputs :name => "Depended upon" do %>
       <%= f.input :host, :member_label => :host_name %>
@@ -10,9 +11,7 @@
       <%= f.input :dependent_hostgroup %>
     <% end %>
   <% end %>
-  <fieldset>
-    <legend>Required Parameters</legend>
-  </fieldset>
+
   <fieldset>
     <a href="#" id="toggleButton"><legend>Optional Parameters</legend></a>
     <div id="toggleSection" style="display:none">
@@ -22,6 +21,7 @@
       <%= f.input :dependency_period, :as => :select, :collection => Timeperiod.all %>
     </div>
   </fieldset>
+
   <%= f.actions do %>
     <%= f.action :submit, :as => :button %>
     <%= f.action :cancel, :as => :link %>

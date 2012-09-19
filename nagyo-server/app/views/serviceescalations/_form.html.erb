@@ -1,5 +1,6 @@
 <div id="center_content">
   <%= semantic_form_for @serviceescalation, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+    <%= f.semantic_errors %>
     <%= f.inputs :name => "Required Parameters" do %>
       <%= f.input :host, :as => :select, :collection => Host.all, :member_label => :host_name %>
       <%= f.input :service, :member_label => :name %>

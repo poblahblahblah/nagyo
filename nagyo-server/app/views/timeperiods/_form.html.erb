@@ -1,5 +1,6 @@
 <div id="center_content">
   <%= semantic_form_for @timeperiod, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+    <%= f.semantic_errors %>
   <fieldset>
     <legend>Required Parameters</legend>
     <%= f.input :timeperiod_name %>

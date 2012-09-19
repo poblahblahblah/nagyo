@@ -1,5 +1,7 @@
 <div id="center_content">
   <%= semantic_form_for @cluster, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+    <%= f.semantic_errors %>
+
   <fieldset>
     <legend>Required Parameters</legend>
     <%= f.input :vip_name %>
