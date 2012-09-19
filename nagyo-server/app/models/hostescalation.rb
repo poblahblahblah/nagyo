@@ -36,8 +36,8 @@ class Hostescalation
 protected
 
   def copy_name_fields
-    host_name           = self.host.host_name rescue nil
-    hostgroup_name      = self.hostgroup.hostgroup_name rescue nil
+    self.host_name      = self.host.host_name rescue nil
+    self.hostgroup_name = self.hostgroup.hostgroup_name rescue nil
   end
 
 end

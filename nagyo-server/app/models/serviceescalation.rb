@@ -42,9 +42,9 @@ class Serviceescalation
 protected
 
   def copy_name_fields
-    host_name           = self.host.host_name rescue nil
-    hostgroup_name      = self.hostgroup.hostgroup_name rescue nil
-    service_description = self.service.name rescue nil
+    self.host_name           = self.host.host_name rescue nil
+    self.hostgroup_name      = self.hostgroup.hostgroup_name rescue nil
+    self.service_description = self.service.name rescue nil
   end
 end
 

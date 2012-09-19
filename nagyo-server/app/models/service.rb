@@ -121,8 +121,8 @@ private
   # by making these fields instead of methods, they will get sent in 
   # json output
   def copy_name_fields
-    host_name      = self.host.host_name rescue nil
-    hostgroup_name = self.hostgroup.hostgroup_name rescue nil
+    self.host_name      = self.host.host_name rescue nil
+    self.hostgroup_name = self.hostgroup.hostgroup_name rescue nil
   end
 
   def set_name_from_input_values

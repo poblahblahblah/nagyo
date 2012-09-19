@@ -65,9 +65,9 @@ class Hostdependency
 private
 
   def copy_name_fields
-    host_name           = self.host.host_name rescue nil
-    dependent_host_name = self.dependent_host.host_name rescue nil
-    hostgroup_name           = self.hostgroup.hostgroup_name rescue nil
-    dependent_hostgroup_name = self.dependent_hostgroup.hostgroup_name rescue nil
+    self.host_name           = self.host.host_name rescue nil
+    self.dependent_host_name = self.dependent_host.host_name rescue nil
+    self.hostgroup_name           = self.hostgroup.hostgroup_name rescue nil
+    self.dependent_hostgroup_name = self.dependent_hostgroup.hostgroup_name rescue nil
   end
 end
