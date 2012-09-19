@@ -80,20 +80,21 @@ RailsAdmin.config do |config|
 
   # All fields marked as 'hidden' won't be shown anywhere in the rails_admin unless you mark them as visible. (visible(true))
 
-  # config.model Cluster do
+  config.model Cluster do
   #   # Found associations:
-  #     configure :contacts, :has_and_belongs_to_many_association 
-  #     configure :check_command, :belongs_to_association 
-  #     configure :node_check_command, :belongs_to_association 
-  #     configure :hostgroup, :belongs_to_association   #   # Found columns:
-  #     configure :_type, :text         # Hidden 
-  #     configure :_id, :bson_object_id 
-  #     configure :created_at, :datetime 
-  #     configure :updated_at, :datetime 
-  #     configure :contact_ids, :serialized         # Hidden 
-  #     configure :check_command_id, :bson_object_id         # Hidden 
-  #     configure :node_check_command_id, :bson_object_id         # Hidden 
-  #     configure :hostgroup_id, :bson_object_id         # Hidden 
+  #     configure :contacts, :has_and_belongs_to_many_association
+  #     configure :check_command, :belongs_to_association
+  #     configure :node_check_command, :belongs_to_association
+  #     configure :hostgroup, :belongs_to_association   #
+  #   # Found columns:
+  #     configure :_type, :text         # Hidden
+  #     configure :_id, :bson_object_id
+  #     configure :created_at, :datetime
+  #     configure :updated_at, :datetime
+  #     configure :contact_ids, :serialized         # Hidden
+  #     configure :check_command_id, :bson_object_id         # Hidden
+  #     configure :node_check_command_id, :bson_object_id         # Hidden
+  #     configure :hostgroup_id, :bson_object_id         # Hidden
   #     configure :vip_name, :text 
   #     configure :vip_dns, :text 
   #     configure :node_alert_when_down, :text 
@@ -104,14 +105,41 @@ RailsAdmin.config do |config|
   #     configure :check_command_arguments, :text 
   #     configure :node_check_command_arguments, :text 
   #     configure :notify_on_node_service, :integer   #   # Sections:
-  #   list do; end
+    list do
+      field :vip_name
+      field :vip_dns
+      field :hostgroup
+      field :contacts
+      field :percent_warn
+      field :percent_crit
+      field :check_command
+      field :check_command_arguments
+      field :ecv_uri
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :vip_name
+      field :vip_dns
+      field :hostgroup
+      field :check_command
+      field :check_command_arguments
+      field :contacts
+      field :percent_warn
+      field :percent_crit
+      field :ecv_uri
+      field :ecv_string
+
+      field :node_alert_when_down, :boolean
+      field :notify_on_node_service, :boolean
+      field :node_check_command
+      field :node_check_command_arguments
+    end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Command do
+  end
+
+  config.model Command do
   #   # Found associations:
   #     configure :hosts, :has_and_belongs_to_many_association 
   #     configure :hardwareprofiles, :has_and_belongs_to_many_association 
@@ -129,14 +157,21 @@ RailsAdmin.config do |config|
   #     configure :command_line, :text 
   #     configure :host_ids, :serialized         # Hidden 
   #     configure :hardwareprofile_ids, :serialized         # Hidden   #   # Sections:
-  #   list do; end
+    list do
+      field :command_name
+      field :command_line
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :command_name
+      field :command_line
+    end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Contact do
+  end
+
+  config.model Contact do
   #   # Found associations:
   #     configure :clusters, :has_and_belongs_to_many_association 
   #     configure :hardwareprofiles, :has_and_belongs_to_many_association 
@@ -176,14 +211,46 @@ RailsAdmin.config do |config|
   #     configure :can_submit_commands, :integer 
   #     configure :retain_status_information, :integer 
   #     configure :retain_nonstatus_information, :integer   #   # Sections:
-  #   list do; end
+    list do
+      field :contact_name
+      field :email
+      field :host_notifications_enabled
+      field :service_notifications_enabled
+      field :host_notification_period
+      field :service_notification_period
+      field :host_notification_options
+      field :service_notification_options
+      field :host_notification_commands
+      field :service_notification_commands
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :contact_name
+      field :email
+      field :host_notifications_enabled
+      field :service_notifications_enabled
+      field :host_notification_period
+      field :service_notification_period
+
+      field :host_notification_options
+      field :service_notification_options
+      field :host_notification_commands
+      field :service_notification_commands
+
+      field :alias
+      field :contact_groups
+      field :pager
+      field :addressx
+      field :can_submit_commands, :boolean
+      field :retain_status_information, :boolean
+      field :retain_nonstatus_information, :boolean
+    end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Contactgroup do
+  end
+
+  config.model Contactgroup do
   #   # Found associations:
   #     configure :members, :has_and_belongs_to_many_association 
   #     configure :contactgroup_members, :has_and_belongs_to_many_association 
@@ -201,14 +268,25 @@ RailsAdmin.config do |config|
   #     configure :serviceescalation_ids, :serialized         # Hidden 
   #     configure :contactgroup_name, :text 
   #     configure :alias, :text   #   # Sections:
-  #   list do; end
+    list do
+      field :contactgroup_name
+      #field :alias
+      field :members
+      field :contactgroup_members
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :contactgroup_name
+      #field :alias
+      field :members
+      field :contactgroup_members
+    end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Hardwareprofile do
+  end
+
+  config.model Hardwareprofile do
   #   # Found associations:
   #     configure :contacts, :has_and_belongs_to_many_association 
   #     configure :check_commands, :has_and_belongs_to_many_association   #   # Found columns:
@@ -219,14 +297,23 @@ RailsAdmin.config do |config|
   #     configure :contact_ids, :serialized         # Hidden 
   #     configure :check_command_ids, :serialized         # Hidden 
   #     configure :hardware_profile, :text   #   # Sections:
-  #   list do; end
+    list do
+      field :hardware_profile
+      field :contacts
+      field :check_commands
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :hardware_profile
+      field :contacts
+      field :check_commands
+    end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Host do
+  end
+
+  config.model Host do
   #   # Found associations:
   #     configure :parents, :has_and_belongs_to_many_association 
   #     configure :contacts, :has_and_belongs_to_many_association 
@@ -288,14 +375,65 @@ RailsAdmin.config do |config|
   #     configure :icon_image_alt, :text 
   #     configure :vrml_image, :text 
   #     configure :statusmap_image, :text   #   # Sections:
-  #   list do; end
+    list do
+      field :host_name
+      field :address
+      field :contacts
+      field :max_check_attempts
+      field :check_period
+      field :notification_interval
+      field :notification_period
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :host_name
+      field :address
+      field :contacts
+      field :max_check_attempts
+      field :check_period
+      field :notification_interval
+      field :notification_period
+
+      field :display_name
+      field :parents     #, :as => :select, :collection => Host.all, :member_label => :host_name
+      field :hostgroups #, :as => :select, :collection => Hostgroup.all
+      field :contact_groups #, :as => :select, :collection => Contactgroup.all
+      field :check_command #, :as => :select, :collection => Command.all
+      field :initial_state #, :as => :nagios_options, :collection => %W(o d u)
+      field :check_interval #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]
+      field :retry_interval #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]
+      field :active_checks_enabled, :boolean
+      field :passive_checks_enabled, :boolean
+      field :obsess_over_host, :boolean
+      field :check_freshness, :boolean
+      field :freshness_threshold #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]
+      field :event_handler #, :as => :select, :collection => Command.all
+      field :event_handler_enabled, :boolean
+      field :low_flap_threshold #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]
+      field :high_flap_threshold #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]
+      field :flap_detection_enabled, :boolean
+      field :flap_detection_options #, :as => :nagios_options, :collection => %W(o d u)
+      field :process_perf_data, :boolean
+      field :retain_status_information, :boolean
+      field :retain_nonstatus_information, :boolean
+      field :first_notification_delay #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] 
+      field :notification_options #, :as => :nagios_options, :collection => %W(d u r f s)
+      field :notifications_enabled, :boolean
+      field :stalking_options #, :as => :nagios_options, :collection => %W(o d u)
+      field :notes
+      field :notes_url
+      field :action_url
+      field :icon_image
+      field :icon_image_alt
+      field :vrml_image
+      field :statusmap_image
+    end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Hostdependency do
+  end
+
+  config.model Hostdependency do
   #   # Found associations:
   #     configure :dependency_period, :belongs_to_association 
   #     configure :host, :belongs_to_association 
@@ -319,14 +457,31 @@ RailsAdmin.config do |config|
   #     configure :host_name, :text 
   #     configure :dependent_hostgroup_name, :text 
   #     configure :hostgroup_name, :text   #   # Sections:
-  #   list do; end
+    list do
+      field :host
+      field :hostgroup
+      field :dependent_host
+      field :dependent_hostgroup
+      field :dependency_period
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :host
+      field :hostgroup
+      field :dependent_host
+      field :dependent_hostgroup
+
+      field :inherits_parent, :boolean
+      field :execution_failure_criteria # o d u p n
+      field :notification_failure_criteria # o d u p n
+      field :dependency_period
+    end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Hostescalation do
+  end
+
+  config.model Hostescalation do
   #   # Found associations:
   #     configure :host, :belongs_to_association 
   #     configure :hostgroup, :belongs_to_association 
@@ -346,14 +501,31 @@ RailsAdmin.config do |config|
   #     configure :escalation_options, :text 
   #     configure :host_name, :text 
   #     configure :hostgroup_name, :text   #   # Sections:
-  #   list do; end
+    list do
+      field :host
+      field :hostgroup
+      field :first_notification
+      field :last_notification
+      field :contacts
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :host
+      field :hostgroup
+      field :contacts
+      field :contact_groups
+      field :first_notification
+      field :last_notification
+      field :notification_interval
+      field :escalation_period
+      field :escalation_options
+    end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Hostgroup do
+  end
+
+  config.model Hostgroup do
   #   # Found associations:
   #     configure :members, :has_and_belongs_to_many_association 
   #     configure :hostgroup_members, :has_and_belongs_to_many_association 
@@ -376,14 +548,31 @@ RailsAdmin.config do |config|
   #     configure :notes, :text 
   #     configure :notes_url, :text 
   #     configure :action_url, :text   #   # Sections:
-  #   list do; end
+    list do
+      field :hostgroup_name
+      field :alias
+      field :notes
+      field :notes_url
+      field :action_url
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :hostgroup_name
+      field :alias
+
+      field :members
+      field :hostgroup_members
+
+      field :notes
+      field :notes_url
+      field :action_url
+    end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Service do
+  end
+
+  config.model Service do
   #   # Found associations:
   #     configure :host, :belongs_to_association 
   #     configure :hostgroup, :belongs_to_association 
@@ -443,14 +632,66 @@ RailsAdmin.config do |config|
   #     configure :icon_image_alt, :text 
   #     configure :host_name, :serialized 
   #     configure :hostgroup_name, :serialized   #   # Sections:
-  #   list do; end
+    list do
+      field :name
+      field :host
+      field :hostgroup
+      field :contacts
+      field :check_command
+      field :check_command_arguments
+      field :check_period
+      field :notification_period
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :host
+      field :hostgroup
+      field :contacts
+      field :check_command
+      field :check_command_arguments
+      field :max_check_attempts
+      field :check_interval
+      field :retry_interval
+      field :notification_interval
+      field :check_period
+      field :notification_period
+
+      field :display_name
+      field :servicegroups
+      field :is_volatile, :boolean
+      field :initial_state # o w u c
+
+      field  :active_checks_enabled, :boolean
+      field  :passive_checks_enabled, :boolean
+      field  :obsess_over_service, :boolean
+      field  :check_freshness, :boolean
+      field  :freshness_threshold
+      field  :event_handler
+      field  :event_handler_enabled, :boolean
+      field  :low_flap_threshold
+      field  :high_flap_threshold
+      field  :flap_detection_enabled, :boolean
+      field  :flap_detection_options #, :as => :nagios_options, :collection => %W(o w u c)
+      field  :process_perf_data, :boolean
+      field  :retain_status_information, :boolean
+      field  :retain_nonstatus_information, :boolean
+      field  :first_notification_delay #, :as => :select, :collection => [ 1, 2, 3, 4, 5]
+      field  :notification_options #, :as => :nagios_options, :collection => %W(w u c r f s n)
+      field  :notifications_enabled, :boolean
+      field  :stalking_options #, :as => :nagios_options, :collection => %W(o w u c)
+      field  :register, :boolean
+      field  :notes
+      field  :notes_url
+      field  :action_url
+      field  :icon_image
+      field  :icon_image_alt
+    end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Servicedependency do
+  end
+
+  config.model Servicedependency do
   #   # Found associations:
   #     configure :host, :belongs_to_association 
   #     configure :hostgroup, :belongs_to_association 
@@ -479,14 +720,17 @@ RailsAdmin.config do |config|
   #     configure :host_name, :text 
   #     configure :dependent_hostgroup_name, :text 
   #     configure :hostgroup_name, :text   #   # Sections:
-  #   list do; end
+    list do
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+    end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Serviceescalation do
+  end
+
+  config.model Serviceescalation do
   #   # Found associations:
   #     configure :host, :belongs_to_association 
   #     configure :hostgroup, :belongs_to_association 
@@ -515,8 +759,9 @@ RailsAdmin.config do |config|
   #   edit do; end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Servicegroup do
+  end
+
+  config.model Servicegroup do
   #   # Found associations:
   #     configure :members, :has_and_belongs_to_many_association 
   #     configure :servicegroup_members, :has_and_belongs_to_many_association   #   # Found columns:
@@ -537,8 +782,9 @@ RailsAdmin.config do |config|
   #   edit do; end
   #   create do; end
   #   update do; end
-  # end
-  # config.model Timeperiod do
+  end
+
+  config.model Timeperiod do
   #   # Found associations:
   #     configure :host_notification_contacts, :has_many_association 
   #     configure :service_notification_contacts, :has_many_association 
@@ -562,7 +808,8 @@ RailsAdmin.config do |config|
   #   edit do; end
   #   create do; end
   #   update do; end
-  # end
+  end
+
   # config.model User do
   #   # Found associations:
   #   # Found columns:
