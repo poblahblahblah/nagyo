@@ -8,15 +8,20 @@ Nagyo::Application.routes.draw do
   resources :contacts
   resources :contactgroups
   resources :hardwareprofiles
-  resources :hostdependencies
-  resources :hostgroups
+
   resources :hosts
-  resources :commands
-  resources :servicedependencies
-  resources :services
-  resources :timeperiods
+  resources :hostgroups
+  resources :hostdependencies
   resources :hostescalations
+
+  resources :commands
+
+  resources :services
+  resources :servicegroups
+  resources :servicedependencies
   resources :serviceescalations
+
+  resources :timeperiods
 
   #get "home/index"
 
