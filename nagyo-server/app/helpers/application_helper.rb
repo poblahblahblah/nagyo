@@ -25,4 +25,14 @@ module ApplicationHelper
     return options
   end
 
+
+  # determine if any of the passed model  is current_page?
+  def any_is_current_page?(models_names)
+    current = false
+    models_names.each do |model|
+      current ||= current_page?(send("#{model}_path"))
+    end
+    return current
+  end
+
 end

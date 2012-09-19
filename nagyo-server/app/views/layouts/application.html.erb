@@ -25,33 +25,9 @@
 
     <body> 
 
-        <div class="navbar">
-            <div class="navbar-inner">
-                <a class="brand" href="/">nagyo</a>
-                <ul class="nav">
-                    <%
-                        nav_links = [
-                            :commands,
-                            :contacts,
-                            :clusters,
-                            :hardwareprofiles,
-                            :hosts,
-                            :hostgroups,
-                            :services,
-                            :timeperiods,
-                        ]
-                    %>
-                    <% nav_links.each do |nl| %>
-                        <li class="<%= current_page?(send("#{nl}_path")) ? 'active' : nil %>">
-                        <%= link_to nl.to_s.humanize, send("#{nl}_path") %>
-                        </li>
-                    <% end %>
-                </ul>
-            </div>
-        </div>
+      <div id="content" class="container">
 
-        <div id="content">
-
+        <%= render "shared/nav_header" %>
             <!-- dropdown menu links -->
             <!--
             <div class="btn-group">
