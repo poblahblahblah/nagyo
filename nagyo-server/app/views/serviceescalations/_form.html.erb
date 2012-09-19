@@ -1,0 +1,26 @@
+<div id="center_content">
+  <%= semantic_form_for @serviceescalation, :html => { :class => 'myform', :id => 'myform' } do |f| %>
+    <%= f.inputs :name => "Required Parameters" do %>
+      <%= f.input :host, :as => :select, :collection => Host.all, :member_label => :host_name %>
+      <%= f.input :service, :member_label => :name %>
+      <%= f.input :contacts %>
+      <%= f.input :contact_groups %>
+      <%= f.input :first_notification %>
+      <%= f.input :last_notification %>
+      <%= f.input :notification_interval %>
+    <% end %>
+    <fieldset>
+      <a href="#" class="toggleButton" data-toggle-div="toggleSection"><legend>Optional Parameters</legend></a>
+      <div id="toggleSection" style="display:none">
+        <%= f.input :hostgroup %>
+        <%= f.input :escalation_period %>
+        <%= f.input :escalation_options %>
+      </div>
+    </fieldset>
+    <%= f.actions do %>
+      <%= f.action :submit, :as => :button %>
+      <%= f.action :cancel, :as => :link %>
+    <% end %>
+  <% end %>
+
+</div>

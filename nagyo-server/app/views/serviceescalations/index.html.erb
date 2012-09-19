@@ -1,0 +1,37 @@
+<%- @page_title = 'serviceescalations' -%>
+
+<h1>ServiceEscalations</h1>
+
+<div id="results_table">
+<table cellspacing="0" class="styled table table-striped">
+  <thead>
+    <tr>
+      <th nowrap="nowrap"></th>
+      <th>Host Name</th>
+      <th>Service</th>
+      <th>Host Group</th>
+      <th>First Notification</th>
+      <th>Last Notification</th>
+      <th>Contacts</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%- @serviceescalations.each do |c| -%>
+    <tr>
+      <td><%= link_to 'Show', serviceescalation_path(c) %> | <%= link_to 'Edit', edit_serviceescalation_path(c) %> | <%= link_to 'Destroy', c, :confirm => 'Are you sure?', :method => :delete %></td>
+      <td><%= h c.host %></td>
+      <td><%= h c.service %></td>
+      <td><%= h c.hostgroup %></td>
+      <td><%= h c.first_notification %></td>
+      <td><%= h c.last_notification %></td>
+      <td><%= h c.contacts.collect(&:to_s).join(", ") %></td>
+    </tr>
+    <%- end -%>
+  </tbody>
+</table>
+</div> <!-- end results_table div -->
+<%= paginate @serviceescalations %>
+
+<br />
+
+<%= link_to 'New ServiceEscalation', new_serviceescalation_path %>

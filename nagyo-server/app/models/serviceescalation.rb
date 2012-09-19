@@ -7,6 +7,7 @@ class Serviceescalation
   # associations
   belongs_to :host
   belongs_to :hostgroup
+  belongs_to :service
 
   has_and_belongs_to_many :contacts
   has_and_belongs_to_many :contact_groups,
@@ -30,11 +31,12 @@ class Serviceescalation
   field :hostgroup_name,      type: String
   field :service_description, type: String
 
+  before_save :copy_name_fields
 
   # validations
+  validates_presence_of :host, :service, :contacts, :contact_groups
+  validates_presence_of :first_notification, :last_notification, :notification_interval
 
-
-  before_save :copy_name_fields
 
 
 protected

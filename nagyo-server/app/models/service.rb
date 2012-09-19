@@ -34,6 +34,10 @@ class Service
     :class_name => "Servicegroup",
     :inverse_of => :members
 
+  has_many :serviceescalations,
+    :class_name => "Serviceescalation",
+    :inverse_of => :service
+
   # required:
   field :name,                          type: String
   field :check_command_arguments,       type: String
