@@ -1,4 +1,4 @@
-# RailsAdmin config file. Generated on September 18, 2012 11:53
+# RailsAdmin config file. Generated on September 19, 2012 12:46
 # See github.com/sferik/rails_admin for more informations
 
 RailsAdmin.config do |config|
@@ -392,8 +392,10 @@ RailsAdmin.config do |config|
   #     configure :event_handler, :belongs_to_association 
   #     configure :check_period, :belongs_to_association 
   #     configure :notification_period, :belongs_to_association 
+  #     configure :servicegroups, :has_and_belongs_to_many_association 
   #     configure :service_dependencies, :has_many_association 
-  #     configure :dependent_service_dependencies, :has_many_association   #   # Found columns:
+  #     configure :dependent_service_dependencies, :has_many_association 
+  #     configure :serviceescalations, :has_many_association   #   # Found columns:
   #     configure :_type, :text         # Hidden 
   #     configure :_id, :bson_object_id 
   #     configure :created_at, :datetime 
@@ -405,6 +407,7 @@ RailsAdmin.config do |config|
   #     configure :event_handler_id, :bson_object_id         # Hidden 
   #     configure :check_period_id, :bson_object_id         # Hidden 
   #     configure :notification_period_id, :bson_object_id         # Hidden 
+  #     configure :servicegroup_ids, :serialized         # Hidden 
   #     configure :name, :string 
   #     configure :check_command_arguments, :text 
   #     configure :max_check_attempts, :integer 
@@ -413,7 +416,6 @@ RailsAdmin.config do |config|
   #     configure :notification_interval, :integer 
   #     configure :service_description, :text 
   #     configure :display_name, :text 
-  #     configure :servicegroups, :text 
   #     configure :is_volatile, :integer 
   #     configure :initial_state, :text 
   #     configure :active_checks_enabled, :integer 
@@ -488,6 +490,7 @@ RailsAdmin.config do |config|
   #   # Found associations:
   #     configure :host, :belongs_to_association 
   #     configure :hostgroup, :belongs_to_association 
+  #     configure :service, :belongs_to_association 
   #     configure :contacts, :has_and_belongs_to_many_association 
   #     configure :contact_groups, :has_and_belongs_to_many_association 
   #     configure :escalation_period, :belongs_to_association   #   # Found columns:
@@ -495,6 +498,7 @@ RailsAdmin.config do |config|
   #     configure :_id, :bson_object_id 
   #     configure :host_id, :bson_object_id         # Hidden 
   #     configure :hostgroup_id, :bson_object_id         # Hidden 
+  #     configure :service_id, :bson_object_id         # Hidden 
   #     configure :contact_ids, :serialized         # Hidden 
   #     configure :contact_group_ids, :serialized         # Hidden 
   #     configure :escalation_period_id, :bson_object_id         # Hidden 
@@ -514,15 +518,16 @@ RailsAdmin.config do |config|
   # end
   # config.model Servicegroup do
   #   # Found associations:
-  #   # Found columns:
+  #     configure :members, :has_and_belongs_to_many_association 
+  #     configure :servicegroup_members, :has_and_belongs_to_many_association   #   # Found columns:
   #     configure :_type, :text         # Hidden 
   #     configure :_id, :bson_object_id 
   #     configure :created_at, :datetime 
   #     configure :updated_at, :datetime 
+  #     configure :member_ids, :serialized         # Hidden 
+  #     configure :servicegroup_member_ids, :serialized         # Hidden 
   #     configure :servicegroup_name, :text 
   #     configure :alias, :text 
-  #     configure :members, :serialized 
-  #     configure :servicegroup_members, :serialized 
   #     configure :notes, :text 
   #     configure :notes_url, :text 
   #     configure :action_url, :text   #   # Sections:
