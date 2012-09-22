@@ -721,10 +721,28 @@ RailsAdmin.config do |config|
   #     configure :dependent_hostgroup_name, :text 
   #     configure :hostgroup_name, :text   #   # Sections:
     list do
+      field :host
+      field :hostgroup
+      field :service
+      field :dependent_host
+      field :dependent_hostgroup
+      field :dependent_service
+      field :dependency_period
     end
   #   export do; end
   #   show do; end
     edit do
+      field :host
+      field :hostgroup
+      field :service
+      field :dependent_host
+      field :dependent_hostgroup
+      field :dependent_service
+
+      field :inherits_parent, :boolean
+      field :execution_failure_criteria # o d u p n
+      field :notification_failure_criteria # o d u p n
+      field :dependency_period
     end
   #   create do; end
   #   update do; end
@@ -753,10 +771,28 @@ RailsAdmin.config do |config|
   #     configure :host_name, :text 
   #     configure :hostgroup_name, :text 
   #     configure :service_description, :text   #   # Sections:
-  #   list do; end
+    list do
+      field :host
+      field :hostgroup
+      field :service
+      field :first_notification
+      field :last_notification
+      field :contacts
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :host
+      field :hostgroup
+      field :service
+      field :contacts
+      field :contact_groups
+      field :first_notification
+      field :last_notification
+      field :notification_interval
+      field :escalation_period
+      field :escalation_options
+    end
   #   create do; end
   #   update do; end
   end
@@ -776,10 +812,26 @@ RailsAdmin.config do |config|
   #     configure :notes, :text 
   #     configure :notes_url, :text 
   #     configure :action_url, :text   #   # Sections:
-  #   list do; end
+    list do
+      field :servicegroup_name
+      field :alias
+      field :notes
+      field :notes_url
+      field :action_url
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :servicegroup_name
+      field :alias
+
+      field :members # Service.all
+      field :servicegroup_members # Servicegroup.all
+
+      field :notes
+      field :notes_url
+      field :action_url
+    end
   #   create do; end
   #   update do; end
   end
@@ -802,10 +854,16 @@ RailsAdmin.config do |config|
   #     configure :updated_at, :datetime 
   #     configure :timeperiod_name, :text 
   #     configure :alias, :text   #   # Sections:
-  #   list do; end
+    list do
+      field :timeperiod_name
+      field :alias
+    end
   #   export do; end
   #   show do; end
-  #   edit do; end
+    edit do
+      field :timeperiod_name
+      field :alias
+    end
   #   create do; end
   #   update do; end
   end

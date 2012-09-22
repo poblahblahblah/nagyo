@@ -1,8 +1,15 @@
 
-  - replace misc *_name fields with method or field generated from data
+  - finish replacing *_name fields with method or field generated from 
+    data
      - e.g. Service.host_name will come from Service.host.host_name 
 
-  - convert old field defaults (e.g. "24x7") into association defaults
+  - convert old string defaults (e.g. "24x7") into association defaults
+
+  - rails_admin works with mongoid
+     x install rails_admin and config
+     - convert the nagios options to checkboxes, figure out how to 
+       reconvert again (maybe just override attr setter in model helper)
+     - edit pages: optional vs required sections? hide/close?
 
   - Feature Request: take a contact and traverse the associations 
     pulling all services/hosts/etc that contact would be alerted for 
@@ -10,14 +17,7 @@
   - write up a doc on order of operations for creating .... e.g. Contact 
     or other optimal flows
 
-  - rails_admin works with mongoid - do we need it? has below feature
-  - BOH Feature: add a warning message when deleting objects to show 
-    what the dependent object chain destruction would do 
 
-  - cleanup: fix index pages to show object association strings instead 
-    of object ids: http://0.0.0.0:3000/contacts
-
-  - try out bootstrap if we keep our own templates/html
 
 Done
 ----
@@ -38,3 +38,10 @@ Done
 
   x look into active-admin-mongoid?
      - uses older mongoid 2.x
+
+  x try out bootstrap if we keep our own templates/html
+
+  x BOH Feature: add a warning message when deleting objects to show 
+    what the dependent object chain destruction would do 
+    - resolution: rails-admin has this feature
+
