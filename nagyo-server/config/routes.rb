@@ -1,30 +1,40 @@
 Nagyo::Application.routes.draw do
 
-  mount RailsAdmin::Engine => '/admin', :as => 'rails_admin'
-
   devise_for :users
 
-  root :to => "main#index"
+  # backwards compatible :show route route for each model to use the 
+  # rails_admin show action for JSON ... edit routes need to use new 
+  # rails admin REST action (or we can provide similar aliases below)
+  [ :clusters,
+    :contacts,
+    :contactgroups,
+    :hardwareprofiles,
 
-  resources :clusters
-  resources :contacts
-  resources :contactgroups
-  resources :hardwareprofiles
+    :hosts,
+    :hostgroups,
+    :hostdependencies,
+    :hostescalations,
 
-  resources :hosts
-  resources :hostgroups
-  resources :hostdependencies
-  resources :hostescalations
+    :commands,
 
-  resources :commands
+    :services,
+    :servicegroups,
+    :servicedependencies,
+    :serviceescalations,
 
-  resources :services
-  resources :servicegroups
-  resources :servicedependencies
-  resources :serviceescalations
+    :timeperiods,
+  ].each do |model|
+    # show
+    match "#{model}/:id" => "rails_admin/main#show",
+      :as         => model.to_s.singularize,
+      :model_name => model.to_s.singularize,
+      :format => :json
+    # edit/update?
+  end
 
-  resources :timeperiods
+  mount RailsAdmin::Engine => '/', :as => 'rails_admin'
 
+  #root :to => "main#index"
   #get "home/index"
 
   # The priority is based upon order of creation:

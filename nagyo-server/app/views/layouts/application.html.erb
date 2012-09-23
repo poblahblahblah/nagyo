@@ -27,23 +27,11 @@
 
       <div id="content" class="container">
 
-        <%= render "shared/nav_header" %>
-            <!-- dropdown menu links -->
-            <!--
-            <div class="btn-group">
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                    Action
-                    <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a tabindex="-1" href="#">Action</a></li>
-                    <li><a tabindex="-1" href="#">Another action</a></li>
-                    <li><a tabindex="-1" href="#">Something else here</a></li>
-                    <li class="divider"></li>
-                    <li><a tabindex="-1" href="#">Separated link</a></li>
-                </ul>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="/">nagyo</a>
             </div>
-            -->
+        </div>
 
             <% if flash[:notice] -%>
                 <div id="notice"><%= flash[:notice] %></div>

@@ -1,22 +1,19 @@
+  - implement roles or use cancan?
 
-  - finish replacing *_name fields with method or field generated from 
-    data
-     - e.g. Service.host_name will come from Service.host.host_name 
+  - allow anyone to show/list objects but only require login for edits
+     - regression after rails_admin integration
 
-  - convert old string defaults (e.g. "24x7") into association defaults
+  - modify routes to support old json paths too?
+    - or remount /admin as /
 
-  - rails_admin works with mongoid
-     x install rails_admin and config
-     - convert the nagios options to checkboxes, figure out how to 
-       reconvert again (maybe just override attr setter in model helper)
-     - edit pages: optional vs required sections? hide/close?
+  - can continue customizing rails_admin edit pages:
+    - optional vs required sections?  hide/close?
 
   - Feature Request: take a contact and traverse the associations 
     pulling all services/hosts/etc that contact would be alerted for 
 
   - write up a doc on order of operations for creating .... e.g. Contact 
     or other optimal flows
-
 
 
 Done
@@ -44,4 +41,16 @@ Done
   x BOH Feature: add a warning message when deleting objects to show 
     what the dependent object chain destruction would do 
     - resolution: rails-admin has this feature
+
+  x finish replacing *_name fields with method or field generated from 
+    data
+     - e.g. Service.host_name will come from Service.host.host_name 
+
+  x convert old string defaults (e.g. "24x7") into association defaults
+    - made a set_defaults method on a few models
+
+  x convert app to rails_admin (works with mongoid)
+     x install rails_admin and config
+     x convert the nagios options to multi-select, 
+       x provide Extensions::SerializedNagiosOptions with serialize_nagios_options helper
 
