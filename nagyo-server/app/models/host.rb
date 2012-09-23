@@ -3,6 +3,7 @@ class Host
   include Mongoid::Timestamps
   include Mongoid::Fields
   include Extensions::DereferencedJson
+  include Extensions::SerializedNagiosOptions
 
 
   # has_many :parents, :class_name => ??
@@ -55,21 +56,13 @@ class Host
   field :alias,                 type: String
   field :address,               type: String
   field :max_check_attempts,    type: Integer, :default => 3
-  #field :check_period,          type: String,  :default => "24x7"
-  #
-  #field :contacts,              type: Array
   field :notification_interval, type: Integer, :default => 5
-  #field :notification_period,   type: String,  :default => "24x7"
 
   # optional:
   field :notes,                        type: String
   field :notes_url,                    type: String
   field :action_url,                   type: String
   field :display_name,                 type: String
-  #field :parents,                      type: Array
-  # field :hostgroups,            type: Array
-  #
-  #field :check_command,                type: String
   field :initial_state,                type: String
   field :check_interval,               type: Integer
   field :retry_interval,               type: Integer
@@ -78,7 +71,6 @@ class Host
   field :obsess_over_host,             type: Integer
   field :check_freshness,              type: Integer
   field :freshness_threshold,          type: Integer
-  #field :event_handler,                type: String
   field :event_handler_enabled,        type: Integer, :default => 1
   field :low_flap_threshold,           type: Integer
   field :high_flap_threshold,          type: Integer
@@ -103,7 +95,13 @@ class Host
   #field :2d_coords,            type: String
   #field :3d_coords,            type: String
 
+  serialize_nagios_options :initial_state, :valid => %w{o d u}
+  serialize_nagios_options :notification_options, :valid => %w{d u r f s}
+  serialize_nagios_options :flap_detection_options, :valid => %w{o d u}
+  serialize_nagios_options :stalking_options, :valid => %w{o d u}
+
   # validations
+  before_validation :set_defaults
   before_validation :set_alias_and_address_to_host_name
 
   # FIXME: it seems mongoid thinks empty array sets count as presence of value.
@@ -148,4 +146,10 @@ private
     self.alias   = self.host_name if self.alias.blank?
     self.address = self.host_name if self.address.blank?
   end
+
+  def set_defaults
+    self.check_period        = Timeperiod.twentyfourseven if self.check_period.blank?
+    self.notification_period = Timeperiod.twentyfourseven if self.notification_period.blank?
+  end
+
 end

@@ -2,6 +2,7 @@ class Servicedependency
   include Mongoid::Document
   include Mongoid::Timestamps
   include Extensions::DereferencedJson
+  include Extensions::SerializedNagiosOptions
 
   # these are the things we are depending upon:
   belongs_to :host,      :inverse_of => :service_dependencies
@@ -43,6 +44,9 @@ class Servicedependency
 
   before_save :copy_name_fields
 
+  serialize_nagios_options :execution_failure_criteria, :valid => %w{o w u c p n}
+  serialize_nagios_options :notification_failure_criteria, :valid => %w{o w u c p n}
+  
   validates_presence_of :service, :dependent_service
   validates_with EitherOrValidator, :fields => [:host, :hostgroup]
   validates_with EitherOrValidator, :fields => [:dependent_host, :dependent_hostgroup]

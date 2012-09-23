@@ -1,6 +1,10 @@
 # RailsAdmin config file. Generated on September 19, 2012 12:46
 # See github.com/sferik/rails_admin for more informations
 
+# add our form inputs 
+RailsAdmin::Config::Fields::Types::register(:nagios_options, NagiosOptionsInput)
+
+
 RailsAdmin.config do |config|
 
   # If your default_local is different from :en, uncomment the following 2 lines and set your default locale here:
@@ -233,8 +237,11 @@ RailsAdmin.config do |config|
       field :host_notification_period
       field :service_notification_period
 
-      field :host_notification_options
-      field :service_notification_options
+      field :host_notification_options, :nagios_options
+      field :service_notification_options, :nagios_options
+      #do #, :enum
+      #  partial "test"
+      #end
       field :host_notification_commands
       field :service_notification_commands
 
@@ -390,17 +397,17 @@ RailsAdmin.config do |config|
       field :host_name
       field :address
       field :contacts
-      field :max_check_attempts
+      field :max_check_attempts # 1..5
       field :check_period
-      field :notification_interval
+      field :notification_interval # 1..5
       field :notification_period
 
       field :display_name
-      field :parents     #, :as => :select, :collection => Host.all, :member_label => :host_name
-      field :hostgroups #, :as => :select, :collection => Hostgroup.all
-      field :contact_groups #, :as => :select, :collection => Contactgroup.all
-      field :check_command #, :as => :select, :collection => Command.all
-      field :initial_state #, :as => :nagios_options, :collection => %W(o d u)
+      field :parents     # :collection => Host.all, :member_label => :host_name
+      field :hostgroups
+      field :contact_groups
+      field :check_command
+      field :initial_state, :nagios_options
       field :check_interval #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]
       field :retry_interval #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]
       field :active_checks_enabled, :boolean
@@ -408,19 +415,19 @@ RailsAdmin.config do |config|
       field :obsess_over_host, :boolean
       field :check_freshness, :boolean
       field :freshness_threshold #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]
-      field :event_handler #, :as => :select, :collection => Command.all
+      field :event_handler
       field :event_handler_enabled, :boolean
       field :low_flap_threshold #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]
       field :high_flap_threshold #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]
       field :flap_detection_enabled, :boolean
-      field :flap_detection_options #, :as => :nagios_options, :collection => %W(o d u)
+      field :flap_detection_options, :nagios_options
       field :process_perf_data, :boolean
       field :retain_status_information, :boolean
       field :retain_nonstatus_information, :boolean
       field :first_notification_delay #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ] 
-      field :notification_options #, :as => :nagios_options, :collection => %W(d u r f s)
+      field :notification_options, :nagios_options
       field :notifications_enabled, :boolean
-      field :stalking_options #, :as => :nagios_options, :collection => %W(o d u)
+      field :stalking_options, :nagios_options
       field :notes
       field :notes_url
       field :action_url
@@ -473,8 +480,8 @@ RailsAdmin.config do |config|
       field :dependent_hostgroup
 
       field :inherits_parent, :boolean
-      field :execution_failure_criteria # o d u p n
-      field :notification_failure_criteria # o d u p n
+      field :execution_failure_criteria, :nagios_options
+      field :notification_failure_criteria, :nagios_options
       field :dependency_period
     end
   #   create do; end
@@ -519,7 +526,7 @@ RailsAdmin.config do |config|
       field :last_notification
       field :notification_interval
       field :escalation_period
-      field :escalation_options
+      field :escalation_options, :nagios_options # d u r
     end
   #   create do; end
   #   update do; end
@@ -660,7 +667,7 @@ RailsAdmin.config do |config|
       field :display_name
       field :servicegroups
       field :is_volatile, :boolean
-      field :initial_state # o w u c
+      field :initial_state, :nagios_options # o w u c
 
       field  :active_checks_enabled, :boolean
       field  :passive_checks_enabled, :boolean
@@ -672,14 +679,14 @@ RailsAdmin.config do |config|
       field  :low_flap_threshold
       field  :high_flap_threshold
       field  :flap_detection_enabled, :boolean
-      field  :flap_detection_options #, :as => :nagios_options, :collection => %W(o w u c)
+      field  :flap_detection_options, :nagios_options
       field  :process_perf_data, :boolean
       field  :retain_status_information, :boolean
       field  :retain_nonstatus_information, :boolean
       field  :first_notification_delay #, :as => :select, :collection => [ 1, 2, 3, 4, 5]
-      field  :notification_options #, :as => :nagios_options, :collection => %W(w u c r f s n)
+      field  :notification_options, :nagios_options
       field  :notifications_enabled, :boolean
-      field  :stalking_options #, :as => :nagios_options, :collection => %W(o w u c)
+      field  :stalking_options, :nagios_options # (o w u c)
       field  :register, :boolean
       field  :notes
       field  :notes_url
@@ -740,8 +747,8 @@ RailsAdmin.config do |config|
       field :dependent_service
 
       field :inherits_parent, :boolean
-      field :execution_failure_criteria # o d u p n
-      field :notification_failure_criteria # o d u p n
+      field :execution_failure_criteria, :nagios_options
+      field :notification_failure_criteria, :nagios_options
       field :dependency_period
     end
   #   create do; end
@@ -791,7 +798,7 @@ RailsAdmin.config do |config|
       field :last_notification
       field :notification_interval
       field :escalation_period
-      field :escalation_options
+      field :escalation_options, :nagios_options
     end
   #   create do; end
   #   update do; end
@@ -897,3 +904,5 @@ RailsAdmin.config do |config|
   #   update do; end
   # end
 end
+
+

@@ -3,6 +3,7 @@ class Service
   include Mongoid::Timestamps
   include Mongoid::Fields
   include Extensions::DereferencedJson
+  include Extensions::SerializedNagiosOptions
 
   belongs_to :host
   belongs_to :hostgroup
@@ -81,6 +82,12 @@ class Service
   field :hostgroup_name,                type: Array
 
   before_save :copy_name_fields
+
+  serialize_nagios_options :initial_state, :valid => %w{o w u c}
+  serialize_nagios_options :flap_detection_options, :valid => %w{o w u c}
+  serialize_nagios_options :notification_options, :valid => %w{w u c r f s}
+  serialize_nagios_options :stalking_options, :valid => %w{o w u c}
+
 
   # validations
   # TODO: Pat: I have the field "name" not visible in the view - I would 

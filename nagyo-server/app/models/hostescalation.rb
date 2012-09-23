@@ -1,6 +1,7 @@
 class Hostescalation
   include Mongoid::Document
   include Extensions::DereferencedJson
+  include Extensions::SerializedNagiosOptions
 
   # associations
   belongs_to :host
@@ -27,6 +28,8 @@ class Hostescalation
   field :hostgroup_name,      type: String
 
   before_save :copy_name_fields
+
+  serialize_nagios_options :escalation_options, :valid => %w{d u r}
 
   # validations
   validates_presence_of :host, :contacts, :contact_groups

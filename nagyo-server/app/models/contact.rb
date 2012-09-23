@@ -3,6 +3,7 @@ class Contact
   include Mongoid::Timestamps
   include Mongoid::Fields
   include Extensions::DereferencedJson
+  include Extensions::SerializedNagiosOptions
 
   has_and_belongs_to_many :clusters
   has_and_belongs_to_many :hardwareprofiles
@@ -35,11 +36,15 @@ class Contact
   field :email,                          type: String
   field :host_notifications_enabled,     type: Integer,  default:  1
   field :service_notifications_enabled,  type: Integer,  default:  1
-  # TODO: convert defaults into before_validation callbacks?
-  #field :host_notification_period,       type: String,   default:  "24x7"
-  #field :service_notification_period,    type: String,   default:  "24x7"
+  #
   field :host_notification_options,      type: String,   default:  "d,u,r"
   field :service_notification_options,   type: String,   default:  "w,u,c,r"
+
+  serialize_nagios_options :host_notification_options,
+    :valid => %w{d u r f s n}, :default => "d,u,r"
+
+  serialize_nagios_options :service_notification_options,
+    :valid => %w{w u c r f s n}, :default => "w,u,c,r"
 
   # optional:
   field :alias,                          type: String
@@ -66,7 +71,8 @@ class Contact
 
   validates_numericality_of :host_notifications_enabled, :service_notifications_enabled
 
-  before_validation       :set_alias_to_contact_name
+  before_validation  :set_alias_to_contact_name
+  before_validation  :set_defaults
 
   def initialize(*params)
     super(*params)
@@ -80,6 +86,11 @@ private
 
   def set_alias_to_contact_name
     self.alias = self.contact_name if self.alias.blank?
+  end
+
+  def set_defaults
+    self.host_notification_period = Timeperiod.twentyfourseven if self.host_notification_period.blank?
+    self.service_notification_period = Timeperiod.twentyfourseven if self.service_notification_period.blank?
   end
 
 end

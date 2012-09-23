@@ -2,25 +2,22 @@ class Hostdependency
   include Mongoid::Document
   include Mongoid::Timestamps
   include Extensions::DereferencedJson
+  include Extensions::SerializedNagiosOptions
 
   belongs_to :dependency_period,
     :class_name => "Timeperiod",
     :inverse_of => :host_dependencies
 
-  # TODO: finish fixing these associations ...
-  # FIXME: what is :members?
-  #has_many :members, :class_name => "Host" ?
-
   belongs_to :host,
     :class_name => "Host",
     :inverse_of => :host_dependencies
-  belongs_to :dependent_host,
-    :class_name => "Host",
-    :inverse_of => :dependent_host_dependencies
-
   belongs_to :hostgroup,
     :class_name => "Hostgroup",
     :inverse_of => :host_dependencies
+
+  belongs_to :dependent_host,
+    :class_name => "Host",
+    :inverse_of => :dependent_host_dependencies
   belongs_to :dependent_hostgroup,
     :class_name => "Hostgroup",
     :inverse_of => :dependent_host_dependencies
@@ -41,6 +38,9 @@ class Hostdependency
   field :hostgroup_name,                type: String
 
   before_save :copy_name_fields
+
+  serialize_nagios_options :execution_failure_criteria, :valid => %w{o d u p n}
+  serialize_nagios_options :notification_failure_criteria, :valid => %w{o d u p n}
 
   # validations
   # TODO: does this work to use same class twice?

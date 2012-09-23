@@ -1,6 +1,7 @@
 class Serviceescalation
   include Mongoid::Document
   include Extensions::DereferencedJson
+  include Extensions::SerializedNagiosOptions
 
   # TODO: complete this model ...
   
@@ -32,6 +33,8 @@ class Serviceescalation
   field :service_description, type: String
 
   before_save :copy_name_fields
+
+  serialize_nagios_options :escalation_options, :valid => %w{w u c r}
 
   # validations
   validates_presence_of :host, :service, :contacts, :contact_groups
