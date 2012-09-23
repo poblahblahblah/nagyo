@@ -42,12 +42,6 @@ class Hostgroup
   field :notes_url,       type: String
   field :action_url,      type: String
 
-  # scopes
-  scope :hostgroup_name,    proc {|hostgroup_name| where(:hostgroup_name => hostgroup_name) }
-  scope :alias,             proc {|_alias| where(:alias => _alias) }
-  scope :members,           proc {|members| where(:members => members) }
-  scope :hostgroup_members, proc {|hostgroup_members| where(:hostgroup_members => hostgroup_members) }
-
   # validations
   before_validation        :set_alias_to_hostgroup_name
   validates_presence_of    :hostgroup_name, :alias

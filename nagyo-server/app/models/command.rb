@@ -40,7 +40,6 @@ class Command
   validates_uniqueness_of :command_name
   validates_presence_of   :command_name, :command_line
 
-  scope :command_name, proc {|command_name| where(:command_name => command_name) }
 
   def initialize(*params)
     super(*params)

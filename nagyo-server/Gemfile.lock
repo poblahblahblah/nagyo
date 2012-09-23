@@ -66,10 +66,7 @@ GEM
       factory_girl (~> 4.0.0)
       railties (>= 3.0.0)
     ffi (1.1.5)
-    formtastic (2.2.1)
-      actionpack (>= 3.0)
     haml (3.1.7)
-    has_scope (0.5.1)
     hike (1.2.1)
     i18n (0.6.1)
     journey (1.0.4)
@@ -212,11 +209,8 @@ DEPENDENCIES
   devise
   execjs
   factory_girl_rails
-  formtastic
-  has_scope (~> 0.5.1)
   jquery-rails
   json
-  kaminari
   mattetti-googlecharts
   mongoid
   mongoid-rspec

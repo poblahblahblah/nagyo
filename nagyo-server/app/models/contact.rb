@@ -54,11 +54,6 @@ class Contact
   field :retain_status_information,      type: Integer
   field :retain_nonstatus_information,   type: Integer
 
-  # scopes
-  [:contact_name, :email, :host_notification_period, :service_notification_period].each do |k|
-    scope k, proc {|arg| where(k => arg) }
-  end
-
   # validations
   # FIXME: some of the validations appear to be not working as expected.
   # FIXME: see the host model for an actual explanation.

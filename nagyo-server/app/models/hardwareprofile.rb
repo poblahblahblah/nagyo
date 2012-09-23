@@ -21,11 +21,6 @@ class Hardwareprofile
   validates_presence_of         :hardware_profile
   validates_uniqueness_of       :hardware_profile
 
-  # scopes
-  scope :hardware_profile,      proc {|hardware_profile| where(:hardware_profile => hardware_profile) }
-  scope :check_commands,        proc {|check_commands| where(:check_commands => check_commands) }
-  scope :contacts,              proc {|contacts| where(:contacts => contacts) }
-
   def initialize(*params)
     super(*params)
   end

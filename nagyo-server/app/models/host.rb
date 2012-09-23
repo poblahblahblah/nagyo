@@ -115,26 +115,6 @@ class Host
   validates_uniqueness_of    :host_name, :scope => [:check_period, :contacts, :notification_period]
 
 
-  # TODO: how will has_scope scopes work with associations instead of arrays?  
-  # hopefully works better!
-  # scopes
-  scope :host_name,           proc {|host_name| where(:host_name => host_name) }
-  scope :alias,               proc {|_alias| where(:alias => _alias) }
-  scope :address,             proc {|address| where(:address => address) }
-  #
-  scope :check_period,        proc {|check_period| where(:check_period => check_period) }
-  #
-  scope :notification_period, proc {|notification_period| where(:notification_period => notification_period) }
-  #
-  scope :contacts,            proc {|contacts| where(:contacts => contacts) }
-  #
-  scope :parents,             proc {|parents| where(:parents => parents) }
-  #
-  scope :hostgroups,          proc {|hostgroups| where(:hostgroups => hostgroups) }
-  #
-  scope :check_command,       proc {|check_command| where(:check_command => check_command) }
-
-
   def initialize(*params)
     super(*params)
   end

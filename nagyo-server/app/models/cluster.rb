@@ -21,8 +21,6 @@ class Cluster
   # required:
 
   ## NOTE: these fields were merged over from Vip model
-  # NOTE: having trouble using :name as a field - seems to conflict with Class 
-  # name when has_scopes is used
   field :vip_name,             type: String
   field :vip_dns,              type: String
   field :node_alert_when_down, type: String, default: 1
@@ -50,16 +48,6 @@ class Cluster
   #validates_uniqueness_of  :hostgroup, :scope => [:check_command, :contacts]
   #validates_uniqueness_of       :hostgroup, :scope => [:check_command, 
   #:contacts, :vip_dns, :vip_name]
-
-
-  # scopes
-  scope :hostgroup,     proc {|hostgroup| where(:hostgroup => hostgroup) }
-  scope :check_command, proc {|check_command| where(:check_command => check_command) }
-  scope :contacts,      proc {|contacts| where(:contacts => contacts) }
-  scope :vip_name,      proc {|vip_name| where(:vip_name => vip_name) }
-  scope :vip_dns,       proc {|vip_dns| where(:vip_dns => vip_dns) }
-  scope :ecv_uri,       proc {|ecv_uri| where(:ecv_uri => ecv_uri) }
-  scope :ecv_string,    proc {|ecv_string| where(:ecv_string => ecv_string) }
 
 
   def initialize(*params)

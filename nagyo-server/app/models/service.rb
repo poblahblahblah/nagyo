@@ -106,14 +106,6 @@ class Service
   #validates_uniqueness_of :hostgroup, :scope => [:check_command, :contacts, 
   #:notification_period]
 
-  # scopes
-  scope :hostgroup,             proc {|hostgroup| where(:hostgroup => hostgroup) } 
-  scope :check_command,         proc {|check_command| where(:check_command => check_command) } 
-  scope :check_period,          proc {|check_period| where(:check_period => check_period) } 
-  scope :notification_period,   proc {|notification_period| where(:notification_period => notification_period) } 
-  scope :contacts,              proc {|contacts| where(:contacts => contacts) } 
-  scope :servicegroups,         proc {|servicegroups| where(:servicegroups => servicegroups) } 
-
   def initialize(*params)
     super(*params)
   end

@@ -25,12 +25,6 @@ class Servicegroup
   validates_presence_of    :servicegroup_name, :alias
   validates_uniqueness_of  :servicegroup_name
 
-  scope :servicegroup_name,    proc {|servicegroup_name| where(:servicegroup_name => servicegroup_name) } 
-  scope :alias,                proc {|_alias| where(:alias => _alias) } 
-  scope :members,              proc {|members| where(:members => members) } 
-  scope :servicegroup_members, proc {|servicegroup_members| where(:servicegroup_members => servicegroup_members) } 
-
-
   def initialize(*params)
     super(*params)
   end

@@ -7,11 +7,7 @@ gem 'rails', '~> 3.2.8'
 gem 'execjs'
 gem 'therubyracer'
 
-# use kaminari instead of will_paginate
-gem 'kaminari'
-
 gem 'json'
-gem 'has_scope', '~> 0.5.1'
 gem "mongoid"
 # Not needed with mongoid > 3.x
 #gem 'mongo'
@@ -72,15 +68,10 @@ gem "devise"
 # gem 'ruby-debug'
 
 #source 'http://gemcutter.org'
-gem "formtastic"
+#gem "formtastic"
 
 #source  'http://gems.github.com'
 gem 'mattetti-googlecharts'
 
-# let's try this ... elia/activeadmin-mongoid
-# hmm :\ needs older mongoid lib
 #
-#gem 'activeadmin-mongoid'
-#
-# rails_admin seems to work, but do we need it?
 gem "rails_admin"

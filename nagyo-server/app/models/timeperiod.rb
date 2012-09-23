@@ -60,10 +60,6 @@ class Timeperiod
   validates_presence_of         :timeperiod_name, :alias
   validates_uniqueness_of       :timeperiod_name, :alias
 
-  # scopes
-  scope :timeperiod_name,       proc {|timeperiod_name| where(:timeperiod_name => timeperiod_name) }
-  scope :alias,                 proc {|_alias| where(:alias => _alias) }
-
 
   def initialize(*params)
     super(*params)

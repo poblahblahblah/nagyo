@@ -39,12 +39,6 @@ class Contactgroup
 
   # FIXME: add validation for not adding contactgroup to itself
 
-  # scopes
-  scope :contactgroup_name,     proc {|contactgroup_name| where(:contactgroup_name => contactgroup_name) }
-  scope :alias,                 proc {|_alias| where(:alias => _alias) }
-  scope :members,               proc {|members| where(:members => members) }
-  scope :contactgroup_members,  proc {|contactgroup_members| where(:contactgroup_members => contactgroup_members) }
-
 
   def initialize(*params)
     super(*params)
