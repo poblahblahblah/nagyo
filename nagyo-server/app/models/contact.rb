@@ -37,8 +37,8 @@ class Contact
   field :host_notifications_enabled,     type: Integer,  default:  1
   field :service_notifications_enabled,  type: Integer,  default:  1
   #
-  field :host_notification_options,      type: String,   default:  "d,u,r"
-  field :service_notification_options,   type: String,   default:  "w,u,c,r"
+  field :host_notification_options,      type: String
+  field :service_notification_options,   type: String
 
   serialize_nagios_options :host_notification_options,
     :valid => %w{d u r f s n}, :default => "d,u,r"
@@ -71,8 +71,8 @@ class Contact
 
   validates_numericality_of :host_notifications_enabled, :service_notifications_enabled
 
+  after_initialize  :set_defaults
   before_validation  :set_alias_to_contact_name
-  before_validation  :set_defaults
 
   def initialize(*params)
     super(*params)

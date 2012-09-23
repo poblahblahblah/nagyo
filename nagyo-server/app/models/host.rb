@@ -90,18 +90,21 @@ class Host
   field :vrml_image,                   type: String
   field :statusmap_image,              type: String
 
-  # FIXME: these throw a syntax error for unexpected integer (begin with 
-  # integer)
-  #field :2d_coords,            type: String
-  #field :3d_coords,            type: String
+  # NOTE: symbols can't begin with Integer.  So just quote the whole 
+  # name. Also you don't get attribute methods, you have to use manual 
+  # methods to access:
+  #   read_attribute("2d_coords")
+  #   write_attribute("2d_coords", "1,2")
+  field :"2d_coords",            type: String  # x,y
+  field :"3d_coords",            type: String  # x,y,z
 
   serialize_nagios_options :initial_state, :valid => %w{o d u}
   serialize_nagios_options :notification_options, :valid => %w{d u r f s}
   serialize_nagios_options :flap_detection_options, :valid => %w{o d u}
   serialize_nagios_options :stalking_options, :valid => %w{o d u}
 
-  # validations
-  before_validation :set_defaults
+  # callbacks & validations
+  after_initialize :set_defaults
   before_validation :set_alias_and_address_to_host_name
 
   # FIXME: it seems mongoid thinks empty array sets count as presence of value.

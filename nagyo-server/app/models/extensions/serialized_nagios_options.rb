@@ -48,6 +48,15 @@ module Extensions
             end
           end
 
+          # handle defaults after initialization
+          unless opts[:default].blank?
+            after_initialize do
+              if send(field).blank?
+                send("#{field}=", opts[:default])
+              end
+            end
+          end
+          #
         end # class_eval
 
       end # serialize_nagios_options

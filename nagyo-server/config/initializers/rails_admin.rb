@@ -435,6 +435,8 @@ RailsAdmin.config do |config|
       field :icon_image_alt
       field :vrml_image
       field :statusmap_image
+      field :"2d_coords"
+      field :"3d_coords"
     end
   #   create do; end
   #   update do; end
