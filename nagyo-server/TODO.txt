@@ -1,10 +1,6 @@
-  - implement roles or use cancan?
-
   - allow anyone to show/list objects but only require login for edits
-     - regression after rails_admin integration
-
-  - modify routes to support old json paths too?
-    - or remount /admin as /
+    - regression after rails_admin integration
+    - implement roles or use cancan?
 
   - can continue customizing rails_admin edit pages:
     - optional vs required sections?  hide/close?
@@ -54,3 +50,5 @@ Done
      x convert the nagios options to multi-select, 
        x provide Extensions::SerializedNagiosOptions with serialize_nagios_options helper
 
+  x modify routes to support old json show path
+    x remount rails_admin from /admin to => /
