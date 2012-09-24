@@ -11,7 +11,19 @@ RailsAdmin.config do |config|
   # require 'i18n'
   # I18n.default_locale = :de
 
-  config.current_user_method { current_user } # auto-generated
+  # auto-generated
+  config.current_user_method { current_user }
+
+  config.authenticate_with do |controller|
+    # assuming this will only ever be rails_admin/main :controller
+    # if current action is edit or update or create
+    allow_these = %w{show index dashboard show_in_app}
+    unless allow_these.include?(controller.params[:action])
+      authenticate_user!
+    else
+      true
+    end
+  end
 
   # If you want to track changes on your models:
   # config.audit_with :history, User
@@ -24,6 +36,12 @@ RailsAdmin.config do |config|
   # or for a dynamic name:
   # config.main_app_name = Proc.new { |controller| [Rails.application.engine_name.titleize, controller.params['action'].titleize] }
 
+  # authorization ... manually?
+  #config.authorize_with do |controller|
+    # if current action is edit or update or create
+    #redirect_to main_app.root_path unless current_user
+  #  false
+  #end
 
   #  ==> Global show view settings
   # Display empty fields in show views

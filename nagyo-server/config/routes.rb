@@ -3,8 +3,7 @@ Nagyo::Application.routes.draw do
   devise_for :users
 
   # backwards compatible :show route route for each model to use the 
-  # rails_admin show action for JSON ... edit routes need to use new 
-  # rails admin REST action (or we can provide similar aliases below)
+  # rails_admin show action for JSON ...
   [ :clusters,
     :contacts,
     :contactgroups,
@@ -30,6 +29,8 @@ Nagyo::Application.routes.draw do
       :model_name => model.to_s.singularize,
       :format => :json
     # edit/update?
+    # edit routes need to use new rails admin REST action (or we can 
+    # provide similar aliases below)
   end
 
   mount RailsAdmin::Engine => '/', :as => 'rails_admin'
