@@ -1,7 +1,3 @@
-  - allow anyone to show/list objects but only require login for edits
-    - regression after rails_admin integration
-    - implement roles or use cancan?
-
   - can continue customizing rails_admin edit pages:
     - optional vs required sections?  hide/close?
 
@@ -52,3 +48,7 @@ Done
 
   x modify routes to support old json show path
     x remount rails_admin from /admin to => /
+
+  x allow anyone to show/list objects but only require login for edits
+    - was a regression issue after rails_admin integration
+

@@ -16,6 +16,21 @@ FactoryGirl.define do
       timeperiod_name "24x7"
     end
 
+    factory :timeperiod_workhours do
+      timeperiod_name "workhours"
+    end
+
+    factory :timeperiod_none do
+      timeperiod_name "none"
+    end
+
+    factory :timeperiod_us_holidays do
+      timeperiod_name "us-holidays"
+    end
+
+    factory :timeperiod_24x7_sans_holidays do
+      timeperiod_name "24x7_sans_holidays"
+    end
   end
 end
 
