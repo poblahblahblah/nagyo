@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
 
-  sequence(:unique_command_name) {|n| "Test Command #{n}" }
+  sequence(:unique_command_name) {|n| "test_command_#{n}" }
 
   factory :command do
     command_name { generate(:unique_command_name) }
@@ -10,12 +10,12 @@ FactoryGirl.define do
 
 
     factory :command_ls do
-      command_name "Directory list"
+      command_name "directory_list"
       command_line "ls"
     end
 
     factory :command_ps do
-      command_name "Process list"
+      command_name "process_list"
       command_line "ps"
     end
 

@@ -3,17 +3,12 @@ source 'http://rubygems.org'
 
 # use the latest 3.2.x rails
 gem 'rails', '~> 3.2.8'
-
 gem 'execjs'
 gem 'therubyracer'
+gem 'jquery-rails'
 
 gem 'json'
 gem "mongoid"
-# Not needed with mongoid > 3.x
-#gem 'mongo'
-#gem 'bson_ext'
-
-gem 'jquery-rails'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -48,30 +43,18 @@ group :test do
   gem "shoulda"
 
   #gem "email_spec"
-  #gem "cucumber-rails", :require => false
+  gem "cucumber-rails", :require => false
 end
 
 
 # Auth with devise + users in mongodb
 gem "devise"
 
-# To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
-
-# Use unicorn as the web server
-# gem 'unicorn'
-
 # Deploy with Capistrano
 # gem 'capistrano'
 
-# To use debugger (only for 1.8.7)
-# gem 'ruby-debug'
-
-#source 'http://gemcutter.org'
-#gem "formtastic"
-
 #source  'http://gems.github.com'
-gem 'mattetti-googlecharts'
+#gem 'mattetti-googlecharts'
 
 #
 gem "rails_admin"

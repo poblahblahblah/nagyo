@@ -1,3 +1,11 @@
+
+  - nagyo-worker will pull Host/node info from nventory
+  - manually enter the hostgroups
+    - when nagyo-worker runs, it will update any existing nagyo-server 
+      hostgroups with host members from nventory
+
+  - 
+
   - can continue customizing rails_admin edit pages:
     - optional vs required sections?  hide/close?
 
