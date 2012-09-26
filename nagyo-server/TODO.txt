@@ -1,19 +1,26 @@
 
   - nagyo-worker will pull Host/node info from nventory
-  - manually enter the hostgroups
+  - user will manually enter the hostgroups
     - when nagyo-worker runs, it will update any existing nagyo-server 
       hostgroups with host members from nventory
 
-  - 
-
-  - can continue customizing rails_admin edit pages:
-    - optional vs required sections?  hide/close?
+  - get nagyo-worker running on nagios1.dc1
+    - use 1.8.7 for now (nv_helpers already installed in system lib)
+    - gem "nventory-client"
+    - nv_helpers into a gem?
+      - in nagios1.dc1:/tmp/nv_helpers
+      - pat will cleanup and add to github
+        - need to remove eharmony specific text, config etc
+      - 
 
   - Feature Request: take a contact and traverse the associations 
     pulling all services/hosts/etc that contact would be alerted for 
 
   - write up a doc on order of operations for creating .... e.g. Contact 
     or other optimal flows
+
+  - can continue customizing rails_admin edit pages:
+    - optional vs required sections?  hide/close?
 
 
 Done
@@ -59,4 +66,6 @@ Done
 
   x allow anyone to show/list objects but only require login for edits
     - was a regression issue after rails_admin integration
+
+  x fix bug in nagios options when value is not set yet - tries to split nil
 
