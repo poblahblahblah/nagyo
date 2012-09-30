@@ -2,6 +2,7 @@ class Contact
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Mongoid::Slug
   include Extensions::DereferencedJson
   include Extensions::SerializedNagiosOptions
 
@@ -33,6 +34,8 @@ class Contact
 
   # required:
   field :contact_name,                   type: String
+  slug :contact_name
+
   field :email,                          type: String
   field :host_notifications_enabled,     type: Integer,  default:  1
   field :service_notifications_enabled,  type: Integer,  default:  1

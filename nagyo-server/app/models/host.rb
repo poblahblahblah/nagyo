@@ -2,6 +2,7 @@ class Host
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Mongoid::Slug
   include Extensions::DereferencedJson
   include Extensions::SerializedNagiosOptions
 
@@ -53,6 +54,8 @@ class Host
 
   # required:
   field :host_name,             type: String
+  slug :host_name
+
   field :alias,                 type: String
   field :address,               type: String
   field :max_check_attempts,    type: Integer, :default => 3

@@ -4,6 +4,7 @@ class Hardwareprofile
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Mongoid::Slug
   include Extensions::DereferencedJson
 
   has_and_belongs_to_many :contacts
@@ -14,8 +15,7 @@ class Hardwareprofile
 
   # required:
   field :hardware_profile,      type: String
-  #field :check_commands,        type: Array
-  #field :contacts,              type: Array
+  slug :hardware_profile
 
   # validations
   validates_presence_of         :hardware_profile

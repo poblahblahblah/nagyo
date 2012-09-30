@@ -3,6 +3,8 @@
 class Servicegroup
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Fields
+  include Mongoid::Slug
   include Extensions::DereferencedJson
 
   has_and_belongs_to_many :members,
@@ -14,6 +16,8 @@ class Servicegroup
 
   # required:
   field :servicegroup_name,    type: String  #:required => true, :unique => true
+  slug :servicegroup_name
+
   field :alias,                type: String  #:required => true, :unique => true
 
   # optional:

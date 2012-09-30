@@ -2,10 +2,13 @@ class Command
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Mongoid::Slug
   include Extensions::DereferencedJson
 
   # required:
   field :command_name, type: String
+  slug :command_name
+
   field :command_line, type: String
 
   has_and_belongs_to_many :hosts

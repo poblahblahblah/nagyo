@@ -1,6 +1,7 @@
 class Servicedependency
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Fields
   include Extensions::DereferencedJson
   include Extensions::SerializedNagiosOptions
 

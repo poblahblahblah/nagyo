@@ -2,6 +2,7 @@ class Contactgroup
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Mongoid::Slug
   include Extensions::DereferencedJson
 
   #...?
@@ -24,6 +25,8 @@ class Contactgroup
 
   # required:
   field :contactgroup_name,     type: String
+  slug :contactgroup_name
+
   field :alias,                 type: String
 
   # optional:

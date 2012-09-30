@@ -2,6 +2,7 @@ class Service
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Mongoid::Slug
   include Extensions::DereferencedJson
   include Extensions::SerializedNagiosOptions
 
@@ -41,6 +42,8 @@ class Service
 
   # required:
   field :name,                          type: String
+  slug :name
+
   field :check_command_arguments,       type: String
   field :max_check_attempts,            type: Integer,  :default => 3
   field :check_interval,                type: Integer,  :default => 3

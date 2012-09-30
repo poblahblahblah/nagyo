@@ -9,10 +9,13 @@ class Timeperiod
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Mongoid::Slug
   include Extensions::DereferencedJson
 
   # required:
   field :timeperiod_name,       type: String
+  slug :timeperiod_name
+
   field :alias,                 type: String
 
   #has_many :contacts

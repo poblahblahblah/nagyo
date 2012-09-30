@@ -1,6 +1,9 @@
 require 'rubygems'
 source 'http://rubygems.org'
 
+# we are using Ruby 1.9
+#ruby "1.9.3"
+
 # use the latest 3.2.x rails
 gem 'rails', '~> 3.2.8'
 gem 'execjs'
@@ -58,3 +61,6 @@ gem "devise"
 
 #
 gem "rails_admin"
+
+# try generating slugs ala friendly-id for mongo-db
+gem "mongoid_slug", :github => "digitalplaywright/mongoid-slug"

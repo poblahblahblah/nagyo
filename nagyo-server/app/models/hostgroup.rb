@@ -4,6 +4,7 @@ class Hostgroup
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Mongoid::Slug
   include Extensions::DereferencedJson
 
   has_and_belongs_to_many :members,
@@ -35,6 +36,8 @@ class Hostgroup
 
   # required:
   field :hostgroup_name,  type: String
+  slug :hostgroup_name
+
   field :alias,           type: String
 
   # optional:

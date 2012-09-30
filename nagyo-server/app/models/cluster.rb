@@ -4,6 +4,7 @@ class Cluster
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Fields
+  include Mongoid::Slug
   include Extensions::DereferencedJson
 
   # habtm?
@@ -22,6 +23,8 @@ class Cluster
 
   ## NOTE: these fields were merged over from Vip model
   field :vip_name,             type: String
+  slug :vip_name
+
   field :vip_dns,              type: String
   field :node_alert_when_down, type: String, default: 1
   field :percent_warn,         type: String
