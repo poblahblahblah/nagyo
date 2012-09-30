@@ -1,13 +1,16 @@
 #!/usr/bin/ruby -W0
+# stdlib
 require 'erb'
 require 'rubygems'
-require 'nventory'
-require 'nv_helpers'
 require 'json'
 require 'tempfile'
 require 'digest/md5'
 require 'fileutils'
 require 'net/smtp'
+
+# custom libs
+require 'nventory'
+require 'nv_helpers'
 
 # I'll probably want to move a lot of this to config files
 nvclient        = NVentory::Client.new(:server => 'http://nventory.corp.eharmony.com', :cookiefile => "/tmp/.nagyocookie")
