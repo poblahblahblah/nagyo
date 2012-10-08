@@ -1,7 +1,21 @@
 # RailsAdmin config file. Generated on September 19, 2012 12:46
 # See github.com/sferik/rails_admin for more informations
 
-# add our form inputs 
+# NOTE: override the to_model_name method in RailsAdmin to support more 
+# "railsy" routes (e.g. can do pluralized model names e.g. /hosts.json)
+require 'rails_admin/application_controller'
+module RailsAdmin
+  class ApplicationController < ::ApplicationController
+
+    def to_model_name(param)
+      #model_name = param.split("~").map(&:camelize).join("::")
+      model_name = param.split("~").map {|x| x.singularize.camelize }.join("::")
+    end
+
+  end
+end
+
+# add our custom form inputs
 RailsAdmin::Config::Fields::Types::register(:nagios_options, NagiosOptionsInput)
 
 

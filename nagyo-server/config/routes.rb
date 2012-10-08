@@ -2,37 +2,6 @@ Nagyo::Application.routes.draw do
 
   devise_for :users
 
-  # backwards compatible :show route route for each model to use the 
-  # rails_admin show action for JSON ...
-  [ :clusters,
-    :contacts,
-    :contactgroups,
-    :hardwareprofiles,
-
-    :hosts,
-    :hostgroups,
-    :hostdependencies,
-    :hostescalations,
-
-    :commands,
-
-    :services,
-    :servicegroups,
-    :servicedependencies,
-    :serviceescalations,
-
-    :timeperiods,
-  ].each do |model|
-    # show
-    match "#{model}/:id" => "rails_admin/main#show",
-      :as         => model.to_s.singularize,
-      :model_name => model.to_s.singularize,
-      :format => :json
-    # edit/update?
-    # edit routes need to use new rails admin REST action (or we can 
-    # provide similar aliases below)
-  end
-
   mount RailsAdmin::Engine => '/', :as => 'rails_admin'
 
   #root :to => "main#index"
