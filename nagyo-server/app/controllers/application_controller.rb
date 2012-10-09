@@ -1,5 +1,7 @@
 class ApplicationController < ActionController::Base
-  protect_from_forgery
+  # can we skip this if xhr?
+  # does rails_admin already do this per-action as appropriate?
+  #protect_from_forgery
 
   # NOTE: This is in config/initializers/rails_admin.rb now.
   #

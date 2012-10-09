@@ -115,7 +115,7 @@ class Host
   validates_presence_of        :notification_interval, :notification_period
 
   # FIXME: for whatever reason validations against multiple fields is not working like they did in MM
-  validates_uniqueness_of    :host_name, :scope => [:check_period, :contacts, :notification_period]
+  validates_uniqueness_of    :host_name, :scope => [:check_period_id, :contact_ids, :notification_period_id]
 
 
   def initialize(*params)
@@ -125,6 +125,54 @@ class Host
   def to_s
     "#{host_name}"
   end
+
+  module HostSetters
+
+    # NOTE: this is not getting called as it adds each to 
+    # Mongoid::Relations::Referenced::ManyToMany via
+    # Mongoid::Relations::Targets::Enumerable
+    #
+    def contacts=(new_contacts)
+      # if the list is strings -- look them up
+      # if the list has Contact objects -- use them already
+
+      real_contact_list = []
+
+      # do we raise if not found or just ignore?
+      new_contacts.each do |c|
+        if c.is_a?(String)
+          real_contact_list << Contact.find(c)
+        else
+          real_contact_list << c
+        end
+      end
+
+      super(real_contact_list)
+    end
+
+
+    # TODO: the << is part of Mongoid::Relations::Targets::Enumerable
+    # define_method("contacts<<") do |new_contact|
+    #   # do we raise if not found or just ignore?
+    #   real_contact = nil
+    #   if new_contact.is_a?(String)
+    #     real_contact = Contact.find(c)
+    #   else
+    #     real_contact = c
+    #   end
+    # 
+    #   super(real_contact)
+    # end
+
+    # FIXME: TODO: why is it that when i set :contact_ids on a 
+    # Host.new() call using slugged key it doesn't set the Contacts?
+    # WORKS:
+    #   Host.new({ "contact_ids" => ["50744ea4bfa68e234c000001"], ...})
+    # DOESN'T WORK:
+    #   Host.new({ "contact_ids" => ["damian"], ...})
+  end
+
+  include HostSetters
 
 private
 

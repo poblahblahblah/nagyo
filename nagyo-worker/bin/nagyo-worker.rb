@@ -1,19 +1,28 @@
-#!/usr/bin/ruby -W0
+#!/usr/bin/env ruby
+
 # stdlib
 require 'erb'
 require 'rubygems'
-require 'json'
 require 'tempfile'
 require 'digest/md5'
 require 'fileutils'
 require 'net/smtp'
+require 'logger'
+
+require 'json'
 
 # custom libs
 require 'nventory'
 require 'nv_helpers'
 
+logger = Logger.new(STDOUT)
+
+logger.debug("Starting nagyo-worker ...")
+
 # I'll probably want to move a lot of this to config files
-nvclient        = NVentory::Client.new(:server => 'http://nventory.corp.eharmony.com', :cookiefile => "/tmp/.nagyocookie")
+nventory_host   = "http://nventory.corp.eharmony.com"
+#nventory_host   = "http://localhost:7000"
+nvclient        = NVentory::Client.new(:server => nventory_host, :cookiefile => "/tmp/.nventory-cookie")
 script_base     = "/data/svc/ops/nagyo/nagyo-worker"
 npvm_regex      = "npvm.+\.np\..+\.eharmony\.com"
 npssvm_regex    = "np\..+\.eharmony\.com"
@@ -29,7 +38,10 @@ reload_required = false
 nagios_user     = "root"
 nagios_group    = "nagios"
 # this should be renamed to something more meaningful:
-url             = "nagios2.np.dc1.eharmony.com:3000"
+#url             = "nagios2.np.dc1.eharmony.com:3000"
+url             = "localhost:3000"
+nagyo_host      = "localhost:3000"
+
 nodes           = nvclient.get_objects(:objecttype => 'nodes',
                                        :get        => {'status[name]' => ['setup', 'inservice', 'ss-inservice']},
                                        :includes   => ['operating_system[name]', 
@@ -37,6 +49,8 @@ nodes           = nvclient.get_objects(:objecttype => 'nodes',
                                                       'node_groups',
                                                       'status[name]'],
                                        :format     => 'json')
+
+logger.debug("Got nodes from nventory (#{nventory_host}): #{nodes.inspect}")
 
 gen_directories.each {|dir| Dir.mkdir(File.join(tmpdir, dir))}
 
