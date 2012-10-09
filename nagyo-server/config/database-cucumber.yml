@@ -1,0 +1,7 @@
+development:
+  adapter: mongodb
+  database: local
+  host: localhost
+
+cucumber:
+  <<: *test

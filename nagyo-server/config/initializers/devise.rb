@@ -53,13 +53,13 @@ Devise.setup do |config|
   # given strategies, for example, `config.http_authenticatable = [:token]` will
   # enable it only for token authentication.
   # config.http_authenticatable = false
-  # config.http_authenticatable = [:token]
+  config.http_authenticatable = [:token]
 
   # If http headers should be returned for AJAX requests. True by default.
   # config.http_authenticatable_on_xhr = true
 
   # The realm used in Http Basic Authentication. "Application" by default.
-  # config.http_authentication_realm = "Nagyo Application"
+  config.http_authentication_realm = "Nagyo Application"
 
   # It will change confirmation, password recovery and other workflows
   # to behave the same regardless if the e-mail provided was right or wrong.
