@@ -3,13 +3,159 @@
 
 # NOTE: override the to_model_name method in RailsAdmin to support more 
 # "railsy" routes (e.g. can do pluralized model names e.g. /hosts.json)
-require 'rails_admin/application_controller'
+#require 'rails_admin/application_controller'
+require 'rails_admin/main_controller'
 module RailsAdmin
-  class ApplicationController < ::ApplicationController
+  #class ApplicationController < ::ApplicationController
+  class MainController < RailsAdmin::ApplicationController
 
+    # TODO: can we also add a before_filter to handle the string -> bson-id 
+    # conversions?
+    #  e.g. host.contacts = ["unix-sa", "unix-ops"]
+    #                   ==> ["17389acb...", "0102381ef..."]
+
+    # how do i control where the filter is in the chain - e.g. does this run 
+    # after the existing MainController before_filters? can i rely on 
+    # model_name ?
+    before_filter :convert_stringable_association_params, :only => [:new, :edit]
+
+    # originally from RailsAdmin::ApplicationController
     def to_model_name(param)
       #model_name = param.split("~").map(&:camelize).join("::")
       model_name = param.split("~").map {|x| x.singularize.camelize }.join("::")
+    end
+
+    private
+
+    # first GET of edit page for existing cluster:
+    # ... {"controller"=>"rails_admin/main", "action"=>"edit", 
+    # "model_name"=>"cluster", "id"=>"5056c6b2bfa68e7de1000001"}
+    #
+    # POST of the edit page:
+    # ... {"utf8"=>"✓", "_method"=>"put", 
+    # "authenticity_token"=>"eRTsPk1hTBUS7L0eLtxWYktgL5dU4txDWHtbHlFssJI=", 
+    # "cluster"=>{"vip_name"=>"gluster-fudge", "vip_dns"=>"10.10.0.1", 
+    # "hostgroup_id"=>"50512d3dbfa68e575700000a", "check_command_id"=>"", 
+    # "check_command_arguments"=>"1", "contact_ids"=>["", "", 
+    # "5051283ebfa68e5757000002", "50744ea4bfa68e234c000001"], 
+    # "percent_warn"=>"1", "percent_crit"=>"1", "ecv_uri"=>"1", 
+    # "ecv_string"=>"1", "node_alert_when_down"=>"1", 
+    # "notify_on_node_service"=>"0", "node_check_command_id"=>"", 
+    # "node_check_command_arguments"=>""}, 
+    # "return_to"=>"http://0.0.0.0:3000/users/sign_in", "_save"=>"", 
+    # "controller"=>"rails_admin/main", "action"=>"edit", 
+    # "model_name"=>"cluster", "id"=>"5056c6b2bfa68e7de1000001"}
+    # 
+    # GET of new cluster page:
+    # LOOKUP_STRINGED_PARAMS ... {"_pjax"=>"[data-pjax-container]", 
+    # "controller"=>"rails_admin/main", "action"=>"new", 
+    # "model_name"=>"cluster"}
+    # 
+    # POST of new cluster page:
+    # ... {"utf8"=>"✓", 
+    # "authenticity_token"=>"eRTsPk1hTBUS7L0eLtxWYktgL5dU4txDWHtbHlFssJI=", 
+    # "cluster"=>{"vip_name"=>"new-vip", "vip_dns"=>"10.1.1.0", 
+    # "hostgroup_id"=>"50512d3dbfa68e575700000a", 
+    # "check_command_id"=>"5060cffebfa68e2791000007", 
+    # "check_command_arguments"=>"$HOST", "contact_ids"=>["", "", 
+    # "50744ea4bfa68e234c000001"], "percent_warn"=>"1", "percent_crit"=>"1", 
+    # "ecv_uri"=>"1", "ecv_string"=>"1", "node_alert_when_down"=>"1", 
+    # "notify_on_node_service"=>"0", "node_check_command_id"=>"", 
+    # "node_check_command_arguments"=>""}, 
+    # "return_to"=>"http://0.0.0.0:3000/cluster", "_save"=>"", 
+    # "id"=>"5075af3ebfa68e9b32000002", "controller"=>"rails_admin/main", 
+    # "action"=>"new", "model_name"=>"cluster"}
+    # 
+    #
+    def convert_stringable_association_params
+      logger.debug("LOOKUP_STRINGED_PARAMS before ... #{params.inspect}")
+
+      # @model_name should have Camelized model name
+      # @abstract_model is rails-admin model proxy
+      # @abstract_model.model is the model Class itself
+      # @abstract_model.param_key is the model name for params hash
+
+      # check the model - get the fields that should be converted
+      model = @abstract_model.model rescue nil
+      return unless model
+
+      # does Model have fields to be converted?
+      look_for = model.stringable_associations.map(&:to_s) rescue nil
+      return if look_for.blank?
+
+      # action: edit, new
+      # TODO: should we only deal with POST? or just check params for 
+      # param_key?
+      return unless params.has_key?(@abstract_model.param_key)
+
+      look_for.each do |field|
+        # does field exist in params?
+        param_key = @abstract_model.param_key
+        field_data = params[param_key][field]
+        next if field_data.blank?
+        next unless (field_data.is_a?(String) || field_data.is_a?(Array))
+
+        # get Mongoid metadata for association field
+        metadata = model.associations[field]
+
+        # this is the model of the associated class
+        field_model = metadata.class_name.constantize rescue nil
+        return unless field_model
+
+        # this is the param for the key(s) field
+        key = metadata.key
+
+        # How to tell if association to multiple?
+        #
+        # if key /_ids$/ -> multi, if /_id$/ => single
+        #
+        # OR
+        #
+        # ModelClass.associations returns list of Mongoid::Relations::Metadata:
+        #  .relation -> Mongoid::Relations::Referenced::Many
+        #  .relation -> Mongoid::Relations::Referenced::ManyToMany
+        # or single ...
+        #  .relation -> Mongoid::Relations::Referenced::In
+        #
+        # OR
+        #
+        #if field_data.is_a?(String)
+        #elsif field_data.is_a?(Array)
+        #else
+        #  logger.warn("Unable to convert strings in #{model}.#{field}: unknown 
+        #  type: #{field_data.class}")
+        #end
+
+        logger.debug("LOOKUP_STRINGED_PARAMS field: #{field} = #{field_data.inspect}")
+
+        case key
+        when /_id$/
+          params[param_key][key] = convert_stringable_param_field(field_model, field_data)
+        when /_ids$/
+          params[param_key][key] = field_data.to_a.collect {|x| convert_stringable_param_field(field_model, x) }
+        end
+
+        # drop old data in favour of the new
+        # TODO: double check argument list counts?
+        params[param_key].delete(field)
+
+        logger.debug("LOOKUP_STRINGED_PARAMS field: #{key} ==> #{params[key].inspect}")
+
+      end # look_for.each
+
+      logger.debug("LOOKUP_STRINGED_PARAMS after ... #{params.inspect}")
+    end # def convert_stringable_association_fields
+
+    # convert a single field for a model into a loadable id
+    def convert_stringable_param_field(model, data)
+      # can only handle String data ...
+      return data unless data.is_a?(String)
+
+      # is already it a BSON?
+      return data if Moped::BSON::ObjectId.legal?(data)
+
+      # finally, try looking it up
+      model.find(data).id rescue nil
     end
 
   end

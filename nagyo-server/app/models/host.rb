@@ -127,27 +127,24 @@ class Host
   end
 
   module HostSetters
+    extend ActiveSupport::Concern
 
-    # NOTE: this is not getting called as it adds each to 
-    # Mongoid::Relations::Referenced::ManyToMany via
-    # Mongoid::Relations::Targets::Enumerable
-    #
-    def contacts=(new_contacts)
-      # if the list is strings -- look them up
-      # if the list has Contact objects -- use them already
+    included do
+      class_attribute :stringable_associations
 
-      real_contact_list = []
 
-      # do we raise if not found or just ignore?
-      new_contacts.each do |c|
-        if c.is_a?(String)
-          real_contact_list << Contact.find(c)
-        else
-          real_contact_list << c
-        end
+      self.stringable_associations = [:contacts]
+    end
+
+    def contact_ids=(contact_ids)
+      logger.debug("CONTACT_IDS=#{contact_ids.inspect}")
+
+      new_ids = contact_ids.reject(&:blank?).map do |id|
+        Moped::BSON::ObjectId.legal?(id) ? id : (Contact.find(id).id rescue nil )
       end
 
-      super(real_contact_list)
+      logger.debug("CONTACT NEW_IDS=#{new_ids.inspect}")
+      super(new_ids)
     end
 
 

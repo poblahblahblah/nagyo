@@ -63,9 +63,9 @@ def resource_way
   puts "EXISTING HOSTS: " + all_hosts.inspect
 
   new_opts = {
-    "host_name" => "pobrien.np.dc1.eharmony.com",
-    "alias" => "pobrien.np.dc1.eharmony.com",
-    "address" => "pobrien.np.dc1.eharmony.com",
+    "host_name" => "damian.np.dc1.eharmony.com",
+    "alias" => "damian.np.dc1.eharmony.com",
+    "address" => "damian.np.dc1.eharmony.com",
     "max_check_attempts" => 3,
     "notification_interval" => 5,
     # 24x7
@@ -76,7 +76,8 @@ def resource_way
     "check_period_id" => "5050cb9ebfa68e0903000001",
     # just using first contact
     #"contacts" => ["pat-obrien"],
-    "contact_ids" => ["5051283ebfa68e5757000002"],
+    "contacts" => ["damian"],
+    #"contact_ids" => ["5051283ebfa68e5757000002"],
   }
 
 
