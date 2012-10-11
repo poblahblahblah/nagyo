@@ -23,6 +23,9 @@ class Hostdependency
     :class_name => "Hostgroup",
     :inverse_of => :dependent_host_dependencies
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
   # required:
 
   # optional:

@@ -21,6 +21,8 @@ class Serviceescalation
     :class_name => "Timeperiod",
     :inverse_of => :serviceescalations
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
 
   # fields
   field :first_notification,      type: Integer

@@ -32,6 +32,10 @@ class Contact
     :inverse_of => :service_notification_contacts
 
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
+
   # required:
   field :contact_name,                   type: String
   slug :contact_name

@@ -51,6 +51,8 @@ class Host
   has_many :hostescalations
   has_many :serviceescalations
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
 
   # required:
   field :host_name,             type: String
@@ -126,50 +128,41 @@ class Host
     "#{host_name}"
   end
 
+  # TODO: finish converting this into a series of Extension points
+  #
+  # include Extensions::StringableAssociations  # after all assoc defined
+  #
+  #   - will add the stringable_associations class_attribute
+  #   - will set stringable_associations based on model
+  #     - add association if related-model has a Slugged field
+  #       if ModelClass.slugged_attributes exist and has one entry
+  #
+  #   - add the custom setter methods for those situations where field_id or 
+  #   field_ids is set manually (via console, url params etc)
   module HostSetters
-    extend ActiveSupport::Concern
 
-    included do
-      class_attribute :stringable_associations
-
-
-      self.stringable_associations = [:contacts]
-    end
-
+    # NOTE: this is a fallback method needed in addition to the 
+    # RailsAdmin::MainController overrides - used when not going through 
+    # RailsAdmin to make changes - does not work with bare-association name 
+    # though, must use :field_ids= method
+    #
+    # Example in console:
+    # > h = Host.last
+    # > h.contact_ids = ["unix-sa"]
+    #
     def contact_ids=(contact_ids)
-      logger.debug("CONTACT_IDS=#{contact_ids.inspect}")
-
+      #logger.debug("CONTACT_IDS=#{contact_ids.inspect}")
       new_ids = contact_ids.reject(&:blank?).map do |id|
         Moped::BSON::ObjectId.legal?(id) ? id : (Contact.find(id).id rescue nil )
       end
-
-      logger.debug("CONTACT NEW_IDS=#{new_ids.inspect}")
+      #logger.debug("CONTACT NEW_IDS=#{new_ids.inspect}")
       super(new_ids)
     end
 
-
-    # TODO: the << is part of Mongoid::Relations::Targets::Enumerable
-    # define_method("contacts<<") do |new_contact|
-    #   # do we raise if not found or just ignore?
-    #   real_contact = nil
-    #   if new_contact.is_a?(String)
-    #     real_contact = Contact.find(c)
-    #   else
-    #     real_contact = c
-    #   end
-    # 
-    #   super(real_contact)
-    # end
-
-    # FIXME: TODO: why is it that when i set :contact_ids on a 
-    # Host.new() call using slugged key it doesn't set the Contacts?
-    # WORKS:
-    #   Host.new({ "contact_ids" => ["50744ea4bfa68e234c000001"], ...})
-    # DOESN'T WORK:
-    #   Host.new({ "contact_ids" => ["damian"], ...})
   end
 
   include HostSetters
+  #
 
 private
 

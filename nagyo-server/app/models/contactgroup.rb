@@ -23,6 +23,10 @@ class Contactgroup
   has_and_belongs_to_many :serviceescalations,
     :inverse_of => :contact_groups
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
+
   # required:
   field :contactgroup_name,     type: String
   slug :contactgroup_name

@@ -27,6 +27,9 @@ class Servicedependency
     :class_name => "Timeperiod",
     :inverse_of => :service_dependencies
   
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
   # required:
   field :dependent_service_description, type: String
   field :service_description,           type: String

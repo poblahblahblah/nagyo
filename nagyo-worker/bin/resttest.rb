@@ -69,11 +69,11 @@ def resource_way
     "max_check_attempts" => 3,
     "notification_interval" => 5,
     # 24x7
-    #"notification_period" => "24x7",
-    "notification_period_id" => "5050cb9ebfa68e0903000001",
+    "notification_period" => "24x7",
+    #"notification_period_id" => "5050cb9ebfa68e0903000001",
     # 24x7
-    #"check_period" => "24x7",
-    "check_period_id" => "5050cb9ebfa68e0903000001",
+    "check_period" => "24x7",
+    #"check_period_id" => "5050cb9ebfa68e0903000001",
     # just using first contact
     #"contacts" => ["pat-obrien"],
     "contacts" => ["damian"],

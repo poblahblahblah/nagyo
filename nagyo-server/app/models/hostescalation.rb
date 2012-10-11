@@ -18,6 +18,9 @@ class Hostescalation
     :class_name => "Timeperiod",
     :inverse_of => :hostescalations
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
   # fields
   field :first_notification,      type: Integer
   field :last_notification,       type: Integer

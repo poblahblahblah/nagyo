@@ -34,6 +34,9 @@ class Hostgroup
   has_many :hostescalations
   has_many :serviceescalations
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
   # required:
   field :hostgroup_name,  type: String
   slug :hostgroup_name

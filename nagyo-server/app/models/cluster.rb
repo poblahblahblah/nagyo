@@ -19,6 +19,9 @@ class Cluster
 
   belongs_to :hostgroup
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
   # required:
 
   ## NOTE: these fields were merged over from Vip model

@@ -40,6 +40,10 @@ class Service
     :class_name => "Serviceescalation",
     :inverse_of => :service
 
+
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
   # required:
   field :name,                          type: String
   slug :name

@@ -40,6 +40,9 @@ class Command
     :class_name => "Service",
     :inverse_of => :event_handler
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
   validates_uniqueness_of :command_name
   validates_presence_of   :command_name, :command_line
 

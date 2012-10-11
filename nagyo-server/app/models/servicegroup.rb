@@ -14,6 +14,9 @@ class Servicegroup
   has_and_belongs_to_many :servicegroup_members,
     :class_name => "Servicegroup"
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
   # required:
   field :servicegroup_name,    type: String  #:required => true, :unique => true
   slug :servicegroup_name

@@ -13,6 +13,9 @@ class Hardwareprofile
     :class_name => "Command",
     :inverse_of => :hardwareprofiles
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
   # required:
   field :hardware_profile,      type: String
   slug :hardware_profile
