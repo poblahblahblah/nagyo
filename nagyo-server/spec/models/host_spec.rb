@@ -13,7 +13,9 @@ describe Host do
     it { should validate_presence_of :notification_interval }
     it { should validate_presence_of :notification_period }
 
-    it { should validate_uniqueness_of(:host_name).scoped_to(:check_period, :contacts, :notification_period) }
+    #it { should validate_uniqueness_of(:host_name).scoped_to(:check_period, 
+    #:contacts, :notification_period) }
+    it { should validate_uniqueness_of(:host_name) }
 
 
   end

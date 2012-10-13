@@ -128,42 +128,6 @@ class Host
     "#{host_name}"
   end
 
-  # TODO: finish converting this into a series of Extension points
-  #
-  # include Extensions::StringableAssociations  # after all assoc defined
-  #
-  #   - will add the stringable_associations class_attribute
-  #   - will set stringable_associations based on model
-  #     - add association if related-model has a Slugged field
-  #       if ModelClass.slugged_attributes exist and has one entry
-  #
-  #   - add the custom setter methods for those situations where field_id or 
-  #   field_ids is set manually (via console, url params etc)
-  module HostSetters
-
-    # NOTE: this is a fallback method needed in addition to the 
-    # RailsAdmin::MainController overrides - used when not going through 
-    # RailsAdmin to make changes - does not work with bare-association name 
-    # though, must use :field_ids= method
-    #
-    # Example in console:
-    # > h = Host.last
-    # > h.contact_ids = ["unix-sa"]
-    #
-    def contact_ids=(contact_ids)
-      #logger.debug("CONTACT_IDS=#{contact_ids.inspect}")
-      new_ids = contact_ids.reject(&:blank?).map do |id|
-        Moped::BSON::ObjectId.legal?(id) ? id : (Contact.find(id).id rescue nil )
-      end
-      #logger.debug("CONTACT NEW_IDS=#{new_ids.inspect}")
-      super(new_ids)
-    end
-
-  end
-
-  include HostSetters
-  #
-
 private
 
   def set_alias_and_address_to_host_name
