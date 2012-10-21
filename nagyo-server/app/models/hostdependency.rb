@@ -23,9 +23,6 @@ class Hostdependency
     :class_name => "Hostgroup",
     :inverse_of => :dependent_host_dependencies
 
-  # NOTE: this has to come *after* the association are defined
-  include Extensions::StringableAssociations
-
   # required:
 
   # optional:
@@ -51,6 +48,9 @@ class Hostdependency
   validates_with EitherOrValidator, :fields => [:host, :hostgroup]
   validates_with EitherOrValidator, :fields => [:dependent_host, :dependent_hostgroup]
 
+
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
 
   def initialize(*params)
     super(*params)

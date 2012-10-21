@@ -23,9 +23,6 @@ class Contactgroup
   has_and_belongs_to_many :serviceescalations,
     :inverse_of => :contact_groups
 
-  # NOTE: this has to come *after* the association are defined
-  include Extensions::StringableAssociations
-
 
   # required:
   field :contactgroup_name,     type: String
@@ -45,6 +42,9 @@ class Contactgroup
   before_validation             :set_alias_to_contactgroup_name
 
   # FIXME: add validation for not adding contactgroup to itself
+
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
 
 
   def initialize(*params)

@@ -27,9 +27,6 @@ class Servicedependency
     :class_name => "Timeperiod",
     :inverse_of => :service_dependencies
   
-  # NOTE: this has to come *after* the association are defined
-  include Extensions::StringableAssociations
-
   # required:
   field :dependent_service_description, type: String
   field :service_description,           type: String
@@ -54,6 +51,9 @@ class Servicedependency
   validates_presence_of :service, :dependent_service
   validates_with EitherOrValidator, :fields => [:host, :hostgroup]
   validates_with EitherOrValidator, :fields => [:dependent_host, :dependent_hostgroup]
+
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
 
 
   def initialize(*params)

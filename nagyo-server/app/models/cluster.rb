@@ -19,9 +19,6 @@ class Cluster
 
   belongs_to :hostgroup
 
-  # NOTE: this has to come *after* the association are defined
-  include Extensions::StringableAssociations
-
   # required:
 
   ## NOTE: these fields were merged over from Vip model
@@ -54,6 +51,9 @@ class Cluster
   #validates_uniqueness_of  :hostgroup, :scope => [:check_command, :contacts]
   #validates_uniqueness_of       :hostgroup, :scope => [:check_command, 
   #:contacts, :vip_dns, :vip_name]
+
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
 
 
   def initialize(*params)

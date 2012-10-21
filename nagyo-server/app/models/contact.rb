@@ -32,10 +32,6 @@ class Contact
     :inverse_of => :service_notification_contacts
 
 
-  # NOTE: this has to come *after* the association are defined
-  include Extensions::StringableAssociations
-
-
   # required:
   field :contact_name,                   type: String
   slug :contact_name
@@ -75,6 +71,11 @@ class Contact
 
   after_initialize  :set_defaults
   before_validation  :set_alias_to_contact_name
+
+
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
 
   def initialize(*params)
     super(*params)

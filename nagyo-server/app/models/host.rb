@@ -51,9 +51,6 @@ class Host
   has_many :hostescalations
   has_many :serviceescalations
 
-  # NOTE: this has to come *after* the association are defined
-  include Extensions::StringableAssociations
-
   # required:
   field :host_name,             type: String
   slug :host_name
@@ -119,6 +116,8 @@ class Host
   # FIXME: for whatever reason validations against multiple fields is not working like they did in MM
   validates_uniqueness_of    :host_name, :scope => [:check_period_id, :contact_ids, :notification_period_id]
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
 
   def initialize(*params)
     super(*params)

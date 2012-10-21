@@ -21,9 +21,6 @@ class Serviceescalation
     :class_name => "Timeperiod",
     :inverse_of => :serviceescalations
 
-  # NOTE: this has to come *after* the association are defined
-  include Extensions::StringableAssociations
-
   # fields
   field :first_notification,      type: Integer
   field :last_notification,       type: Integer
@@ -44,6 +41,9 @@ class Serviceescalation
   validates_presence_of :host, :service, :contacts, :contact_groups
   validates_presence_of :first_notification, :last_notification, :notification_interval
 
+
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
 
 
 protected

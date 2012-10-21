@@ -58,13 +58,13 @@ class Timeperiod
     :inverse_of => :escalation_period
 
 
-  # NOTE: this has to come *after* the association are defined
-  include Extensions::StringableAssociations
-
   before_validation :ensure_alias_label
   # validations
   validates_presence_of         :timeperiod_name, :alias
   validates_uniqueness_of       :timeperiod_name, :alias
+
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
 
 
   def initialize(*params)

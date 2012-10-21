@@ -6,6 +6,7 @@
 #   - add the custom setter methods for those situations where field_id or 
 #   field_ids is set manually (via console, scripts, etc)
 #
+#
 module Extensions
 
   module StringableAssociations
@@ -13,28 +14,50 @@ module Extensions
     extend ActiveSupport::Concern
 
     included do
-      #
-      class_attribute :stringable_associations
 
+      # lookup id for an association class - can dereference model attribute 
+      # values or slugged attributes into BSON ids.
       #
-      self.stringable_associations = determine_stringable_fields(self)
-
-      # lookup id for an association class - can dereference slugged ids into 
-      # BSON ids
       def bson_from_stringable_id(value, model_name)
-        Moped::BSON::ObjectId.legal?(value) ? value : (model_name.to_s.constantize.find(value).id rescue nil)
+        if Moped::BSON::ObjectId.legal?(value)
+         return value
+        end
+
+        id_val = nil
+        model_class = model_name.to_s.constantize rescue nil
+        begin
+          id_val = model_class.find(value).id
+        rescue
+          logger.error("ERROR :: #{$!} ")
+          begin
+            id_val = model_class.find_by(model_class.slugged_attributes.first => value).id
+          rescue
+            logger.error("ERROR 2:: #{$!} ")
+          end
+            #nil
+        end
+        id_val
       end
 
-    end
+      ###
+
+      #
+      class_attribute :stringable_associations
+      self.stringable_associations = determine_stringable_fields(self)
+
+    end # included
 
 
     module ClassMethods
 
+
+
       def determine_stringable_fields(model)
-        logger.debug("DETERMINE_STRINGABLE for #{model}")
         the_fields = []
 
         model.associations.each do |name, metadata|
+          #logger.debug("DETERMINE_STRINGABLE #{model} ... #{name}, 
+          ##{metadata}")
           assoc_model = metadata.class_name.constantize rescue nil
           next unless assoc_model
           # make sure it has some slug
@@ -45,10 +68,10 @@ module Extensions
 
           # add the custom setter method per field
           #
-          # NOTE: this defines a method in addition to the 
+          # NOTE: this defines a method in addition to the monkey patched 
           # RailsAdmin::MainController overrides that is used when *not* going 
-          # through RailsAdmin.  But, it does not work with bare-association 
-          # name, must use _id=/_ids= methods.
+          # through a RailsAdmin route.  However, it does not work with 
+          # bare-association name, you must use the _id=/_ids= methods.
           #
           # Example in console to set Host.contacts:
           # > h = Host.last
@@ -66,9 +89,7 @@ module Extensions
               end
             end
 
-            # set it
             super(new_value)
-
           end # define method
 
 

@@ -34,9 +34,6 @@ class Hostgroup
   has_many :hostescalations
   has_many :serviceescalations
 
-  # NOTE: this has to come *after* the association are defined
-  include Extensions::StringableAssociations
-
   # required:
   field :hostgroup_name,  type: String
   slug :hostgroup_name
@@ -52,6 +49,9 @@ class Hostgroup
   before_validation        :set_alias_to_hostgroup_name
   validates_presence_of    :hostgroup_name, :alias
   validates_uniqueness_of  :hostgroup_name, :alias
+
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
 
   def initialize(*params)
     super(*params)

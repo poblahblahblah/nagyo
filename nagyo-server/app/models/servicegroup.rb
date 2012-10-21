@@ -14,9 +14,6 @@ class Servicegroup
   has_and_belongs_to_many :servicegroup_members,
     :class_name => "Servicegroup"
 
-  # NOTE: this has to come *after* the association are defined
-  include Extensions::StringableAssociations
-
   # required:
   field :servicegroup_name,    type: String  #:required => true, :unique => true
   slug :servicegroup_name
@@ -31,6 +28,10 @@ class Servicegroup
   before_validation        :set_alias_to_servicegroup_name
   validates_presence_of    :servicegroup_name, :alias
   validates_uniqueness_of  :servicegroup_name
+
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
+
 
   def initialize(*params)
     super(*params)

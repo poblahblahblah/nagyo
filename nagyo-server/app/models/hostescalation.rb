@@ -18,8 +18,6 @@ class Hostescalation
     :class_name => "Timeperiod",
     :inverse_of => :hostescalations
 
-  # NOTE: this has to come *after* the association are defined
-  include Extensions::StringableAssociations
 
   # fields
   field :first_notification,      type: Integer
@@ -40,6 +38,8 @@ class Hostescalation
   validates_presence_of :host, :contacts, :contact_groups
   validates_presence_of :first_notification, :last_notification, :notification_interval
 
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
 
 protected
 

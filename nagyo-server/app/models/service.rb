@@ -40,10 +40,6 @@ class Service
     :class_name => "Serviceescalation",
     :inverse_of => :service
 
-
-  # NOTE: this has to come *after* the association are defined
-  include Extensions::StringableAssociations
-
   # required:
   field :name,                          type: String
   slug :name
@@ -113,9 +109,8 @@ class Service
   #validates_uniqueness_of :hostgroup, :scope => [:check_command, :contacts, 
   #:notification_period]
 
-  def initialize(*params)
-    super(*params)
-  end
+  # NOTE: this has to come *after* the association are defined
+  include Extensions::StringableAssociations
 
   # NOTE: unique key will be set from input values below
   def to_s
