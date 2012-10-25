@@ -134,7 +134,7 @@ RailsAdmin.config do |config|
 
   #  ==> Global show view settings
   # Display empty fields in show views
-  # config.compact_show_view = false
+  config.compact_show_view = false
 
   #  ==> Global list view settings
   # Number of default rows per-page:

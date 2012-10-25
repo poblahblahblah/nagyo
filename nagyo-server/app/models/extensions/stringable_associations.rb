@@ -19,6 +19,7 @@ module Extensions
       # values or slugged attributes into BSON ids.
       #
       def bson_from_stringable_id(value, model_name)
+        return if value.blank?
         if Moped::BSON::ObjectId.legal?(value)
          return value
         end
@@ -28,13 +29,11 @@ module Extensions
         begin
           id_val = model_class.find(value).id
         rescue
-          logger.error("ERROR :: #{$!} ")
           begin
             id_val = model_class.find_by(model_class.slugged_attributes.first => value).id
           rescue
-            logger.error("ERROR 2:: #{$!} ")
+            #
           end
-            #nil
         end
         id_val
       end

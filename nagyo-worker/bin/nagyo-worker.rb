@@ -12,16 +12,22 @@ require 'logger'
 require 'json'
 
 # custom libs
-require 'nventory'
-require 'nv_helpers'
+#require 'nventory'
+#require 'nv_helpers'
 
-logger = Logger.new(STDOUT)
+# our lib
+require 'nagyo-worker'
+
+include Nagyo::Worker
+logger = Nagyo::Worker.logger
 
 logger.debug("Starting nagyo-worker ...")
 
 # I'll probably want to move a lot of this to config files
-nventory_host   = "http://nventory.corp.eharmony.com"
+#nventory_host   = "http://nventory.corp.eharmony.com"
 #nventory_host   = "http://localhost:7000"
+#
+nventory_host   = "http://nventory.slacklabs.com"
 nvclient        = NVentory::Client.new(:server => nventory_host, :cookiefile => "/tmp/.nventory-cookie")
 script_base     = "/data/svc/ops/nagyo/nagyo-worker"
 npvm_regex      = "npvm.+\.np\..+\.eharmony\.com"
@@ -30,107 +36,47 @@ nodes           = {}
 node_groups     = {}
 service_ngs     = []
 gen_directories = %W(clusters commands contacts hardware hostgroups hosts services vips)
+# !!
 tmpdir          = Dir.mktmpdir
+
 tmpfile         = Tempfile.new('nagios.cfg').path
 nagdir          = "/etc/nagios/objects"
+
+# !!
 backup_dir      = FileUtils.mkdir_p("/var/nagyo/backup")
 reload_required = false
 nagios_user     = "root"
 nagios_group    = "nagios"
-# this should be renamed to something more meaningful:
+
+# TODO: this should be renamed to something more meaningful:
 #url             = "nagios2.np.dc1.eharmony.com:3000"
 url             = "localhost:3000"
 nagyo_host      = "localhost:3000"
 
-nodes           = nvclient.get_objects(:objecttype => 'nodes',
-                                       :get        => {'status[name]' => ['setup', 'inservice', 'ss-inservice']},
-                                       :includes   => ['operating_system[name]', 
-                                                      'hardware_profile[name]',
-                                                      'node_groups',
-                                                      'status[name]'],
-                                       :format     => 'json')
 
-logger.debug("Got nodes from nventory (#{nventory_host}): #{nodes.inspect}")
 
-gen_directories.each {|dir| Dir.mkdir(File.join(tmpdir, dir))}
+# pull from nventory and seed nagyo
+Nagyo::Worker::NventorySync.sync_nventory_nodes(:nventory_host => nventory_host)
 
-def get_remote_json(url, file_and_path)
-    # uncomment for https
-    #url = URI.parse("https://" + url)
-    url = URI.parse("http://" + url)
-    http = Net::HTTP.new(url.host, url.port)
-    # and this for ssl
-    #http.use_ssl = true
-    resp = http.get(file_and_path)
-    return resp.body
-end
+#nodes, node_groups = Nagyo::Worker::NventorySync.nventory_nodes
 
-def get_data_from_ng(ng)
-  nv_helper = NvHelpers::NvWrapper.new(:cookiefile => '/tmp/.nagyo-nvcookie')
-  # Check that nodegroup exists
-  if nv_helper.get_node_group_by_name(ng).nil?
-    msg = "Node group #{ng} does not exist in nVentory."
-    exit 1
-  end
-  # These are the graffitis we're interested in
-  keys = %w(instances application_start_port)
-  graffitis = nv_helper.get_graffitis(ng, keys, true)
-  nodes     = nv_helper.get_nodes_from_group(ng).keys
-  return graffitis, nodes
-end
 
-# note to self: look for something cleaner:
-def send_email(from, to, subject, message, *cc)
-  msg = <<END_OF_MESSAGE
-From: #{from}
-To: #{to}
-CC: #{cc}
-Subject: #{subject}
+# load into 
 
-#{message}
-END_OF_MESSAGE
-  Net::SMTP.start('localhost') do |smtp|
-    smtp.send_message msg, from, to, *cc
-  end
-  rescue => exception
-  puts "RESCUE => MAILER: unable to send mail #{exception}"
-  return false
-end
+# create directories for nagios config
 
-# there are a few things we want to check for, the first of
-# which being whether or not there is an operating system
-# listed for this, the second of which being it's an 
-# operating system that we actually care about.
-nodes.delete_if {|x| !x.has_key?('operating_system')}
-nodes.delete_if {|x| x['operating_system']['name'] !~ /centos|red hat|scientific/i}
+# ... 
+gen_directories.each {|dir| Dir.mkdir(File.join(tmpdir, dir))} rescue logger.error("Unable to create directories: #{$!}")
 
-# and now let's get rid of all non setup or *inservice nodes
-nodes.delete_if {|x| x['status']['name'] !~ /^setup$|inservice$/i}
 
-# here we do various things to the nodes array, there will be a blurb before each of them
-nodes.each do |node|
-  # we don't really care about alerting on non production hosts (although this may change)
-  # so let's just pass the nodes through a regex matching the SSVMs but not the hypervisors
-  # and just change their status to 'setup'. jankey?
-  if node['name'] !~ /#{npvm_regex}/ && node['name'] =~ /#{npssvm_regex}/
-    node['status']['name'] = 'setup'
-  end
-  # this isn't all that necessary:
-  if node['status']['name'] =~ /inservice/
-    node['status']['name'] = 'inservice'
-  end
-  # let's put all of the nodegroups into a new array which just lists the names and the nodes belonging to them
-  node['node_groups'].each do |ng|
-    node_groups[ng['name']] = [] if !node_groups.has_key?(ng['name'])
-    node_groups[ng['name']] << node['name']
-  end
-end
+# generate nagios config using templates
 
 # all of the stuff below can be broken out into their own thread
 # since they're all doing what amounts to the same thing, but 
 # from different sources and to different destinations.
 # hosts/hosts.cfg
 Thread.new do
+  # NOTE: the erb iterates nodes ... 
   hosts = ERB.new(File.open(File.join(script_base, "templates/hosts.erb")){ |f| f.read } ).result(binding)
   f = File.new(File.join(tmpdir, "hosts/hosts.cfg"), "wb")
   f.puts hosts
