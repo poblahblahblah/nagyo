@@ -8,7 +8,7 @@ require 'nv_helpers'
 module Nagyo::Worker
   # class?
   module NventorySync
-    include Nagyo::Worker
+    #include Nagyo::Worker
 
 
     # TODO: rely on nventory config ...  can we have conf file in distribution?  
@@ -23,6 +23,7 @@ module Nagyo::Worker
     #
     def self.nventory_nodes_and_groups(opts = {})
 
+      # TODO: use a Config for this?
       # I'll probably want to move a lot of this to config files
       #nventory_host   = "http://nventory.corp.eharmony.com"
       #nventory_host   = "http://localhost:7000"
@@ -34,6 +35,7 @@ module Nagyo::Worker
       service_ngs     = []
 
       # this returns a hash host_name => {host_data}
+      # TODO: this could also be specified in config .. e.g. yaml
       nodes           = nvclient.get_objects(:objecttype => 'nodes',
                                              :get        => {'status[name]' => ['setup', 'inservice', 'ss-inservice']},
                                              :includes   => ['operating_system[name]', 

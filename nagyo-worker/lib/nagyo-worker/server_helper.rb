@@ -11,7 +11,8 @@ module Nagyo::Worker
   # Example
   #
   #    nagyo = Nagyo::Worker::ServerHelper.new(
-  #               :base_url => "http://localhost:3000/",
+  #
+  #               :nagyo_host => "http://localhost:3000/",
   #               :auth_token => "b4j5qBqzYx5EukCM3Vri"
   #            )
   #    periods = nagyo.get_all("Timeperiods")
@@ -22,14 +23,14 @@ module Nagyo::Worker
   #
   class ServerHelper
 
-    attr_accessor :base_url, :auth_token, :nagyo
+    attr_accessor :nagyo_host, :auth_token, :nagyo
 
-    def initialize(opts = {})
+    def initialize(nagyo_host = nil, auth_token = nil)
       # need a nagyo server host, port and base URI
-      self.base_url   = opts[:base_url]
-      self.auth_token = opts[:auth_token] # 'b4j5qBqzYx5EukCM3Vri'
+      self.nagyo_host = nagyo_host || Nagyo::Worker.config[:nagyo_host]
+      self.auth_token = auth_token || Nagyo::Worker.config[:nagyo_auth_token] # 'b4j5qBqzYx5EukCM3Vri'
 
-      self.nagyo = RestClient::Resource.new(base_url, auth_token)
+      self.nagyo = RestClient::Resource.new(self.nagyo_host, self.auth_token)
     end
 
     # CRUD operations - by model class, id
