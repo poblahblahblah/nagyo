@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
 
   # requirements
   gem.add_development_dependency "rake"
-  #gem.add_development_dependency "rspec"
+  gem.add_development_dependency "rspec"
 
   gem.add_runtime_dependency "nventory-client"
   gem.add_runtime_dependency "nv_helpers"
