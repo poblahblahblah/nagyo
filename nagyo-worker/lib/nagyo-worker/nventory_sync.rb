@@ -1,19 +1,40 @@
 
 # Sync nodes from nVentory to Nagyo hosts.
 
-# other libs
+# external libs
 require 'nventory'
 require 'nv_helpers'
 
 module Nagyo::Worker
   # class?
   module NventorySync
-    #include Nagyo::Worker
+    def self.config
+      Nagyo::Worker.config
+    end
 
+    def self.logger
+      Nagyo::Worker.logger
+    end
 
-    # TODO: rely on nventory config ...  can we have conf file in distribution?  
-    # gemfile config file resource?
+    # returns two arrays: graffitis, nodes
+    # NvWrapper uses an NVentory::Client
+    def self.get_data_from_ng(ng)
+      nv_helper = NvHelpers::NvWrapper.new(:server => config[:nventory_host],
+                                           :cookiefile => config[:cookiefile])
 
+      # Check that nodegroup exists
+      if nv_helper.get_node_group_by_name(ng).nil?
+        msg = "Node group #{ng} does not exist in nVentory."
+        exit 1
+      end
+      # These are the graffitis we're interested in
+      keys = %w(instances application_start_port)
+      graffitis = nv_helper.get_graffitis(ng, keys, true)
+      nodes     = nv_helper.get_nodes_from_group(ng).keys
+      return graffitis, nodes
+    end
+
+    # TODO: rely on nventory config ?
 
     # pulls nodes and nodegroups from nventory server and returns the result.
     #
@@ -23,16 +44,18 @@ module Nagyo::Worker
     #
     def self.nventory_nodes_and_groups(opts = {})
 
-      # TODO: use a Config for this?
-      # I'll probably want to move a lot of this to config files
+      Nagyo::Worker.configure(opts)
+
+      # production
       #nventory_host   = "http://nventory.corp.eharmony.com"
+      # development
       #nventory_host   = "http://localhost:7000"
-      #
-      nventory_host   = opts[:nventory_host] || "http://nventory.slacklabs.com"
-      nvclient        = NVentory::Client.new(:server => nventory_host, :cookiefile => "/tmp/.nventory-cookie")
+
+      nventory_host   = opts[:nventory_host] || config[:nventory_host]
+      nvclient        = NVentory::Client.new(:server => nventory_host,
+                                             :cookiefile => config[:cookiefile])
       nodes           = {}
       node_groups     = {}
-      service_ngs     = []
 
       # this returns a hash host_name => {host_data}
       # TODO: this could also be specified in config .. e.g. yaml
@@ -47,9 +70,10 @@ module Nagyo::Worker
       #Nagyo::Worker.logger.debug("Got nodes from nventory (#{nventory_host}): 
       ##{nodes.inspect}")
 
-      script_base     = "/data/svc/ops/nagyo/nagyo-worker"
-      npvm_regex      = "npvm.+\.np\..+\.eharmony\.com"
-      npssvm_regex    = "np\..+\.eharmony\.com"
+      # TODO: do we still want to filter out all not-inservice nodes here?
+      # what if a host is inservice, gets put in nagyo, then later out of 
+      # service - how to pull out of nagyo and avoid monitoring?
+
       # there are a few things we want to check for, the first of
       # which being whether or not there is an operating system
       # listed for this, the second of which being it's an 
@@ -66,7 +90,7 @@ module Nagyo::Worker
         # we don't really care about alerting on non production hosts (although this may change)
         # so let's just pass the nodes through a regex matching the SSVMs but not the hypervisors
         # and just change their status to 'setup'. jankey?
-        if node['name'] !~ /#{npvm_regex}/ && node['name'] =~ /#{npssvm_regex}/
+        if node['name'] !~ /#{config[:npvm_regex]}/ && node['name'] =~ /#{config[:npssvm_regex]}/
           node['status']['name'] = 'setup'
         end
         # this isn't all that necessary:
@@ -86,6 +110,8 @@ module Nagyo::Worker
 
 
     # load nventory nodes into nagyo-server.
+    # nVentory is authoritative for Node information, status.  Nagyo just 
+    # stores a representation of the Node.
     #
     # Will create/update nagyo models for Host, Hostgroup, Hardwareprofile
     #
@@ -95,15 +121,56 @@ module Nagyo::Worker
     #   Node.hardware_profile => {:name => ""}
     #   Node.status => {:name => "", :description => ""} ?
     #
-    def self.sync_nventory_nodes(opts = {})
+    def self.sync_nventory_nodes_to_nagyo(opts = {})
+      #
       #
       nodes, nodegroups = nventory_nodes_and_groups
 
-      logger.debug("Got nodes from nventory (#{opts[:nventory_host]}): #{nodes.keys.inspect}")
-      logger.debug("Got node groups from nventory #{nodegroups.keys.inspect}")
+      nagyo = Nagyo::Worker::ServerHelper.new(opts[:nagyo_host], opts[:nagyo_auth_token])
 
-      # first make nodegroups
-      nodegroups.each do |n|
+      logger.debug("Got nodes from nventory (#{opts[:nventory_host]}): #{nodes.keys.inspect}")
+      logger.debug("Got node groups from nventory #{nodegroups.inspect}")
+
+      if opts[:dump_nodes]
+        outf = File.new("nventory-nodes-#{Time.now.to_i}.yml", "wb")
+        outf.puts YAML.dump({:nodes => nodes, :nodegroups => nodegroups})
+        outf.close
+      end
+
+
+      # TODO: get hosts from nagyo-server - so we know what hosts are not in 
+      # the nVentory inservice node list
+      #
+      # TODO: make each Host in nagyo - though, Host requires many other fields 
+      # to construct :\  Required and not otherwise defaulted:
+      #   - :host_name, :address, :contacts
+      #   - what should :contacts be?
+      nagyo_hosts = nagyo.get_all("hosts").group_by {|x| x["host_name"] }
+
+      nodes.each do |host_name, nodedata|
+
+
+        if nagyo_hosts.include?(host_name)
+          # what would we update ... status is active ?
+        else
+          # create new
+          # massage nventory Node data into Nagyo Host data
+        end
+
+      end
+
+
+      nagyo_hostgroups = nagyo.get_all("hostgroups").group_by {|x| x["hostgroup_name"] }
+
+      # make nodegroups into hostgroups
+      nodegroups.each do |group, members|
+        if nagyo_hostgroups.include?(group)
+          # update existing ...
+          nagyo.update("hostgroup", group, :members => members)
+        else
+          # make hostgroup in nagyo
+          nagyo.create("hostgroup", :hostgroup_name => group, :members => members)
+        end
       end
 
 
@@ -111,6 +178,7 @@ module Nagyo::Worker
       #   - Hardwareprofile
 
 
+      return nodes, nodegroups
     end
 
   end

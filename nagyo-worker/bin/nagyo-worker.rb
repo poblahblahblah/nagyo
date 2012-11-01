@@ -74,29 +74,36 @@ reload_required = false
 ##################
 
 
+def script_init
+  # ...
+end
 
-# !! create a temporary directory
-tmpdir          = Dir.mktmpdir
-logger.debug("Using temporary dir: #{tmpdir}")
+  # !! create a temporary directory
+  tmpdir         = Dir.mktmpdir
+  logger.debug("Using temporary dir: #{tmpdir}")
 
-# !! create temporary nagios.cfg main file
-tmpfile         = Tempfile.new('nagios.cfg').path
-logger.debug("Using temporary nagios.cfg := #{tmpfile}")
+  # !! create temporary nagios.cfg main file
+  tmp_nagios_cfg = Tempfile.new('nagios.cfg').path
+  logger.debug("Using temporary nagios.cfg := #{tmp_nagios_cfg}")
 
-# !! create tmp directories for new nagios configs
-gen_directories = %W(clusters commands contacts hardware hostgroups hosts services)
-gen_directories.each {|dir| Dir.mkdir(File.join(tmpdir, dir))} rescue logger.error("Unable to create directories: #{$!}")
+  # !! create tmp directories for new nagios configs
+  gen_directories = config[:nagios_object_dirs] #
+  gen_directories.each {|dir| Dir.mkdir(File.join(tmpdir, dir))} rescue logger.error("Unable to create directories: #{$!}")
 
 
-# !! create backup directory
-FileUtils.mkdir_p(config[:backup_dir])
+  # !! create backup directory
+  FileUtils.mkdir_p(config[:backup_dir])
+
+
+
 
 # pull from nventory and seed nagyo 
 # TODO: make optional via cli options
+config[:sync_nventory_nagyo] = false # true
 if config[:sync_nventory_nagyo]
   # sync in-service nodes to nagyo hosts
   logger.info("Syncing nventory nodes (#{config[:nventory_host]} to nagyo-server Hosts ...")
-  Nagyo::Worker::NventorySync.sync_nventory_nodes(:nventory_host => config[:nventory_host])
+  Nagyo::Worker::NventorySync.sync_nventory_nodes_to_nagyo(:nventory_host => config[:nventory_host])
 end
 
 
@@ -134,48 +141,49 @@ end
 #
 # another Thread around this call? - or share nodes var?
 nodes = hosts = nagyo_server.get_all("hosts")
-
 logger.debug("nodes = #{nodes.inspect}")
+
+
+config_writer_threads = []
+
 # hosts/hosts.cfg (1 file)
-#Thread.new do
+config_writer_threads << Thread.new do
   # NOTE: the erb template iterates over nodes ...
   render_erb_tmpfile(binding, "hosts.erb", "#{tmpdir}/hosts/hosts.cfg")
-#end
+end
 
 
 # hardware/hardwareID.cfg (1 file per hw profile)
 nagyo_server.get_all("hardwareprofiles").each do |hp|
-  Thread.new do
+  config_writer_threads << Thread.new do
 
     # TODO: what is this for --- hardware_host_list used in erb
     hardware_host_list = []
 
     # TODO: wha? why does this (over)write the hardware/id.cfg for each hardware-profile check_command??
-    hp['check_commands'].each do |cc|
-      # FIXME: TODO: uses nventory nodes list here ... but use hosts list from nagyo instead
-      nodes.each do |node|
-        if node['hardware_profile']['name'] =~ /#{hp['hardware_profile']}/
-          hardware_host_list << node['name']
+    hp['check_commands'].to_a.each do |cc|
+      hosts.each do |node|
+        if host['hardware_profile'] =~ /#{hp['hardware_profile']}/
+          hardware_host_list << host['host_name']
         end
       end
 
-      render_erb_tmpfile("hardware.erb", File.join(tmpdir, "hardware", hp['id'] + '.cfg'))
+      render_erb_tmpfile(binding, "hardware.erb", File.join(tmpdir, "hardware", hp['_id'] + '.cfg'))
     end
   end
 end
 
 # contacts/contactID.cfg (1 per contact)
 nagyo_server.get_all("contacts").each do |cc|
-  Thread.new do
-    render_erb_tmpfile("contacts.erb", File.join(tmpdir, "contacts", cc['id'] + '.cfg'))
+  config_writer_threads << Thread.new do
+    render_erb_tmpfile(binding, "contacts.erb", File.join(tmpdir, "contacts", cc['_id'] + '.cfg'))
   end
 end
 
 # commands/commandID.cfg (1 per command)
 nagyo_server.get_all("commands").each do |cc|
-##JSON.parse(get_remote_json(nagyo_host, "/commands.json")).each do |cc|
-  Thread.new do
-    render_erb_tmpfile("commands.erb", File.join(tmpdir, "commands", cc['id'] + '.cfg'))
+  config_writer_threads << Thread.new do
+    render_erb_tmpfile(binding, "commands.erb", File.join(tmpdir, "commands", cc['_id'] + '.cfg'))
   end
 end
 
@@ -189,10 +197,11 @@ end
 # 1 thread for all services
 services_thread = Thread.new do
   nagyo_server.get_all("services").each do |cc|
-    render_erb_tmpfile("services.erb", File.join(tmpdir, "services", cc['id'] + '.cfg'))
+    render_erb_tmpfile(binding, "services.erb", File.join(tmpdir, "services", cc['_id'] + '.cfg'))
     service_ngs << cc['nodegroup']
   end
 end
+config_writer_threads << services_thread
 
 # TODO: service_ngs is used to write out the hostgroup configs, it is updated 
 # by above services_thread and by below un-named Clusters thread ... should we 
@@ -208,7 +217,7 @@ clusters_thread = Thread.new do
       hosts_to_check = []
       cc['nodegroup'].each do |ng|
         # FIXME: which nventory does it use?
-        nv_results     = Nagyo::Worker.get_data_from_ng(ng)
+        nv_results     = Nagyo::Worker::NventorySync.get_data_from_ng(ng)
         graffitis      = nv_results[0]
         nodes_in_ng    = nv_results[1]
         graffitis['instances'] = 1 if !graffitis.has_key?('instances')
@@ -218,12 +227,13 @@ clusters_thread = Thread.new do
           end
         end
 
-        render_erb_tmpfile("cluster.erb", File.join(tmpdir, "clusters", cc['id'] + '.cfg'))
+        render_erb_tmpfile(binding, "cluster.erb", File.join(tmpdir, "clusters", cc['_id'] + '.cfg'))
         service_ngs << cc['nodegroup']
       end
     end
   end
 end
+config_writer_threads << clusters_thread
 
 # hostgroups and nodegroups are the same thing but named differently
 # between nagios and nventory
@@ -232,20 +242,33 @@ end
 #
 # hostgroups/group_name.cfg for each hostgroup
 node_groups.each_pair do |k,v|
-  Thread.new do
+  config_writer_threads << Thread.new do
     services_thread.join
     # TODO: dont we need this too?
     clusters_thread.join
 
     next if !service_ngs.include?(k)
-    render_erb_tmpfile("hostgroups.erb", "#{tmpdir}/hostgroups/#{k}.cfg")
+    render_erb_tmpfile(binding, "hostgroups.erb", "#{tmpdir}/hostgroups/#{k}.cfg")
   end
 end
 
 
-sleep 1 until Thread.list.size == 1
+logger.debug("Waiting for threads now: #{config_writer_threads}")
+#config_writer_threads.map(&:join)
 
-exit
+config_writer_threads.each do |t|
+  begin
+    t.join
+  rescue Exception => e
+    logger.error("exception in joining thread #{t}: #{$!}")
+    #logger.error(%Q{#{e.inspect} ... #{e.backtrace.join("\n")}})
+  end
+end
+
+
+
+
+sleep 1 until Thread.list.size == 1
 
 # since everything has (presumably) been generated, we can compare
 # the files in various ways to see if we need to move and reload.
@@ -282,17 +305,17 @@ end
 if reload_required
 
   nagios_cfg = ERB.new(File.open("#{script_base}/templates/nagios.cfg.erb"){ |f| f.read }).result(binding)
-  f = File.new(tmpfile, "wb")
+  f = File.new(tmp_nagios_cfg, "wb")
   f.puts nagios_cfg
   f.close
 
   # finicky permissions!
   FileUtils.chown_R(config[:nagios_user], config[:nagios_group], tmpdir)
   FileUtils.chmod_R(0655, tmpdir)
-  FileUtils.chown(config[:nagios_user], config[:nagios_group], tmpfile)
-  FileUtils.chmod(0655, tmpfile)
+  FileUtils.chown(config[:nagios_user], config[:nagios_group], tmp_nagios_cfg)
+  FileUtils.chmod(0655, tmp_nagios_cfg)
 
-  if system("/usr/sbin/nagios -v #{tmpfile}") == false
+  if system("/usr/sbin/nagios -v #{tmp_nagios_cfg}") == false
     message = "verification of the nagios configs have failed. please investigate."
     #send_email("pobrien@eharmony.com", "pobrien@eharmony.com", "nagios config generation failed", message)
     exit 1

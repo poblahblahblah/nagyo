@@ -1,18 +1,22 @@
 # FIXME: eharmony specific
-<% nodes.each do |node| %>
-<% if node['status']['name'] == 'setup' %>
-<% notifications_enabled = '0' %>
-<% notification_interval = '120' %>
-<% notification_period   = 'workhours' %>
-<% elsif node['status']['name'] =~ /inservice/ %>
-<% notifications_enabled = '1' %>
-<% notification_interval = '5' %>
-<% notification_period   = '24x7' %>
-<% end %>
+<% hosts ||= [] %>
+<% hosts.each do |host| %>
+    <%# TODO: should this move to nventory-nagyo sync code? %>
+    <%# TODO: add Host.status field copied from nventory node["status"]["name"] %>
+    <% if host['status'] == 'setup' %>
+	<% notifications_enabled = '0' %>
+	<% notification_interval = '120' %>
+	<% notification_period   = 'workhours' %>
+    <% elsif host['status'] =~ /inservice/ %>
+	<% notifications_enabled = '1' %>
+	<% notification_interval = '5' %>
+	<% notification_period   = '24x7' %>
+    <% end %>
 define host{
-  host_name                     <%= node['name'] %>
-  address                       <%= node['name'] %>
-  _nodegroups                   <% node['node_groups'].each do |v| %><%= v['name'] + ',' %><% end %>
+  host_name                     <%= host['host_name'] %>
+  address                       <%= host['host_name'] %>
+  hostgroups                    <%= host['hostgroups'].join(',') %>
+  _nodegroups                   <%= host['hostgroups'].join(',') %>
   notifications_enabled         <%= notifications_enabled %>
   event_handler_enabled         1
   flap_detection_enabled        1
