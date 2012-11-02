@@ -61,6 +61,7 @@ class Host
   field :notification_interval, type: Integer, :default => 5
 
   # optional:
+  field :status,                       type: String  # from nventory node
   field :notes,                        type: String
   field :notes_url,                    type: String
   field :action_url,                   type: String
