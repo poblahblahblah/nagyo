@@ -111,7 +111,7 @@ module Nagyo::Worker
 
     # load nventory nodes into nagyo-server.
     # nVentory is authoritative for Node information, status.  Nagyo just 
-    # stores a representation of the Node.
+    # stores a partial representation of Node data.
     #
     # Will create/update nagyo models for Host, Hostgroup, Hardwareprofile
     #
@@ -128,6 +128,8 @@ module Nagyo::Worker
 
       nagyo = Nagyo::Worker::ServerHelper.new(opts[:nagyo_host], opts[:nagyo_auth_token])
 
+      nagyo.raise_errors = false
+
       logger.debug("Got nodes from nventory (#{opts[:nventory_host]}): #{nodes.keys.inspect}")
       logger.debug("Got node groups from nventory #{nodegroups.inspect}")
 
@@ -137,6 +139,19 @@ module Nagyo::Worker
         outf.close
       end
 
+      # make nodegroups into hostgroups
+      nagyo_hostgroups = nagyo.get_all("hostgroups").group_by {|x| x["hostgroup_name"] }
+
+      nodegroups.each do |group, members|
+        members = members.flatten
+        if nagyo_hostgroups.include?(group)
+          # update existing ...
+          nagyo.update("hostgroup", group, :members => members)
+        else
+          # make hostgroup in nagyo
+          nagyo.create("hostgroup", :hostgroup_name => group, :members => members)
+        end
+      end
 
       # TODO: get hosts from nagyo-server - so we know what hosts are not in 
       # the nVentory inservice node list
@@ -147,36 +162,46 @@ module Nagyo::Worker
       #   - what should :contacts be?
       nagyo_hosts = nagyo.get_all("hosts").group_by {|x| x["host_name"] }
 
-      nodes.each do |host_name, nodedata|
+      nodes.each do |host_name, node|
 
+        # check for hardware profile:?  but nagyo Host model has no 
+        # hardwareprofile ...
+        hwprofile = node["hardware_profile"]["name"]
+        unless nagyo.get("hardwareprofile", hwprofile)
+          # TODO: can't seem to get by-name ... needs id or slugged-name
+          nagyo.create("hardwareprofile", :hardware_profile => hwprofile)
+        end
 
+        host_options = {
+          :host_name   => node["name"],
+          :status      => node["status"]["name"],
+        }
+        if node["nodegroups"]
+          host_options[:hostgroups] = (node["nodegroups"].collect(&:name) rescue [])
+        end
+
+        result = nil
         if nagyo_hosts.include?(host_name)
-          # what would we update ... status is active ?
+          # what would we update ... only update status ... ?
+          h = nagyo_hosts[host_name].first
+          #logger.debug("updating host #{host_name}: #{h.inspect}")
+          result = nagyo.update("host", h["_id"], host_options)
         else
           # create new
           # massage nventory Node data into Nagyo Host data
+          logger.debug("creating new host #{host_name}")
+
+          new_opts = host_options.merge({
+            # for now we need to set some required fields:
+            :address     => host_name,
+            :contact_ids => [ config[:default_contact] ],
+          })
+
+          result = nagyo.create("host", new_opts)
         end
+        logger.debug("host update/new result = #{result}")
 
       end
-
-
-      nagyo_hostgroups = nagyo.get_all("hostgroups").group_by {|x| x["hostgroup_name"] }
-
-      # make nodegroups into hostgroups
-      nodegroups.each do |group, members|
-        if nagyo_hostgroups.include?(group)
-          # update existing ...
-          nagyo.update("hostgroup", group, :members => members)
-        else
-          # make hostgroup in nagyo
-          nagyo.create("hostgroup", :hostgroup_name => group, :members => members)
-        end
-      end
-
-
-      # then make hosts, creating other models as needed:
-      #   - Hardwareprofile
-
 
       return nodes, nodegroups
     end

@@ -3,6 +3,7 @@
 # deals in Hashes - no model objects here
 
 require 'json'
+require 'cgi'
 require 'rest_client'
 
 module Nagyo::Worker
@@ -22,13 +23,20 @@ module Nagyo::Worker
   #                          :timeperiod_name => "another period")
   #
   class ServerHelper
+    def config
+      Nagyo::Worker.config
+    end
+    def logger
+      Nagyo::Worker.logger
+    end
 
-    attr_accessor :nagyo_host, :auth_token, :nagyo
+    attr_accessor :nagyo_host, :auth_token, :nagyo, :raise_errors
 
     def initialize(nagyo_host = nil, auth_token = nil)
       # need a nagyo server host, port and base URI
       self.nagyo_host = nagyo_host || Nagyo::Worker.config[:nagyo_host]
       self.auth_token = auth_token || Nagyo::Worker.config[:nagyo_auth_token] # 'b4j5qBqzYx5EukCM3Vri'
+      self.raise_errors = true
 
       self.nagyo = RestClient::Resource.new(self.nagyo_host, self.auth_token)
     end
@@ -37,20 +45,31 @@ module Nagyo::Worker
     # want json for pulling data
     def get_all(model, opts = {})
       name = model_name(model)
-      response = self.nagyo["#{name}"].get(opts.merge(:format => :json, :accept => :json))
-      data = JSON.parse(response)
+      begin
+        response = self.nagyo["#{name}"].get(opts.merge(:format => :json, :accept => :json))
+        data = JSON.parse(response)
+        return data
+      rescue Exception => e
+        logger.error("Nagyo.get_all:#{name}: #{e}")
+        raise e if self.raise_errors
+      end
     end
 
     # want json for pulling data
     def get(model, id, opts = {})
       name = model_name(model)
-      response = self.nagyo["#{name}/#{id}"].get(opts.merge(:format => :json, :accept => :json))
-      data = JSON.parse(response)
+      begin
+        response = self.nagyo["#{name}/#{CGI.escape(id)}"].get(opts.merge(:format => :json, :accept => :json))
+        data = JSON.parse(response)
 
-      # NOTE: if we get a Hash - single record matched - otherwise when no 
-      # match it will return all records in an Array ...
-      if data.is_a?(Hash)
-        return data
+        # NOTE: if we get a Hash - single record matched - otherwise when no 
+        # match it will return all records in an Array ...
+        if data.is_a?(Hash)
+          return data
+        end
+      rescue Exception => e
+        logger.error("Nagyo.get:#{name}: #{e}")
+        raise e if self.raise_errors
       end
     end
 
@@ -71,25 +90,37 @@ module Nagyo::Worker
 
     def update(model, id, opts = {})
       name = model_name(model)
-      response = self.nagyo["#{name}/#{id}/edit"].put(:format => :js, name => opts)
-      data = JSON.parse(response)
+      begin
+        response = self.nagyo["#{name}/#{CGI.escape(id)}/edit"].put(:format => :js, name => opts)
+        data = JSON.parse(response)
+        return data
+      rescue Exception => e
+        logger.error("Nagyo.update:#{name}: #{e}")
+        raise e if self.raise_errors
+      end
     end
 
     #
     def create(model, opts = {})
       name = model_name(model)
-      # TODO: return id? json-parse response? rails-admin does not do json here 
-      # only html - may need to parse for model errors or else get  406 Not 
-      # Acceptable response
-      #
-      # NOTE: when successful, returns: RestClient::Found: 302 Found, redirects 
-      # to index of model ... (without :accept or :format, that is)
-      #
-      # NOTE: when not success: returns: RestClient::NotAcceptable: 406 Not 
-      # Acceptable
-      #
-      response = self.nagyo["#{name}/new"].post(:format => :js, name => opts)
-      data = JSON.parse(response)
+      begin
+        # TODO: return id? json-parse response? rails-admin does not do 
+        # json here only html - may need to parse for model errors or 
+        # else get  406 Not Acceptable response
+        #
+        # NOTE: when successful, returns: RestClient::Found: 302 Found, redirects 
+        # to index of model ... (without :accept or :format, that is)
+        #
+        # NOTE: when not success: returns: RestClient::NotAcceptable: 406 Not 
+        # Acceptable
+        #
+        response = self.nagyo["#{name}/new"].post(:format => :js, name => opts)
+        data = JSON.parse(response)
+        return data
+      rescue Exception => e
+        logger.error("Nagyo.create:#{name}: #{e}")
+        raise e if self.raise_errors
+      end
     end
 
     def destroy(model, id, opts = {})
@@ -102,7 +133,12 @@ module Nagyo::Worker
       # in API request?
       #
       name = model_name(model)
-      response = self.nagyo["#{name}/#{id}/delete"].delete(opts.merge(:_method => :delete, :format => :js))
+      begin
+        response = self.nagyo["#{name}/#{CGI.escape(id)}/delete"].delete(opts.merge(:_method => :delete, :format => :js))
+      rescue Exception => e
+        logger.error("Nagyo.create:#{name}: #{e}")
+        raise e if self.raise_errors
+      end
     end
 
   private

@@ -99,7 +99,7 @@ end
 
 # pull from nventory and seed nagyo 
 # TODO: make optional via cli options
-config[:sync_nventory_nagyo] = false # true
+config[:sync_nventory_nagyo] = true
 if config[:sync_nventory_nagyo]
   # sync in-service nodes to nagyo hosts
   logger.info("Syncing nventory nodes (#{config[:nventory_host]} to nagyo-server Hosts ...")
@@ -270,9 +270,12 @@ end
 
 sleep 1 until Thread.list.size == 1
 
+
+
 # since everything has (presumably) been generated, we can compare
 # the files in various ways to see if we need to move and reload.
 
+logger.debug("Comparing nagios configurations ...")
 # create an array for both newly generated files and the existing
 # files that are currently being used by nagios.
 Dir.chdir(config[:nagios_dir])
@@ -303,6 +306,7 @@ end
 # against a temporary nagios.cfg file to see if it passes nagios' 
 # sanity checks.
 if reload_required
+  logger.debug("Reload of nagios required ...")
 
   nagios_cfg = ERB.new(File.open("#{script_base}/templates/nagios.cfg.erb"){ |f| f.read }).result(binding)
   f = File.new(tmp_nagios_cfg, "wb")
@@ -315,10 +319,14 @@ if reload_required
   FileUtils.chown(config[:nagios_user], config[:nagios_group], tmp_nagios_cfg)
   FileUtils.chmod(0655, tmp_nagios_cfg)
 
+  logger.debug("Attempting verification of nagios configs ...")
+
   if system("/usr/sbin/nagios -v #{tmp_nagios_cfg}") == false
     message = "verification of the nagios configs have failed. please investigate."
+    logger.error(message)
     #send_email("pobrien@eharmony.com", "pobrien@eharmony.com", "nagios config generation failed", message)
     exit 1
+
   else
 
     # backup old configs
@@ -326,10 +334,11 @@ if reload_required
 
     # move the configs and restart nagios
     FileUtils.mv(tmpdir, config[:nagios_dir], :force => true)
-   
+
     # restart nagios
     if system("/etc/init.d/nagios reload") == false
       message = "reloading of nagios failed. nagios is down. please investigate immediately."
+      logger.error(message)
       #send_email("pobrien@eharmony.com", "pobrien@eharmony.com", "nagios config generation failed", message)
       exit 1
     end
