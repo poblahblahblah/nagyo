@@ -21,48 +21,90 @@ require 'nagyo-worker'
 
 include Nagyo::Worker
 logger = Nagyo::Worker.logger
-config = Nagyo::Worker.config
+logger.level = Logger::WARN
 
-logger.info("Starting nagyo-worker ...")
+config = Nagyo::Worker.config
 
 nodes           = {}
 node_groups     = {}
 service_ngs     = []
 
+config_file = config[:nagyo_worker_config] || "nagyo-worker.yml"
 
-# TODO: how to find config file ... in dev? when installed as gem?
-# TODO: let set as option on command line
-config_file = "nagyo-worker.yml"
 
-# load configuration
+opts = OptionParser.new do |opts|
+  opts.banner = "Usage: #$0 [options]"
+
+  opts.on('-c', '--config FILE', 'load nagyo-worker config from FILE (after options)') do |file|
+    config_file = file
+    # set in config?
+    config[:nagyo_worker_config] = file
+  end
+
+  opts.on('-s', '--[no-]sync', "Whether to sync nVentory nodes to Nagyo Hosts (default #{config[:sync_nventory_nagyo]})") do |sync|
+    config[:sync_nventory_nagyo] = !! sync
+  end
+  opts.on('--nagyo-host HOST', "The nagyo HOST to contact (default #{config[:nagyo_host]})") do |host|
+    config[:nagyo_host] = host
+  end
+  opts.on('--nagyo-auth TOKEN', "The nagyo TOKEN to authorize creation of new records") do |token|
+    config[:nagyo_auth_token] = token
+  end
+
+  opts.on('--nventory-host HOST', "The nVentory HOST to contact (default #{config[:nventory_host]})") do |host|
+    config[:nventory_host] = host
+  end
+
+  opts.on('--script-base DIR', "The script base DIR where nagyo-worker installed (default #{config[:script_base]})") do |dir|
+    config[:script_base] = dir
+  end
+  opts.on('--nagios-dir DIR', "The DIR where nagios config lives (default #{config[:nagios_dir]})") do |dir|
+    config[:nagios_dir] = dir
+  end
+  opts.on('--backup-dir DIR', "The DIR where nagios configs are backed up during overwrite (default #{config[:backup_dir]})") do |dir|
+    config[:backup_dir] = dir
+  end
+  opts.on('--nagios-tmpdir DIR', "The temporary DIR where nagios config is written (default :auto)") do |dir|
+    config[:nagios_tmpdir] = dir
+  end
+
+  # logger output to file?
+  # log level? off / --verbose / --debug
+  opts.on('-v', '--[no-]verbose', "Whether to log script output") do |v|
+    config[:verbose] = !! v
+    if config[:verbose]
+      logger.level = Logger::INFO
+    end
+  end
+  opts.on('-d', '--[no-]debug', "Whether to log debug output also") do |d|
+    config[:debug] = !! d
+    if config[:debug]
+      logger.level = Logger::DEBUG
+    end
+  end
+end
+
+opts.parse!(ARGV)
+
+
+logger.info("Starting nagyo-worker ...")
+
+# load configuration from yml file -- but occurs after options are parsed ...
 if File.exists?(config_file)
   logger.info("Loading nagyo-worker configuration from: #{config_file}") 
   config = Nagyo::Worker.configure_from_file(config_file)
   logger.debug("configuration => #{config.inspect}")
 end
 
+# done setting / resetting configuration options
 #######################
 
 
-
-# I'll probably want to move a lot of this to config files
-#nventory_host   = "http://nventory.corp.eharmony.com"
-#nventory_host   = "http://localhost:7000"
-nventory_host   = "http://nventory.slacklabs.com"
-#
-# nvclient        = NVentory::Client.new(:server => nventory_host, :cookiefile => "/tmp/.nventory-cookie")
-
-#nagyo_host        = "nagios2.np.dc1.eharmony.com:3000"
-nagyo_host        = "localhost:3000"
-nagyo_auth_token  = 'b4j5qBqzYx5EukCM3Vri'
-
-# 
+#######################
+# build up nagyo server client
+# uses Nagyo::Worker.config internally
 nagyo_server = Nagyo::Worker::ServerHelper.new
-  # :base_url => nagyo_host,
-  # :auth_token => nagyo_auth_token)
 
-## move these to nventory sync?
-# script_base     = "/data/svc/ops/nagyo/nagyo-worker"
 script_base = config[:script_base]
 
 
@@ -71,16 +113,15 @@ reload_required = false
 
 
 
-##################
-
 
 def script_init
   # ...
 end
 
   # !! create a temporary directory
-  tmpdir         = Dir.mktmpdir
-  logger.debug("Using temporary dir: #{tmpdir}")
+  #tmpdir         = Dir.mktmpdir
+  config[:nagios_tmpdir] ||= Dir.mktmpdir
+  logger.debug("Using temporary dir: #{config[:nagios_tmpdir]}")
 
   # !! create temporary nagios.cfg main file
   tmp_nagios_cfg = Tempfile.new('nagios.cfg').path
@@ -88,7 +129,7 @@ end
 
   # !! create tmp directories for new nagios configs
   gen_directories = config[:nagios_object_dirs] #
-  gen_directories.each {|dir| Dir.mkdir(File.join(tmpdir, dir))} rescue logger.error("Unable to create directories: #{$!}")
+  gen_directories.each {|dir| Dir.mkdir(File.join(config[:nagios_tmpdir], dir))} rescue logger.error("Unable to create directories: #{$!}")
 
 
   # !! create backup directory
@@ -96,10 +137,11 @@ end
 
 
 
+##################
+
 
 # pull from nventory and seed nagyo 
-# TODO: make optional via cli options
-config[:sync_nventory_nagyo] = true
+#config[:sync_nventory_nagyo] = true
 if config[:sync_nventory_nagyo]
   # sync in-service nodes to nagyo hosts
   logger.info("Syncing nventory nodes (#{config[:nventory_host]} to nagyo-server Hosts ...")
@@ -107,11 +149,19 @@ if config[:sync_nventory_nagyo]
 end
 
 
+##################
 
-# helper for writing out config - better as a proc?
+
+# helper for writing out config
 def render_erb_tmpfile(context, erb_basename, output_filename)
   Nagyo::Worker.logger.debug("rendering #{erb_basename} to #{output_filename}")
   script_base = Nagyo::Worker.config[:script_base]
+  tmpdir = Nagyo::Worker.config[:nagios_tmpdir]
+
+  # output file into tmpdir
+  output_filename = File.join(tmpdir, output_filename) unless output_filename.match(%r{^/})
+
+  # render template to string
   erb_result = ERB.new(File.open("#{script_base}/templates/#{erb_basename}"){ |f| f.read } ).result(context)
 
   # strip extra whitespace
@@ -124,6 +174,8 @@ def render_erb_tmpfile(context, erb_basename, output_filename)
   erb_result
 end
 
+##################
+
 
 # generate nagios config using templates ... in Threads 
 
@@ -131,25 +183,18 @@ end
 # since they're all doing what amounts to the same thing, but 
 # from different sources and to different destinations.
 
-
-# does this work?
-
-# TODO: do we need nventory nodes here or now re-get from nagyo?
-#
-# nodes, node_groups = Nagyo::Worker::NventorySync.nventory_nodes
 # FIXME: below expects node_groups certain format ... 
 #
-# another Thread around this call? - or share nodes var?
-nodes = hosts = nagyo_server.get_all("hosts")
-logger.debug("nodes = #{nodes.inspect}")
+# another Thread around this call? - or share hosts var?
+hosts = nagyo_server.get_all("hosts")
 
 
 config_writer_threads = []
 
 # hosts/hosts.cfg (1 file)
 config_writer_threads << Thread.new do
-  # NOTE: the erb template iterates over nodes ...
-  render_erb_tmpfile(binding, "hosts.erb", "#{tmpdir}/hosts/hosts.cfg")
+  # NOTE: the erb template iterates over all hosts ...
+  render_erb_tmpfile(binding, "hosts.erb", "hosts/hosts.cfg")
 end
 
 
@@ -168,7 +213,7 @@ nagyo_server.get_all("hardwareprofiles").each do |hp|
         end
       end
 
-      render_erb_tmpfile(binding, "hardware.erb", File.join(tmpdir, "hardware", hp['_id'] + '.cfg'))
+      render_erb_tmpfile(binding, "hardware.erb", File.join("hardware", hp['_id'] + '.cfg'))
     end
   end
 end
@@ -176,14 +221,14 @@ end
 # contacts/contactID.cfg (1 per contact)
 nagyo_server.get_all("contacts").each do |cc|
   config_writer_threads << Thread.new do
-    render_erb_tmpfile(binding, "contacts.erb", File.join(tmpdir, "contacts", cc['_id'] + '.cfg'))
+    render_erb_tmpfile(binding, "contacts.erb", File.join("contacts", cc['_id'] + '.cfg'))
   end
 end
 
 # commands/commandID.cfg (1 per command)
 nagyo_server.get_all("commands").each do |cc|
   config_writer_threads << Thread.new do
-    render_erb_tmpfile(binding, "commands.erb", File.join(tmpdir, "commands", cc['_id'] + '.cfg'))
+    render_erb_tmpfile(binding, "commands.erb", File.join("commands", cc['_id'] + '.cfg'))
   end
 end
 
@@ -197,7 +242,7 @@ end
 # 1 thread for all services
 services_thread = Thread.new do
   nagyo_server.get_all("services").each do |cc|
-    render_erb_tmpfile(binding, "services.erb", File.join(tmpdir, "services", cc['_id'] + '.cfg'))
+    render_erb_tmpfile(binding, "services.erb", File.join("services", cc['_id'] + '.cfg'))
     service_ngs << cc['nodegroup']
   end
 end
@@ -227,7 +272,7 @@ clusters_thread = Thread.new do
           end
         end
 
-        render_erb_tmpfile(binding, "cluster.erb", File.join(tmpdir, "clusters", cc['_id'] + '.cfg'))
+        render_erb_tmpfile(binding, "cluster.erb", File.join("clusters", cc['_id'] + '.cfg'))
         service_ngs << cc['nodegroup']
       end
     end
@@ -248,7 +293,7 @@ node_groups.each_pair do |k,v|
     clusters_thread.join
 
     next if !service_ngs.include?(k)
-    render_erb_tmpfile(binding, "hostgroups.erb", "#{tmpdir}/hostgroups/#{k}.cfg")
+    render_erb_tmpfile(binding, "hostgroups.erb", "hostgroups/#{k}.cfg")
   end
 end
 
@@ -280,7 +325,7 @@ logger.debug("Comparing nagios configurations ...")
 # files that are currently being used by nagios.
 Dir.chdir(config[:nagios_dir])
 old_configs = Dir.glob("**/**").sort
-Dir.chdir(tmpdir)
+Dir.chdir(config[:nagios_tmpdir])
 new_configs = Dir.glob("**/**").sort
 
 # if the arrays are different then we know something changed, so
@@ -291,9 +336,9 @@ if old_configs != new_configs
 else
   new_configs.each do |conf|
     next if File.directory?(File.join(config[:nagios_dir], conf))
-    next if File.directory?(File.join(tmpdir, conf))
+    next if File.directory?(File.join(config[:nagios_tmpdir], conf))
     if reload_required != true
-      new_md5 = Digest::MD5.hexdigest(File.read(File.join(tmpdir, conf)))
+      new_md5 = Digest::MD5.hexdigest(File.read(File.join(config[:nagios_tmpdir], conf)))
       old_md5 = Digest::MD5.hexdigest(File.read(File.join(config[:nagios_dir], conf)))
       if new_md5 != old_md5
         reload_required = true
@@ -308,14 +353,11 @@ end
 if reload_required
   logger.debug("Reload of nagios required ...")
 
-  nagios_cfg = ERB.new(File.open("#{script_base}/templates/nagios.cfg.erb"){ |f| f.read }).result(binding)
-  f = File.new(tmp_nagios_cfg, "wb")
-  f.puts nagios_cfg
-  f.close
+  render_erb_tmpfile(binding, "nagios.cfg.erb", tmp_nagios_cfg)
 
   # finicky permissions!
-  FileUtils.chown_R(config[:nagios_user], config[:nagios_group], tmpdir)
-  FileUtils.chmod_R(0655, tmpdir)
+  FileUtils.chown_R(config[:nagios_user], config[:nagios_group], config[:nagios_tmpdir])
+  FileUtils.chmod_R(0655, config[:nagios_tmpdir])
   FileUtils.chown(config[:nagios_user], config[:nagios_group], tmp_nagios_cfg)
   FileUtils.chmod(0655, tmp_nagios_cfg)
 
@@ -333,7 +375,7 @@ if reload_required
     FileUtils.mv(config[:nagios_dir], File.join(backup_dir, Time.now.to_i.to_s), :force => true)
 
     # move the configs and restart nagios
-    FileUtils.mv(tmpdir, config[:nagios_dir], :force => true)
+    FileUtils.mv(config[:nagios_tmpdir], config[:nagios_dir], :force => true)
 
     # restart nagios
     if system("/etc/init.d/nagios reload") == false

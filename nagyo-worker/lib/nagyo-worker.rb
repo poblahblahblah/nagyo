@@ -19,7 +19,8 @@ module Nagyo
       :cookiefile       => "/tmp/nagyo-worker-nventory.cookie",
 
       :nagyo_host       => "http://localhost:3000",
-      :nagyo_auth_token => nil,
+      #:nagyo_auth_token => nil,
+      :nagyo_auth_token => "b4j5qBqzYx5EukCM3Vri",
 
       :script_base      => "/data/svc/ops/nagyo/nagyo-worker",
       :npvm_regex       => "npvm.+\.np\..+\.eharmony\.com",

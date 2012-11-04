@@ -15,7 +15,7 @@ cfg_file=/etc/nagios/timeperiods.cfg
 # extension) in a particular directory by using the cfg_dir
 # directive as shown below:
 <% gen_directories.each do |dir| %>
-cfg_dir=<%= File.join(tmpdir, dir) %><% end %>
+cfg_dir=<%= File.join(config[:nagios_tmpdir], dir) %><% end %>
 
 # OBJECT CACHE FILE
 # This option determines where object definitions are cached when

@@ -23,6 +23,8 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "nv_helpers"
   gem.add_runtime_dependency "rest-client"
   gem.add_runtime_dependency "json"
+  gem.add_runtime_dependency "nokogiri"
+
   # nice to have but maybe not absolutely necessary ...
   gem.add_runtime_dependency "activesupport"
 

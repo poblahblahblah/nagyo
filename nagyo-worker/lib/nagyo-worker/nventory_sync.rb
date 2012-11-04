@@ -123,23 +123,24 @@ module Nagyo::Worker
     #
     def self.sync_nventory_nodes_to_nagyo(opts = {})
       #
+      Nagyo::Worker.configure(opts)
       #
       nodes, nodegroups = nventory_nodes_and_groups
 
-      nagyo = Nagyo::Worker::ServerHelper.new(opts[:nagyo_host], opts[:nagyo_auth_token])
+      nagyo = Nagyo::Worker::ServerHelper.new(config[:nagyo_host], config[:nagyo_auth_token])
 
       nagyo.raise_errors = false
 
-      logger.debug("Got nodes from nventory (#{opts[:nventory_host]}): #{nodes.keys.inspect}")
+      logger.debug("Got nodes from nventory (#{config[:nventory_host]}): #{nodes.keys.inspect}")
       logger.debug("Got node groups from nventory #{nodegroups.inspect}")
 
-      if opts[:dump_nodes]
+      if config[:dump_nodes]
         outf = File.new("nventory-nodes-#{Time.now.to_i}.yml", "wb")
         outf.puts YAML.dump({:nodes => nodes, :nodegroups => nodegroups})
         outf.close
       end
 
-      # make nodegroups into hostgroups
+      logger.info("Making Nagyo hostgroups for nVentory nodegroups ...")
       nagyo_hostgroups = nagyo.get_all("hostgroups").group_by {|x| x["hostgroup_name"] }
 
       nodegroups.each do |group, members|
@@ -153,6 +154,7 @@ module Nagyo::Worker
         end
       end
 
+      logger.info("Making Nagyo Hosts for nVentory nodes ...")
       # TODO: get hosts from nagyo-server - so we know what hosts are not in 
       # the nVentory inservice node list
       #
@@ -161,14 +163,15 @@ module Nagyo::Worker
       #   - :host_name, :address, :contacts
       #   - what should :contacts be?
       nagyo_hosts = nagyo.get_all("hosts").group_by {|x| x["host_name"] }
+      nagyo_hwprofiles = nagyo.get_all("hardwareprofile").group_by {|x| x["hardware_profile"] }
 
       nodes.each do |host_name, node|
 
-        # check for hardware profile:?  but nagyo Host model has no 
-        # hardwareprofile ...
+        # check for hardware profile:?
+        # TODO: but nagyo Host has no hardwareprofile ... should it?
         hwprofile = node["hardware_profile"]["name"]
-        unless nagyo.get("hardwareprofile", hwprofile)
-          # TODO: can't seem to get by-name ... needs id or slugged-name
+        if hwprofile && !nagyo_hwprofiles.include?(hwprofile)
+          logger.info("Creating Nagyo Hardwareprofile for #{hwprofile}.")
           nagyo.create("hardwareprofile", :hardware_profile => hwprofile)
         end
 
@@ -182,6 +185,7 @@ module Nagyo::Worker
 
         result = nil
         if nagyo_hosts.include?(host_name)
+          logger.debug("update existing host #{host_name}")
           # what would we update ... only update status ... ?
           h = nagyo_hosts[host_name].first
           #logger.debug("updating host #{host_name}: #{h.inspect}")
