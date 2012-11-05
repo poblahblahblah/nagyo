@@ -1,8 +1,7 @@
 # FIXME: eharmony specific
 <% hosts ||= [] %>
 <% hosts.each do |host| %>
-    <%# TODO: should this move to nventory-nagyo sync code? %>
-    <%# TODO: add Host.status field copied from nventory node["status"]["name"] %>
+    <%# TODO: should these notification fields come from Nagyo Host model instead ? %>
     <% if host['status'] == 'setup' %>
 	<% notifications_enabled = '0' %>
 	<% notification_interval = '120' %>
@@ -14,21 +13,22 @@
     <% end %>
 define host{
   host_name                     <%= host['host_name'] %>
-  address                       <%= host['host_name'] %>
+  address                       <%= host['address'] %>
   hostgroups                    <%= host['hostgroups'].join(',') %>
   _nodegroups                   <%= host['hostgroups'].join(',') %>
   notifications_enabled         <%= notifications_enabled %>
-  event_handler_enabled         1
-  flap_detection_enabled        1
-  process_perf_data             0
-  retain_status_information     1
-  retain_nonstatus_information  1
-  max_check_attempts            3
+  event_handler_enabled         <%= host['event_handler_enabled'] %>
+  flap_detection_enabled        <%= host['flap_detection_enabled'] %>
+  process_perf_data             <%= host['process_perf_data'] %>
+  retain_status_information     <%= host['retain_status_information'] %>
+  retain_nonstatus_information  <%= host['retain_nonstatus_information'] %>
+  max_check_attempts            <%= host['max_check_attempts'] %>
   notification_interval         <%= notification_interval %>
-  check_period                  24x7
+  check_period                  <%= host['check_period'] %>
   notification_period           <%= notification_period %>
-  notification_options          d,u,r
+  notification_options          <%= host['notification_options'] %>
+  # TODO: command to_s output needs command_name!command_line ...
   check_command                 check_ping!-w 100.0,20% -c 500.0,60% -p 5 -4
-  contacts                      pobrien@eharmony.com
+  contacts                      <%= host['contacts'].join(',') %>
 }
 <% end %>
