@@ -3,6 +3,15 @@ require 'spec_helper'
 describe Contact do
   describe "associations" do
     it { should have_and_belong_to_many :clusters }
+    it { should have_and_belong_to_many :hardwareprofiles }
+    it { should have_and_belong_to_many :hosts }
+    it { should have_and_belong_to_many :hostescalations }
+    it { should have_and_belong_to_many :services }
+    it { should have_and_belong_to_many :serviceescalations }
+    it { should have_and_belong_to_many :host_notification_commands }
+    it { should have_and_belong_to_many :service_notification_commands }
+    it { should have_and_belong_to_many :contact_groups
+    }
     it { should belong_to :host_notification_period }
     it { should belong_to :service_notification_period }
 
