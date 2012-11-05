@@ -15,7 +15,6 @@ module Nagyo::Worker
   # Example
   #
   #    nagyo = Nagyo::Worker::ServerHelper.new(
-  #
   #               :nagyo_host => "http://localhost:3000/",
   #               :auth_token => "b4j5qBqzYx5EukCM3Vri"
   #            )
@@ -112,7 +111,7 @@ module Nagyo::Worker
       end
     end
 
-    def destroy(model, id, opts = {})
+    def delete(model, id, opts = {})
       # NOTE: the :accept => :json is causing rails-admin to barf ... which 
       # means rails_admin delete action may not be able to respond to 
       # json/javascript or is expecting a confirmation for DELETE - is it 
@@ -122,7 +121,7 @@ module Nagyo::Worker
       # in API request?
       #
       name = model_name(model)
-      do_restful_action("destroy", name) do
+      do_restful_action("delete", name) do
         self.nagyo["#{name}/#{CGI.escape(id)}/delete"].delete(opts.merge(:_method => :delete, :format => :js))
       end
     end
@@ -133,6 +132,7 @@ module Nagyo::Worker
       model.to_s.downcase
     end
 
+    # perform the code in &block (rest-client call) and process the result
     def do_restful_action(action, model, &block)
       begin
         # do block
