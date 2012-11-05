@@ -19,13 +19,12 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rake"
   gem.add_development_dependency "rspec"
 
-  gem.add_runtime_dependency "nventory-client"
-  gem.add_runtime_dependency "nv_helpers"
+  gem.add_runtime_dependency "activesupport"
   gem.add_runtime_dependency "rest-client"
   gem.add_runtime_dependency "json"
   gem.add_runtime_dependency "nokogiri"
-
-  # nice to have but maybe not absolutely necessary ...
-  gem.add_runtime_dependency "activesupport"
+  gem.add_runtime_dependency "nventory-client"
+  # NOTE: see also Gemfile for nv_helpers repo
+  gem.add_runtime_dependency "nv_helpers"
 
 end
