@@ -42,3 +42,10 @@ RSpec.configure do |config|
   end
   
 end
+
+
+# login method for request tests (IntegrationTest)
+def login(user)
+  #post login_path, :login => user.login, :password => 'please'
+  post_via_redirect user_session_path, :user => { :email => user.email, :password => 'please' }
+end

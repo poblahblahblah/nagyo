@@ -217,10 +217,15 @@ RailsAdmin.config do |config|
   #     configure :node_check_command_arguments, :text 
   #     configure :notify_on_node_service, :integer   #   # Sections:
     list do
+      #filters [:vip_name, :vip_dns, :hostgroup]
       field :vip_name
       field :vip_dns
-      field :hostgroup
-      field :contacts
+      field :hostgroup do
+        searchable [:hostgroup_name]
+      end
+      field :contacts do
+        searchable [:contact_name]
+      end
       field :percent_warn
       field :percent_crit
       field :check_command
@@ -268,7 +273,8 @@ RailsAdmin.config do |config|
   #     configure :command_line, :text 
   #     configure :host_ids, :serialized         # Hidden 
   #     configure :hardwareprofile_ids, :serialized         # Hidden   #   # Sections:
-    list do
+    list do 
+      #filters [:command_name, :command_line]
       field :command_name
       field :command_line
     end
@@ -323,6 +329,7 @@ RailsAdmin.config do |config|
   #     configure :retain_status_information, :integer 
   #     configure :retain_nonstatus_information, :integer   #   # Sections:
     list do
+      #filters [:contact_name, :email]
       field :contact_name
       field :email
       field :host_notifications_enabled
@@ -383,6 +390,7 @@ RailsAdmin.config do |config|
   #     configure :contactgroup_name, :text 
   #     configure :alias, :text   #   # Sections:
     list do
+      #filters [:contactgroup_name]
       field :contactgroup_name
       #field :alias
       field :members
@@ -412,6 +420,7 @@ RailsAdmin.config do |config|
   #     configure :check_command_ids, :serialized         # Hidden 
   #     configure :hardware_profile, :text   #   # Sections:
     list do
+      #filters [:hardware_profile]
       field :hardware_profile
       field :contacts
       field :check_commands
@@ -490,6 +499,12 @@ RailsAdmin.config do |config|
   #     configure :vrml_image, :text 
   #     configure :statusmap_image, :text   #   # Sections:
     list do
+      #     filters [:id, :name]  # Array of field names which filters should be 
+      #filters [:host_name, :address, :status]
+      #     shown by default in the table header
+      #     items_per_page 100    # Override default_items_per_page
+      #     sort_by :id           # Sort column (default is primary key)
+      #     sort_reverse true     # Sort direction (default is true for primary key, last created first)
       field :host_name
       field :address
       field :contacts
@@ -497,6 +512,7 @@ RailsAdmin.config do |config|
       field :check_period
       field :notification_interval
       field :notification_period
+      field :status #nventory
     end
   #   export do; end
   #   show do; end
@@ -508,6 +524,7 @@ RailsAdmin.config do |config|
       field :check_period
       field :notification_interval # 1..5
       field :notification_period
+      field :status
 
       field :display_name
       field :parents     # :collection => Host.all, :member_label => :host_name
@@ -574,6 +591,7 @@ RailsAdmin.config do |config|
   #     configure :dependent_hostgroup_name, :text 
   #     configure :hostgroup_name, :text   #   # Sections:
     list do
+
       field :host
       field :hostgroup
       field :dependent_host
@@ -665,6 +683,7 @@ RailsAdmin.config do |config|
   #     configure :notes_url, :text 
   #     configure :action_url, :text   #   # Sections:
     list do
+      #filters [:hostgroup_name, :alias]
       field :hostgroup_name
       field :alias
       field :notes
@@ -749,11 +768,19 @@ RailsAdmin.config do |config|
   #     configure :host_name, :serialized 
   #     configure :hostgroup_name, :serialized   #   # Sections:
     list do
-      field :name
-      field :host
-      field :hostgroup
-      field :contacts
-      field :check_command
+      field :name 
+      field :host do
+        searchable [:host_name]
+      end
+      field :hostgroup do
+        searchable [:hostgroup_name]
+      end
+      field :contacts do
+        searchable [:contact_name, :email]
+      end
+      field :check_command do
+        searchable [:command_name]
+      end
       field :check_command_arguments
       field :check_period
       field :notification_period
@@ -929,6 +956,7 @@ RailsAdmin.config do |config|
   #     configure :notes_url, :text 
   #     configure :action_url, :text   #   # Sections:
     list do
+      #filters [:servicegroup_name, :alias]
       field :servicegroup_name
       field :alias
       field :notes
@@ -971,6 +999,7 @@ RailsAdmin.config do |config|
   #     configure :timeperiod_name, :text 
   #     configure :alias, :text   #   # Sections:
     list do
+      #filters [:timeperiod_name, :alias]
       field :timeperiod_name
       field :alias
     end
