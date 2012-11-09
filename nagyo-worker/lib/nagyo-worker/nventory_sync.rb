@@ -177,8 +177,23 @@ module Nagyo::Worker
 
         host_options = {
           :host_name   => node["name"],
-          :status      => node["status"]["name"],
         }
+
+        status = node["status"]["name"]
+        if status.match(/inservice/)
+          host_options.merge!({
+            :notifications_enabled  => 1,
+            :notification_interval  => 5,
+            :notification_period_id => '24x7',
+          })
+        elsif status.match(/setup/)
+          host_options.merge!({
+            :notifications_enabled  => 0,
+            :notification_interval  => 120,
+            :notification_period_id => 'workhours',
+          })
+        end
+
         if node["nodegroups"]
           host_options[:hostgroups] = (node["nodegroups"].collect(&:name) rescue [])
         end
