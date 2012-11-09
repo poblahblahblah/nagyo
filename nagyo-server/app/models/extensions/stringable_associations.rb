@@ -77,7 +77,7 @@ module Extensions
           # > h.contact_ids = ["unix-sa"]
           #
           define_method("#{metadata.key}=") do |value|
-            new_value = nil
+            new_value = value
             if metadata.key.match(/_id$/)
               # single
               new_value = bson_from_stringable_id(value, metadata.class_name)

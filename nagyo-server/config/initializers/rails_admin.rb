@@ -149,6 +149,7 @@ RailsAdmin.config do |config|
 
   # Application wide tried label methods for models' instances
   config.label_methods << :description # Default is [:name, :title]
+  config.label_methods << :to_label
   config.label_methods << :to_s
 
   #  ==> Global models configuration

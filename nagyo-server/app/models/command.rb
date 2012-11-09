@@ -61,6 +61,10 @@ class Command
   end
 
   def to_s
+    "#{command_name}!#{command_line}"
+  end
+
+  def to_label
     "#{command_name}"
   end
 end
