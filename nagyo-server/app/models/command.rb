@@ -11,7 +11,16 @@ class Command
 
   field :command_line, type: String
 
-  has_and_belongs_to_many :hosts
+  #has_and_belongs_to_many :hosts,
+  #  :class_name => "Host",
+  #  :inverse_of => :check_command
+  has_many :check_command_hosts,
+    :class_name => "Host",
+    :inverse_of => :check_command
+  has_many :event_handler_hosts,
+    :class_name => "Host",
+    :inverse_of => :event_handler
+  
   #??has_many :services
 
   has_many :host_notification_contacts,

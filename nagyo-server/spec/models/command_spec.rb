@@ -2,8 +2,9 @@ require 'spec_helper'
 
 describe Command do
   describe "validations" do
-    it { should have_and_belong_to_many :hosts }
     it { should have_and_belong_to_many :hardwareprofiles }
+    it { should have_many :check_command_hosts }
+    it { should have_many :event_handler_hosts }
 
     it { should have_many :host_notification_contacts }
     it { should have_many :service_notification_contacts }

@@ -37,9 +37,11 @@ class Host
     :inverse_of => :hosts
 
   belongs_to :check_command,
-    :class_name => "Command"
+    :class_name => "Command",
+    :inverse_of => :check_command_hosts
   belongs_to :event_handler,
-    :class_name => "Command"
+    :class_name => "Command",
+    :inverse_of => :event_handler_hosts
 
   belongs_to :check_period,
     :class_name => "Timeperiod",
