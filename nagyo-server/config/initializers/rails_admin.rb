@@ -511,6 +511,9 @@ RailsAdmin.config do |config|
       field :contacts
       field :max_check_attempts
       field :check_period
+      field :notifications_enabled do
+        searchable true
+      end
       field :notification_interval
       field :notification_period
       field :status #nventory

@@ -78,11 +78,13 @@ class Timeperiod
 
   ## Class methods to pull common periods
 
-  # need some handy methods to grab commonly used periods
+  # methods to grab commonly used periods
   def self.twentyfourseven
-    t = Timeperiod.find_or_create_by(:timeperiod_name => "24x7")
-    t.save! if t.new_record?
-    return t
+    Timeperiod.find_or_create_by_timeperiod_name("24x7")
+  end
+
+  def self.workhours
+    Timeperiod.find_or_create_by_timeperiod_name("workhours")
   end
 
 private
@@ -91,5 +93,11 @@ private
     self.alias ||= self.timeperiod_name
   end
 
+
+  def self.find_or_create_by_timeperiod_name(name)
+    t = Timeperiod.find_or_create_by(:timeperiod_name => name)
+    t.save! if t.new_record?
+    return t
+  end
 
 end

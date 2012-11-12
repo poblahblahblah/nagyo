@@ -8,6 +8,13 @@ FactoryGirl.define do
 
     notification_interval 5
     notification_period { Timeperiod.twentyfourseven }
+
+
+    factory :host_no_notifications do
+      host_name                      "test-host-quiet"
+      notifications_enabled 0
+      notification_period { Timeperiod.workhours }
+    end
   end
 end
 
