@@ -15,8 +15,12 @@ module Extensions
 
     included do
 
-      # lookup id for an association class - can dereference model attribute 
-      # values or slugged attributes into BSON ids.
+
+      # lookup id for an association class - can dereference model 
+      # attribute values or slugged attributes into BSON ids.
+      #
+      # TODO: pull this out into a helper so we can use in rails_admin 
+      # config also?
       #
       def bson_from_stringable_id(value, model_name)
         return if value.blank?
@@ -25,7 +29,7 @@ module Extensions
         end
 
         id_val = nil
-        model_class = model_name.to_s.constantize rescue nil
+        model_class = model_name.to_s.camelize.constantize rescue nil
         begin
           id_val = model_class.find(value).id
         rescue
@@ -48,7 +52,6 @@ module Extensions
 
 
     module ClassMethods
-
 
 
       def determine_stringable_fields(model)

@@ -10,10 +10,16 @@ module RailsAdmin
 
     before_filter :convert_stringable_association_params, :only => [:new, :edit]
 
-    # NOTE: override  RailsAdmin::ApplicationController to support more 
-    # "railsy" routes (e.g.  can do pluralized model name)
+    # @override RailsAdmin::ApplicationController to support more "railsy" 
+    # routes (e.g.  can do pluralized model name)
     def to_model_name(param)
       model_name = param.split("~").map {|x| x.singularize.camelize }.join("::")
+    end
+
+    # @override RailsAdmin::ApplicationController
+    def get_object
+      id = convert_stringable_param_field(@abstract_model.model, params[:id])
+      raise RailsAdmin::ObjectNotFound unless (@object = @abstract_model.get(id))
     end
 
     private
@@ -84,7 +90,7 @@ module RailsAdmin
       return data if Moped::BSON::ObjectId.legal?(data)
 
       # finally, try looking it up
-      model.find(data).id rescue nil
+      model.find(data).id rescue model.find_by(model.slugged_attributes.first => data).id rescue data
     end
 
   end
