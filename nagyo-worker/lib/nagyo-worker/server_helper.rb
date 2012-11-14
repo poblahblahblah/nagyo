@@ -3,11 +3,13 @@
 # deals in Hashes - no model objects here
 
 require 'json'
-require 'cgi'
+#require 'cgi'
 require 'rest_client'
 
 require 'nokogiri'
-#require 'open-uri'
+require 'open-uri'
+
+# require 'active_support/core_ext/object/to_query'
 
 module Nagyo::Worker
 
@@ -62,7 +64,7 @@ module Nagyo::Worker
     def get(model, id, opts = {})
       name = model_name(model)
       data = do_restful_action("get", name) do
-        self.nagyo["#{name}/#{CGI.escape(id)}"].get(opts.merge(:format => :json, :accept => :json))
+        self.nagyo["#{name}/#{URI.encode(id)}"].get(opts.merge(:format => :json, :accept => :json))
       end
       # NOTE: if we get a Hash - single record matched - otherwise when no 
       # match it will return all records in an Array ...
@@ -89,7 +91,7 @@ module Nagyo::Worker
     def update(model, id, opts = {})
       name = model_name(model)
       do_restful_action("update", name) do
-        self.nagyo["#{name}/#{CGI.escape(id)}/edit"].put(:format => :js, name => opts)
+        self.nagyo["#{name}/#{URI.encode(id)}/edit"].put(:format => :js, name => opts)
       end
     end
 
@@ -122,7 +124,7 @@ module Nagyo::Worker
       #
       name = model_name(model)
       do_restful_action("delete", name) do
-        self.nagyo["#{name}/#{CGI.escape(id)}/delete"].delete(opts.merge(:_method => :delete, :format => :js))
+        self.nagyo["#{name}/#{URI.encode(id)}/delete"].delete(opts.merge(:_method => :delete, :format => :js))
       end
     end
 

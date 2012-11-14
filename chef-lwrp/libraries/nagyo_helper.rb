@@ -1,16 +1,25 @@
+require 'open-uri'
+
 #gem 'rest-client', '>= 1.6.7'
 require 'rest_client'
+
+# TODO: can we use Nagyo::Worker::ServerHelper here?
+# require 'nagyo-worker'
+#
 
 module NagyoHelper
   BASE_URL = 'http://nagios2.np.dc1.eharmony.com:3000'
 
   def self.add_or_update(resource)
-    base_url = (resource.nagyo_url || BASE_URL) + "/" + resource.model_name
     model_name = resource.model_name
+    base_url = (resource.nagyo_url || BASE_URL) + "/" + model_name
+
+    ## ...
     params = {}
     resource.my_attr_keys.each do |attr|
       params[attr] = resource.send(attr) if resource.respond_to?(attr)
     end
+
     begin
       get_params = {}
       # See if object already exist
@@ -28,10 +37,16 @@ module NagyoHelper
       # ...)
       #   /service/:id
       #   /service/:name
+
+      # TODO: for those models that still need filters - have to provide util 
+      # method to convert params into a set of rails_admin filters ...
+
       get_params = get_params.collect { |k, v| "#{k.to_s}=#{CGI::escape(v.to_s)}" }.join('&')    
+      # TODO: /model_name/:id.json
       response = RestClient.get base_url + ".json?#{get_params}"
 
       result = JSON.parse(response)
+      # TODO: add create_or_update method to Nagyo::Worker::ServerHelper
       if !result.empty? # Update if this is for existing object
         object_id = result.first['id']
         ret = RestClient.put "#{base_url}/#{object_id}", model_name => params 
