@@ -13,6 +13,10 @@ class Hardwareprofile
     :class_name => "Command",
     :inverse_of => :hardwareprofiles
 
+  has_many :hosts,
+    :class_name => "Host",
+    :inverse_of => :hardwareprofile
+
   # required:
   field :hardware_profile,      type: String
   slug :hardware_profile

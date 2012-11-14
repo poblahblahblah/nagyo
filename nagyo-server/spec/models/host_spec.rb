@@ -19,6 +19,7 @@ describe Host do
 
     it { should belong_to :check_period }
     it { should belong_to :notification_period }
+    it { should belong_to :hardwareprofile }
 
     it { should have_many :hostescalations }
     it { should have_many :serviceescalations }

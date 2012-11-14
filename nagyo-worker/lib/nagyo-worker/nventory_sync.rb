@@ -140,6 +140,8 @@ module Nagyo::Worker
         outf.close
       end
 
+      ### nodegroups => hostgroups
+      #
       logger.info("Making Nagyo hostgroups for nVentory nodegroups ...")
       nagyo_hostgroups = nagyo.get_all("hostgroups").group_by {|x| x["hostgroup_name"] }
 
@@ -154,6 +156,9 @@ module Nagyo::Worker
         end
       end
 
+
+      ### nodes => hosts
+      #
       logger.info("Making Nagyo Hosts for nVentory nodes ...")
       # TODO: get hosts from nagyo-server - so we know what hosts are not in 
       # the nVentory inservice node list
@@ -177,9 +182,11 @@ module Nagyo::Worker
 
         host_options = {
           :host_name   => node["name"],
+          :hardware_profile_id => hwprofile,
         }
 
         status = node["status"]["name"]
+        # NOTE: this used to be in erb template for nagios Host output
         if status.match(/inservice/)
           host_options.merge!({
             :notifications_enabled  => 1,
@@ -209,6 +216,8 @@ module Nagyo::Worker
           # create new
           # massage nventory Node data into Nagyo Host data
           logger.debug("creating new host #{host_name}")
+          # TODO: check for default_contact in nagyo ... otherwise creation 
+          # will fail with 406 NotAcceptable
 
           new_opts = host_options.merge({
             # for now we need to set some required fields:
@@ -221,6 +230,7 @@ module Nagyo::Worker
         logger.debug("host update/new result = #{result}")
 
       end
+
 
       return nodes, nodegroups
     end

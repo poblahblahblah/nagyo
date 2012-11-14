@@ -50,6 +50,10 @@ class Host
     :class_name => "Timeperiod",
     :inverse_of => :notification_period_hosts
 
+  belongs_to :hardwareprofile,
+    :class_name => "Hardwareprofile",
+    :inverse_of => :hosts
+
   has_many :hostescalations
   has_many :serviceescalations
 
