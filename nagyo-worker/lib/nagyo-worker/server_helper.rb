@@ -10,6 +10,8 @@ require 'nokogiri'
 require 'open-uri'
 
 # require 'active_support/core_ext/object/to_query'
+# require 'active_support/core_ext/hash/indifferent_access'
+require 'active_support/core_ext/hash'
 
 module Nagyo::Worker
 
@@ -34,6 +36,23 @@ module Nagyo::Worker
       Nagyo::Worker.logger
     end
 
+    # instead of building out a metadata api in nagyo, for now have alist here 
+    # of known model keys - basically any nagyo model attribute that is slugged 
+    def model_keys
+      {
+        :cluster         => :vip_name,
+        :command         => :command_name,
+        :contact         => :contact_name,
+        :contactgroup    => :contactgroup_name,
+        :hardwareprofile => :hardware_profile,
+        :host            => :host_name,
+        :hostgroup       => :hostgroup_name,
+        :service         => :name,
+        :servicegroup    => :servicegroup_name,
+        :timeperiod      => :timeperiod_name,
+      }
+    end
+
     attr_accessor :nagyo_host, :auth_token, :nagyo, :raise_errors
 
     def initialize(nagyo_host = nil, auth_token = nil, raise_errors = false)
@@ -49,11 +68,14 @@ module Nagyo::Worker
       self.nagyo = RestClient::Resource.new(self.nagyo_host, self.auth_token)
     end
 
+    # TODO: add helper for :get_all and :get to support passing filter opts to 
+    # rails_admin controller ...  f[field][seq][o]=is, ...[v]=something
 
     # CRUD operations - by model class, id
     # want json for pulling data
     def get_all(model, opts = {})
       name = model_name(model)
+      opts.symbolize_keys!
       do_restful_action("get_all", name) do
         all_opts = {:format => :json, :accept => :json, :params => {:all => 'true'}}
         self.nagyo["#{name}"].get(all_opts.merge(opts))
@@ -63,8 +85,9 @@ module Nagyo::Worker
     # want json for pulling data
     def get(model, id, opts = {})
       name = model_name(model)
+      opts.symbolize_keys!
       data = do_restful_action("get", name) do
-        self.nagyo["#{name}/#{URI.encode(id)}"].get(opts.merge(:format => :json, :accept => :json))
+        self.nagyo["#{name}/#{URI.encode(id.to_s)}"].get(opts.merge(:format => :json, :accept => :json))
       end
       # NOTE: if we get a Hash - single record matched - otherwise when no 
       # match it will return all records in an Array ...
@@ -73,19 +96,9 @@ module Nagyo::Worker
       end
     end
 
-    # for update, create in :json or :html mode, when we get a "302 Found" 
-    # response, means it worked. But - if we pretend to be javascript (not 
-    # json) with :format => :js then it will return a json hash with "id": 
-    # "0123abc..." 
-    #
-    #
-    # TODO: what about csrf auth token? disable on whole app? or figure out a 
-    # proper json api for rails-admin
-    #
-    # NOTE: these opts cause much fail: :accept => :json, :format => :json. 
-    # rails-admin actions seem to only look for format.html or format.js, 
-    # will succeed in creating or updating record but then fails rendering JSON 
-    # with "406 Not Acceptable" for :accept => :json or :format => :json :(
+    # NOTE: we are not using a csrf authentication token for write operations 
+    # (create, update) - for now it is disabled in nagyo-server.  eventually 
+    # can figure out a proper json api with or without rails-admin.
     #
 
     def update(model, id, opts = {})
@@ -99,19 +112,27 @@ module Nagyo::Worker
     def create(model, opts = {})
       name = model_name(model)
       do_restful_action("create", name) do
-        # TODO: return id? json-parse response? rails-admin does not do json 
-        # here only html - may need to parse for model errors or else get  406 
-        # Not Acceptable response
-        #
-        # NOTE: when successful, returns: RestClient::Found: 302 Found, redirects 
-        # to index of model ... (without :accept or :format, that is)
-        #
-        # NOTE: when not success: returns: RestClient::NotAcceptable: 406 Not 
-        # Acceptable
-        #
+        # TODO: return id?
         self.nagyo["#{name}/new"].post(:format => :js, name => opts)
       end
     end
+
+
+    def create_or_update(model, id = nil, opts = {})
+      name = model_name(model)
+      # first try to get it ... using id?
+      opts.symbolize_keys!
+      id ||= opts[model_keys[name.to_sym]]
+      obj = get(model, id, opts)
+      if obj
+        # ... found, update it
+        response = update(model, obj["_id"], opts)
+      else
+        # not found, create it
+        response = create(model, opts)
+      end
+    end
+
 
     def delete(model, id, opts = {})
       # NOTE: the :accept => :json is causing rails-admin to barf ... which 
@@ -135,6 +156,17 @@ module Nagyo::Worker
     end
 
     # perform the code in &block (rest-client call) and process the result
+    #
+    # NOTE: for update, create in :json or :html mode, when we get a "302 
+    # Found" response, means it worked. But - if we pretend to be javascript 
+    # (not json) with :format => :js then it will return a json hash with "id": 
+    # "0123abc..." 
+    #
+    # NOTE: these opts cause much fail: :accept => :json, :format => :json.  
+    # rails-admin actions seem to only look for format.html or format.js, will 
+    # succeed in creating or updating record but then fails rendering JSON with 
+    # "406 Not Acceptable" for :accept => :json or :format => :json :(
+    #
     def do_restful_action(action, model, &block)
       begin
         # do block
