@@ -1,23 +1,19 @@
 #!/usr/bin/env ruby
 
+require 'rubygems'
+
 # stdlib
 require 'erb'
 require 'yaml'
-require 'rubygems'
 require 'tempfile'
 require 'digest/md5'
 require 'fileutils'
 require 'net/smtp'
 require 'logger'
 
-require 'json'
-
-# custom libs (moved to Nagyo::Worker::NventorySync )
-#require 'nventory'
-#require 'nv_helpers'
-
-# our lib
+# our lib(s)
 require 'nagyo-worker'
+require 'nagyo-server-helper'
 
 include Nagyo::Worker
 logger = Nagyo::Worker.logger
@@ -103,7 +99,7 @@ end
 #######################
 # build up nagyo server client
 # uses Nagyo::Worker.config internally
-nagyo_server = Nagyo::Worker::ServerHelper.new
+nagyo_server = Nagyo::Server::Helper.new
 
 script_base = config[:script_base]
 

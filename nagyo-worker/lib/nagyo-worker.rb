@@ -5,7 +5,6 @@ require 'active_support/hash_with_indifferent_access'
 
 # explicitly load all files here ...
 require "nagyo-worker/version"
-require "nagyo-worker/server_helper"
 require "nagyo-worker/nventory_sync"
 
 module Nagyo
@@ -54,19 +53,6 @@ module Nagyo
 
     def self.logger
       @logger ||= Logger.new(STDOUT)
-    end
-
-    # NOTE: now using nagyo ServerHelper to get hashed data back
-    # @deprecated
-    def self.get_remote_json(url, file_and_path)
-      # uncomment for https
-      #url = URI.parse("https://" + url)
-      url = URI.parse("http://" + url)
-      http = Net::HTTP.new(url.host, url.port)
-      # and this for ssl
-      #http.use_ssl = true
-      resp = http.get(file_and_path)
-      return resp.body
     end
 
 

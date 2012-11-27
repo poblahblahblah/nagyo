@@ -4,6 +4,7 @@
 # external libs
 require 'nventory'
 require 'nv_helpers'
+require 'nagyo-server-helper'
 
 module Nagyo::Worker
   # class?
@@ -127,7 +128,7 @@ module Nagyo::Worker
       #
       nodes, nodegroups = nventory_nodes_and_groups
 
-      nagyo = Nagyo::Worker::ServerHelper.new(config[:nagyo_host], config[:nagyo_auth_token])
+      nagyo = Nagyo::Server::Helper.new(config[:nagyo_host], config[:nagyo_auth_token])
 
       nagyo.raise_errors = false
 

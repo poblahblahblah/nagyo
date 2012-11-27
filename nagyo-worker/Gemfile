@@ -3,5 +3,10 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in nagyo-worker.gemspec
 gemspec
 
-# override to pull from private repo - need your github ssh keys available
-gem "nv_helpers", :git => "git@github.com:poblahblahblah/nv_helpers.git"
+group :development, :test do
+  # override to pull from private repo - need your github ssh keys available
+  gem "nv_helpers", :git => "git@github.com:poblahblahblah/nv_helpers"
+  gem "nagyo-server-helper", :path => "../nagyo-server-helper"
+  #:git => "git@github.com:poblahblahblah/nagyo/nagyo-server-helper.git", 
+  #:branch => "develop"
+end

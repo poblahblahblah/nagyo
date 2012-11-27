@@ -2,8 +2,8 @@
 require File.expand_path('../lib/nagyo-worker/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["Damian Martinez"]
-  gem.email         = ["damian-gh@malachiarts.com"]
+  gem.authors       = ["Pat O'Brien"]
+  gem.email         = ["pobrien@eharmony.com"]
   gem.description   = %q{Nagyo worker writes nagios config from nagyo-server , nventory data.}
   gem.summary       = %q{Single script to pull nventory nodes and write out nagios config with nagyo-server data.}
   gem.homepage      = ""
@@ -20,11 +20,9 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rspec"
 
   gem.add_runtime_dependency "activesupport"
-  gem.add_runtime_dependency "rest-client"
-  gem.add_runtime_dependency "json"
-  gem.add_runtime_dependency "nokogiri"
-  gem.add_runtime_dependency "nventory-client"
-  # NOTE: see also Gemfile for nv_helpers repo
-  gem.add_runtime_dependency "nv_helpers"
 
+  # NOTE: see also Gemfile for custom github repos
+  gem.add_runtime_dependency "nventory-client"
+  gem.add_runtime_dependency "nv_helpers"
+  gem.add_runtime_dependency "nagyo-server-helper"
 end
