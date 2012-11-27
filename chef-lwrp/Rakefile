@@ -1,0 +1,31 @@
+
+
+
+desc "install nagyo-chef-lwrp into COOKBOOKS"
+task :install do
+  puts ARGV.inspect
+  #
+  cookdir = ENV["COOKBOOKS"]
+  unless cookdir
+    raise "Need to specify directory: rake install COOKBOOKS=/path/to/cookbooks"
+  end
+
+  #
+  libdir = "#{cookdir}/base/libraries"
+  mkdir_p libdir
+  cp "libraries/nagyo_helper.rb", libdir
+
+  #
+  providers = "#{cookdir}/eharmonyops/providers"
+  mkdir_p providers
+  cp "providers/nagyo_helper.rb", providers
+
+  #
+  resources = "#{cookdir}/eharmonyops/resources"
+  mkdir_p resources
+  FileList['resources/*.rb'].each do |rrb|
+    cp rrb, resources
+  end
+
+end
+

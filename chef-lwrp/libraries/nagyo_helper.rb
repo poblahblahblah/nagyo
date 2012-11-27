@@ -3,12 +3,22 @@ require 'open-uri'
 #gem 'rest-client', '>= 1.6.7'
 require 'rest_client'
 
-# TODO: can we use Nagyo::Worker::ServerHelper here?
-# require 'nagyo-worker'
-#
+# TODO: can we use Nagyo::Server::Helper here?  how to get it installed - rpm / 
+# gem? -- chef needs it on machine before it loads libraries ... ?
+require 'nagyo-server-helper'
 
+# Used in providers/nagyo_helper to add or update a resource
+#
 module NagyoHelper
+  # Nagyo Server URL
+  # TODO: make this more configurable, e.g. yml file like nagyo-worker?
   BASE_URL = 'http://nagios2.np.dc1.eharmony.com:3000'
+
+  # can this work as a class/module level instead of instance level?
+  # TODO: research chef-lwrp docs for how this is included
+  def self.nagyo
+    @nagyo ||= Nagyo::Server::Helper.new(BASE_URL)
+  end
 
   def self.add_or_update(resource)
     model_name = resource.model_name
@@ -27,34 +37,17 @@ module NagyoHelper
         get_params[attr] = resource.send(attr) if resource.respond_to?(attr)
       end
 
-      # FIXME: TODO: i don't think this is best way to pull objects -- ?
-      # e.g. why use Service.[:nodegroup, :check_command, :contacts, 
-      # :notification_period] when you can just use Service.name ?
-      #
-      # TODO: Try to limit get_params to single key and use Mongoid::Slug
-      # -- otherwise, some objects will need more finder methods or find by _id 
-      # instead (e.g.  servicedependency ... has no unique key other than _id 
-      # ...)
-      #   /service/:id
-      #   /service/:name
+      # try to find the model's id key
+      id_key = nagyo.model_keys[model_name.to_sym] rescue nil
+      id_val = get_params[id_key] if id_key
+      # TODO: delete id from get_params if found?
 
-      # TODO: for those models that still need filters - have to provide util 
-      # method to convert params into a set of rails_admin filters ...
+      # TODO: for those models that still need multiple keys, provide a utility 
+      # in NagyoHelper to convert params into a set of rails_admin filters ...
 
-      get_params = get_params.collect { |k, v| "#{k.to_s}=#{CGI::escape(v.to_s)}" }.join('&')    
-      # TODO: /model_name/:id.json
-      response = RestClient.get base_url + ".json?#{get_params}"
-
-      result = JSON.parse(response)
-      # TODO: add create_or_update method to Nagyo::Worker::ServerHelper
-      if !result.empty? # Update if this is for existing object
-        object_id = result.first['id']
-        ret = RestClient.put "#{base_url}/#{object_id}", model_name => params 
-      else # Create if this is for a new object
-        ret = RestClient.post base_url, model_name => params 
-      end
+      result = nagyo.create_or_update(model_name, id_val, get_params)
     rescue => e
       Chef::Log.info(e)
     end
-  end  
+  end
 end

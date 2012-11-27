@@ -1,0 +1,25 @@
+# Gemfile mainly useful for testing the lwrp resource and provider code
+#
+source "http://rubygems.org"
+
+gem "nv_helpers", :git => "git@github.com:poblahblahblah/nv_helpers"
+gem "nventory-client"
+
+group :development, :test do
+  # chef - probably already installed in system?
+  # do I need this here
+  #gem "chef",  "0.10.2"
+  gem "chefkitchen_cli" #?
+
+  gem "rake"
+
+  # used from source in development ... TODO: what about production gem?
+  gem "nagyo-server-helper", :path => "../nagyo-server-helper"
+
+  # lint for chef recipe code - requires ruby 1.9.2+
+  # gem "foodcritic"
+
+  # use vagrant (and virtualbox vm's) to test
+  # vagrant 1.0.5 uses VirtualBox 4.1.x 
+  gem "vagrant", "~> 1.0.5"
+end
