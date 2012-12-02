@@ -21,13 +21,10 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rake"
 
-  s.add_runtime_dependency "activesupport"
   s.add_runtime_dependency "rest-client"
   s.add_runtime_dependency "json"
   s.add_runtime_dependency "nokogiri"
-  s.add_runtime_dependency "configuration"
+  s.add_runtime_dependency "activesupport"
 
-  s.add_runtime_dependency "nventory-client"
-  # NOTE: see also Gemfile for nv_helpers repo
-  s.add_runtime_dependency "nv_helpers"
+  #s.add_runtime_dependency "configuration"
 end

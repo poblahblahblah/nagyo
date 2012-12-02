@@ -13,13 +13,15 @@
 
 begin
   factory_user = FactoryGirl.build(:user)
+  puts "*** Building User #{factory_user.email}"
   db_user = User.find_or_create_by(:email => factory_user.email)
   if db_user
-    db_user.update_attributes(factory_user.attributes)
+    # get around attr-protected settings
+    factory_user.attributes.each { |k,v| db_user.send("#{k}=", v) rescue nil }
     db_user.save
   end
 rescue
-  puts "Unable to create or have already created default user: #{$!}"
+  puts "*** Unable to create or have already created default user: #{$!}"
 end
 
 # timeperiods

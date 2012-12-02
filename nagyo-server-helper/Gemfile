@@ -2,9 +2,3 @@ source "http://rubygems.org"
 
 # Specify your gem's dependencies in nagyo-server-helper.gemspec
 gemspec
-
-group :development, :test do
-  # override to pull from private repo - need your github ssh keys available
-  gem "nv_helpers", :git => "git@github.com:poblahblahblah/nv_helpers.git"
-end
-

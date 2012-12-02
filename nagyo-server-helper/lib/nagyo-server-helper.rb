@@ -1,10 +1,10 @@
 # Nagyo Server Helper - a REST client for accessing Nagyo Server.
 
-# FIXME: TODO: get rid of references to Nagyo::Worker here (especially config)
 
 require 'nagyo-server-helper/version'
 
 
+require 'logger'
 require 'json'
 require 'rest_client'
 require 'nokogiri'
@@ -29,18 +29,30 @@ module Nagyo
     #    newone = nagyo.create("timeperiod",
     #                          :timeperiod_name => "another period")
     #
+    #
+    # Configuration Options
+    #   - nagyo_host
+    #   - nagyo_auth_token
+    #   - 
+    #
     class Helper
-      VERSION = "0.0.1"
 
+      attr_accessor :nagyo_host, :auth_token, :nagyo, :raise_errors
+
+      # dev defaults - TODO: can make configurable if necessary
       def config
-        Nagyo::Worker.config
-      end
-      def logger
-        Nagyo::Worker.logger
+        {
+          :nagyo_host => "http://0.0.0.0:3000",
+          :nagyo_auth_token => 'nagyo-token-test-user'
+        }
       end
 
-      # instead of building out a metadata api in nagyo, for now have alist here 
-      # of known model keys - basically any nagyo model attribute that is slugged 
+      def logger
+        @logger ||= Logger.new(STDOUT)
+      end
+
+      # instead of building out a metadata api in nagyo, have list here of 
+      # known model keys of any nagyo model attribute that is slugged 
       def model_keys
         {
           :cluster         => :vip_name,
@@ -56,12 +68,10 @@ module Nagyo
         }
       end
 
-      attr_accessor :nagyo_host, :auth_token, :nagyo, :raise_errors
-
       def initialize(nagyo_host = nil, auth_token = nil, raise_errors = false)
         # need a nagyo server host, port and base URI
-        self.nagyo_host = nagyo_host || Nagyo::Worker.config[:nagyo_host]
-        self.auth_token = auth_token || Nagyo::Worker.config[:nagyo_auth_token] # 'b4j5qBqzYx5EukCM3Vri'
+        self.nagyo_host = nagyo_host || config[:nagyo_host]
+        self.auth_token = auth_token || config[:nagyo_auth_token]
         self.raise_errors = raise_errors
 
         self.config_nagyo
