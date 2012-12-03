@@ -8,7 +8,7 @@ server on the host system:
 
   # start nagyo-server on host system at :3000
   cd nagyo/nagyo-server
-  bundle install
+  bundle
   bundle exec rake db:seed
   ./script/rails s
 
@@ -20,13 +20,26 @@ server on the host system:
   # ... or softlink to local dir
   ln -fs /path/to/dev/cookbooks
 
+  # build nagyo-server-helper gem and copy to cookbooks for installation on test vm
+  cd nagyo/nagyo-server-helper
+  bundle
+  bundle exec rake build
+  cp pkg/nagyo-server-helper-0.0.1.gem ../chef-lwrp/cookbooks/.
+
   # install nagyo-chef-lwrp to cookbooks dir
   cd nagyo/chef-lwrp
-  bundle install
+  bundle
   bundle exec rake install COOKBOOKS=cookbooks
 
-  # this runs chef-solo on vm with test cookbook
+  # bring up a VM (chef-solo will likely fail)
   bundle exec vagrant up
+
+  # ssh in to VM and install nagyo helper
+  bundle exec vagrant ssh
+    % sudo gem install /vagrant/cookbooks/nagyo-server-helper-0.0.1.gem
+
+  # re-run chef-solo on vm with test cookbook
+  bundle exec vagrant provision
 
 
 Files:
