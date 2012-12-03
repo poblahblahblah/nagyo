@@ -10,11 +10,8 @@ PATH
   specs:
     nagyo-server-helper (0.0.1)
       activesupport
-      configuration
       json
       nokogiri
-      nv_helpers
-      nventory-client
       rest-client
 
 GEM
@@ -30,7 +27,6 @@ GEM
       thor
     childprocess (0.3.6)
       ffi (~> 1.0, >= 1.0.6)
-    configuration (1.3.2)
     erubis (2.7.0)
     facter (1.6.14)
     ffi (1.2.0)

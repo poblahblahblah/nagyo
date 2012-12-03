@@ -55,6 +55,8 @@ end
 
 attribute :my_attr_keys, :kind_of => Array, :required => false, :default => @@my_attrs.keys
 #[:nodegroup, :check_command, :contacts, :notification_period]
+# TODO: can we set the Chef::Resource identity_attr to :name here?
+self.identity_attr(:name)
 attribute :get_attrs, :kind_of => Array, :required => false, :default => [:name]
 attribute :nagyo_url, :required => false
 attribute :model_name, :required => false, :default => "service"

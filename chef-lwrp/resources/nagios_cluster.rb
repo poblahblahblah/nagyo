@@ -28,6 +28,7 @@ end
 
 attribute :my_attr_keys, :kind_of => Array, :required => false, :default => @@my_attrs.keys
 #[:nodegroup, :check_command, :contacts, :vip_dns, :vip_name]
+self.identity_attr(:vip_name)
 attribute :get_attrs, :kind_of => Array, :required => false, :default => [:vip_name]
 attribute :nagyo_url, :required => false
 attribute :model_name, :required => false, :default => "cluster"

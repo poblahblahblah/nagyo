@@ -1,31 +1,55 @@
 
 
-
-desc "install nagyo-chef-lwrp into COOKBOOKS"
-task :install do
-  puts ARGV.inspect
-  #
+namespace "setup" do 
   cookdir = ENV["COOKBOOKS"]
-  unless cookdir
-    raise "Need to specify directory: rake install COOKBOOKS=/path/to/cookbooks"
+  task :check_cookbooks_dir do
+    #
+    unless cookdir
+      raise "** Need to specify directory: rake install COOKBOOKS=/path/to/cookbooks"
+    end
+    raise "* Unable to find directory: '#{cookdir}'!" unless File.exists?(cookdir)
   end
 
-  #
-  libdir = "#{cookdir}/base/libraries"
-  mkdir_p libdir
-  cp "libraries/nagyo_helper.rb", libdir
-
-  #
-  providers = "#{cookdir}/eharmonyops/providers"
-  mkdir_p providers
-  cp "providers/nagyo_helper.rb", providers
-
-  #
-  resources = "#{cookdir}/eharmonyops/resources"
-  mkdir_p resources
-  FileList['resources/*.rb'].each do |rrb|
-    cp rrb, resources
+  desc "cookbook used for development tests"
+  task :test_cookbook do
+    test_cookbook_dir = "#{cookdir}/test-nagyo-chef-lwrp-cookbook"
+    rm_rf test_cookbook_dir
+    cp_r "test-nagyo-chef-lwrp-cookbook", test_cookbook_dir
   end
 
+
+  desc "install NagyoHelper library to base cookbook"
+  task :install_library do
+    libdir = "#{cookdir}/base/libraries"
+    mkdir_p libdir
+    cp "libraries/nagyo_helper.rb", libdir
+  end
+
+  desc "install Nagyo LWRP resources to eharmonyops cookbook"
+  task :install_resources do
+    resources = "#{cookdir}/eharmonyops/resources"
+    mkdir_p resources
+    FileList['resources/*.rb'].each do |rrb|
+      cp rrb, resources
+    end
+  end
+
+  desc "install Nagyo LWRP provider to eharmonyops cookbook"
+  task :install_provider do
+    providers = "#{cookdir}/eharmonyops/providers"
+    mkdir_p providers
+    cp "providers/nagyo_helper.rb", providers
+  end
+
+  task :test_cookbook     => [:check_cookbooks_dir]
+  task :install_library   => [:check_cookbooks_dir]
+  task :install_resources => [:check_cookbooks_dir]
+  task :install_provider  => [:check_cookbooks_dir]
 end
 
+install_tasks = %w{ setup:install_library setup:install_resources setup:install_provider }
+# hmm - how to tell env ?
+install_tasks << "setup:test_cookbook" #unless Rails.env.production?
+
+desc "Install the Nagyo Chef LWRP files."
+task :install => install_tasks

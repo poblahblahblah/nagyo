@@ -48,7 +48,7 @@ module Nagyo
       end
 
       def logger
-        @logger ||= Logger.new(STDOUT)
+        @logger ||= Logger.new(STDERR)
       end
 
       # instead of building out a metadata api in nagyo, have list here of 
