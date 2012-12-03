@@ -6,6 +6,7 @@ This is the Chef LWRP code for Nagyo models.
 Basic sanity test with test cookbook using a local vagrant vm and nagyo 
 server on the host system:
 
+```sh
     # start nagyo-server on host system at :3000
     cd nagyo/nagyo-server
     bundle
@@ -40,20 +41,20 @@ server on the host system:
 
     # re-run chef-solo on vm with test cookbook
     bundle exec vagrant provision
+```
 
 
-## Files:
-* libraries/nagyo_helper.rb  ''NagyoHelper''
+Files
+-----
+* libraries/nagyo_helper.rb  `NagyoHelper`
     * --> cookbooks/base/libraries/nagyo_helper.rb
-
 * providers/nagyo_helper.rb   
-    * ''Chef::Provider::EharmonyopsNagyoHelper'', 
-      eharmonyops_nagyo_helper
+    * `Chef::Provider::EharmonyopsNagyoHelper`, 
+      `eharmonyops_nagyo_helper`
     * --> cookbooks/eharmonyops/providers/nagyo_helper.rb
-
 * resources/nagios_cluster.rb
-    * ''Chef::Resource::EharmonyopsNagiosCluster'', 
-      eharmonyops_nagios_cluster { }
+    * `Chef::Resource::EharmonyopsNagiosCluster`, 
+      `eharmonyops_nagios_cluster`
     * --> cookbooks/eharmonyops/resources/nagios_cluster.rb
 * resources/nagios_service.rb
     * --> cookbooks/eharmonyops/resources/nagios_service.rb
