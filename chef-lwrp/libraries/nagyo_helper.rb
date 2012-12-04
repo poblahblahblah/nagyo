@@ -15,12 +15,16 @@ module NagyoHelper
   # TODO: make this more configurable, e.g. yml file like nagyo-worker?
   BASE_URL = 'http://nagios2.np.dc1.eharmony.com:3000'
 
+  # TODO: should we just make sure it exists without updating ?  might get 
+  # annoying to have chef reloading/re-updating things all the time ...
+
   def self.add_or_update(resource)
     model_name = resource.model_name
     base_url = (resource.nagyo_url || BASE_URL)
 
     # each resource could have it's own nagyo url so make it fresh
     nagyo = Nagyo::Server::Helper.new(base_url)
+    nagyo.raise_errors = true
 
     ## ...
     params = {}
@@ -59,7 +63,7 @@ module NagyoHelper
       #
       result = nagyo.create_or_update(model_name, id_val, params)
     rescue => e
-      Chef::Log.info(e)
+      Chef::Log.error(e)
     end
   end
 end

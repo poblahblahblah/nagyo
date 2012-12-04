@@ -1,0 +1,5 @@
+.vagrant
+cookbooks/
+.bundle/
+log/*
+tmp/*

@@ -1,7 +1,10 @@
 
 
+desc "Tasks related to installation and setting up test environment."
 namespace "setup" do 
   cookdir = ENV["COOKBOOKS"]
+
+  desc "Ensure the COOKBOOKS directory exists."
   task :check_cookbooks_dir do
     #
     unless cookdir
@@ -11,7 +14,7 @@ namespace "setup" do
   end
 
   desc "cookbook used for development tests"
-  task :test_cookbook do
+  task :install_test_cookbook do
     test_cookbook_dir = "#{cookdir}/test-nagyo-chef-lwrp-cookbook"
     rm_rf test_cookbook_dir
     cp_r "test-nagyo-chef-lwrp-cookbook", test_cookbook_dir
@@ -41,15 +44,15 @@ namespace "setup" do
     cp "providers/nagyo_helper.rb", providers
   end
 
-  task :test_cookbook     => [:check_cookbooks_dir]
-  task :install_library   => [:check_cookbooks_dir]
-  task :install_resources => [:check_cookbooks_dir]
-  task :install_provider  => [:check_cookbooks_dir]
+  task :install_test_cookbook => [:check_cookbooks_dir]
+  task :install_library       => [:check_cookbooks_dir]
+  task :install_resources     => [:check_cookbooks_dir]
+  task :install_provider      => [:check_cookbooks_dir]
 end
 
 install_tasks = %w{ setup:install_library setup:install_resources setup:install_provider }
 # hmm - how to tell env ?
-install_tasks << "setup:test_cookbook" #unless Rails.env.production?
+install_tasks << "setup:install_test_cookbook" #unless Rails.env.production?
 
 desc "Install the Nagyo Chef LWRP files."
 task :install => install_tasks

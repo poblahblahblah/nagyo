@@ -135,14 +135,15 @@ module Nagyo
       def create_or_update(model, id = nil, opts = {})
         name = model_name(model)
         # first try to get it ... using id?
-        opts.symbolize_keys!
+        opts = opts.reject {|k,v| v.nil?}.symbolize_keys
         id ||= opts[model_keys[name.to_sym]]
         obj = get(model, id, opts)
-        if obj
-          # ... found, update it
-          response = update(model, obj["_id"], opts)
-        else
-          # not found, create it
+
+        if obj # ... found existing, update it ...
+          # merge new attrs into existing attrs, dropping nil
+          update_attrs = obj.attributes.merge( opts )
+          response = update(model, obj["_id"], update_attrs)
+        else # ... not found, create it from scratch
           response = create(model, opts)
         end
       end
