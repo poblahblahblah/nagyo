@@ -1,2 +1,5 @@
 require 'bundler'
 Bundler::GemHelper.install_tasks
+
+# some custom RPM helper tasks
+load "lib/tasks/rpm.rake"
