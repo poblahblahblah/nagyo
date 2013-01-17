@@ -1,4 +1,1 @@
-development:
-  adapter: mongodb
-  database: local
-  host: localhost
+# NOTE: see config/mongoid.yml for database config

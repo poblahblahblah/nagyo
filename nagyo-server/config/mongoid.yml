@@ -69,3 +69,17 @@ test:
       options:
         consistency: :strong
         identity_map_enabled: false
+
+# production hosts
+production:
+  sessions:
+    default:
+      database: nagyo_server
+      # TODO: list only PRIMARY or all?
+      hosts:
+        - nagyo-db2.prod.dc1.eharmony.com:27017
+        - nagyo-db1.prod.dc1.eharmony.com:27017
+        - nagyo-db3.prod.dc1.eharmony.com:27017
+      options:
+        consistency: :strong
+        identity_map_enabled: true
