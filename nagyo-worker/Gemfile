@@ -4,9 +4,8 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
-  # override to pull from private repo - need your github ssh keys available
-  gem "nv_helpers", :git => "git@github.com:poblahblahblah/nv_helpers"
+  # public github repo
+  gem "nv_helpers", :github => "poblahblahblah/nv_helpers"
   gem "nagyo-server-helper", :path => "../nagyo-server-helper"
-  #:git => "git@github.com:poblahblahblah/nagyo/nagyo-server-helper.git", 
   #:branch => "develop"
 end
