@@ -27,6 +27,9 @@ group :assets do
   gem 'bootstrap-sass', '~> 2.1.0.0'
 end
 
+# need this in all groups for seeding db ...
+gem "factory_girl_rails"
+
 # for testing:
 group :development, :test do
   gem "rspec-rails", "~> 2.0"
