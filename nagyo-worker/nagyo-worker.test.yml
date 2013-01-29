@@ -1,0 +1,8 @@
+--- 
+:nagyo_auth_token: nagyo-token-test-user
+:nagios_dir: /etc/nagios/objects
+:script_base: /home/nagyo/nagyo-worker
+:nagyo_server: http://nagyo:3000
+:nagios_user: root
+:nventory_host: http://nventory.slacklabs.com
+

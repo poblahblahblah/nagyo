@@ -99,7 +99,7 @@ end
 #######################
 # build up nagyo server client
 # uses Nagyo::Worker.config internally
-nagyo_server = Nagyo::Server::Helper.new
+nagyo_server = Nagyo::Server::Helper.new(config[:nagyo_host], config[:nagyo_auth_token])
 
 script_base = config[:script_base]
 
