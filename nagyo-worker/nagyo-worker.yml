@@ -1,7 +1,0 @@
---- 
-:nagyo_auth_token: b4j5qBqzYx5EukCM3Vri
-:nagios_dir: /etc/nagios/objects
-:script_base: /home/ops-svc/nagyo/nagyo-worker
-:nagyo_server: http://nagyo-web1.prod.dc1:3000
-:nagios_user: root
-

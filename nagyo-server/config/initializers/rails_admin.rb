@@ -522,7 +522,6 @@ RailsAdmin.config do |config|
       end
       field :notification_interval
       field :notification_period
-      field :status #nventory
     end
   #   export do; end
   #   show do; end
@@ -534,7 +533,6 @@ RailsAdmin.config do |config|
       field :check_period
       field :notification_interval # 1..5
       field :notification_period
-      field :status
 
       field :display_name
       field :parents     # :collection => Host.all, :member_label => :host_name

@@ -120,7 +120,9 @@ module Nagyo::Worker
     #   Node.name => Host.host_name
     #   Node.node_groups => []  => Host.node_groups Nodegroup.new ...
     #   Node.hardware_profile => {:name => ""}
-    #   Node.status => {:name => "", :description => ""} ?
+    #
+    # Data transformed: (Nagyo Host does not have :status field)
+    #   Node.status => {:name => "", :description => ""} -- determines the notification options on sync
     #
     def self.sync_nventory_nodes_to_nagyo(opts = {})
       #
@@ -169,6 +171,7 @@ module Nagyo::Worker
       #   - :host_name, :address, :contacts
       #   - what should :contacts be?
       nagyo_hosts = nagyo.get_all("hosts").group_by {|x| x["host_name"] }
+      # returns hash of { hwprofile => [{profile => data}], ...}
       nagyo_hwprofiles = nagyo.get_all("hardwareprofile").group_by {|x| x["hardware_profile"] }
 
       nodes.each do |host_name, node|
@@ -176,9 +179,10 @@ module Nagyo::Worker
         # check for hardware profile:?
         # TODO: but nagyo Host has no hardwareprofile ... should it?
         hwprofile = node["hardware_profile"]["name"]
-        if hwprofile && !nagyo_hwprofiles.include?(hwprofile)
+        if hwprofile && !nagyo_hwprofiles.keys.include?(hwprofile)
           logger.info("Creating Nagyo Hardwareprofile for #{hwprofile}.")
           nagyo.create("hardwareprofile", :hardware_profile => hwprofile)
+          nagyo_hwprofiles[hwprofile] = "created"
         end
 
         host_options = {
@@ -227,6 +231,8 @@ module Nagyo::Worker
           })
 
           result = nagyo.create("host", new_opts)
+          # check if result is success?
+          nagyo_hosts[host_name] = "created"
         end
         logger.debug("host update/new result = #{result}")
 
