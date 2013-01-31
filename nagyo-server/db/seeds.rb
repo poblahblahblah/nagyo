@@ -17,20 +17,32 @@ begin
   db_user = User.find_or_create_by(:email => factory_user.email)
   if db_user
     # get around attr-protected settings
-    factory_user.attributes.each { |k,v| db_user.send("#{k}=", v) rescue nil }
-    db_user.save
+    factory_user.attributes.each do |k,v|
+      next if k.to_s == "_id"
+      begin
+	puts "Setting #{k}= #{v}"
+        db_user.send("#{k}=", v) 
+      rescue
+        puts "Unable to set attribute on user: #{$!}"
+      end
+    end
+    puts "db_user= #{db_user.inspect}"
+    puts "db_user.errors= #{db_user.errors.inspect}"
+    db_user.save!
   end
 rescue
   puts "*** Unable to create or have already created default user: #{$!}"
 end
 
 # timeperiods
+puts "*** Building Timeperiods ... "
 timeperiods = FactoryGirl.factories.select { |x| x.send(:class_name).to_s.downcase == "timeperiod" }
 timeperiods.each do |factory|
   FactoryGirl.create(factory.name) rescue nil
 end
 
 # commands
+puts "*** Building Commands ... "
 commands = FactoryGirl.factories.select { |x| x.send(:class_name).to_s.downcase == "command" }
 commands.each do |factory|
   begin
