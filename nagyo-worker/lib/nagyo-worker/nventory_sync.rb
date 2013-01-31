@@ -120,7 +120,9 @@ module Nagyo::Worker
     #   Node.name => Host.host_name
     #   Node.node_groups => []  => Host.node_groups Nodegroup.new ...
     #   Node.hardware_profile => {:name => ""}
-    #   Node.status => {:name => "", :description => ""} ?
+    #
+    # Data transformed: (Nagyo Host does not have :status field)
+    #   Node.status => {:name => "", :description => ""} -- determines the notification options on sync
     #
     def self.sync_nventory_nodes_to_nagyo(opts = {})
       #
