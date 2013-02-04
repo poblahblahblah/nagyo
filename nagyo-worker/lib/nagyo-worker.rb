@@ -28,7 +28,7 @@ module Nagyo
       :nagios_object_dirs => %W(clusters commands contacts hardware hostgroups hosts services),
 
       # when creating hosts, things are required
-      :default_contact  => "pobrien@eharmony.com",
+      :default_contact  => "nagios-test-alerts@eharmony.com",
 
     })
 
