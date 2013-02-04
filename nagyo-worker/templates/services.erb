@@ -1,8 +1,8 @@
 # FIXME: eharmony specific
 define service {
   _nodegroup			<%= cc['nodegroup'] %>
-  hostgroup_name		<%= cc['nodegroup'] %>
 <% # note for eharmony: I left out hostgroup_name, since we use nodegroup_name %>
+  #hostgroup_name		<%= cc['nodegroup'] %>
 <% %W(host_name service_description display_name servicegroups is_volatile
       check_command initial_state max_check_attempts check_interval retry_interval
       active_checks_enabled passive_checks_enabled check_period obsess_over_service 
