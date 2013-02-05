@@ -79,7 +79,8 @@ module Nagyo
 
       def config_nagyo
         logger.debug("Configuring Nagyo Helper: host=#{self.nagyo_host}")
-        self.nagyo = RestClient::Resource.new(self.nagyo_host, self.auth_token)
+        opts = {:user => self.auth_token, :password => nil, :timeout => 900} #, :open_timeout => 900}
+        self.nagyo = RestClient::Resource.new(self.nagyo_host, opts)
       end
 
       # TODO: add helper for :get_all and :get to support passing filter opts to 
