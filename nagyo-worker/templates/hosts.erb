@@ -4,7 +4,8 @@
 define host{
   host_name                     <%= host['host_name'] %>
   address                       <%= host['address'] %>
-  hostgroups                    <%= host['hostgroups'].join(',') %>
+  #NOTE: hostgroups not yet integrated
+  #hostgroups                    <%= host['hostgroups'].join(',') %>
   _nodegroups                   <%= host['hostgroups'].join(',') %>
   notifications_enabled         <%= host['notifications_enabled'] %>
   event_handler_enabled         <%= host['event_handler_enabled'] %>
