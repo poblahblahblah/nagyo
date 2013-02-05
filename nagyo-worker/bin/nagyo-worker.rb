@@ -375,10 +375,14 @@ if reload_required
   render_erb_tmpfile(binding, "nagios.cfg.erb", tmp_nagios_cfg)
 
   # finicky permissions!
-  FileUtils.chown_R(config[:nagios_user], config[:nagios_group], config[:nagios_tmpdir])
-  FileUtils.chmod_R(0655, config[:nagios_tmpdir])
-  FileUtils.chown(config[:nagios_user], config[:nagios_group], tmp_nagios_cfg)
-  FileUtils.chmod(0655, tmp_nagios_cfg)
+  begin
+    FileUtils.chown_R(config[:nagios_user], config[:nagios_group], config[:nagios_tmpdir])
+    FileUtils.chmod_R(0655, config[:nagios_tmpdir])
+    FileUtils.chown(config[:nagios_user], config[:nagios_group], tmp_nagios_cfg)
+    FileUtils.chmod(0655, tmp_nagios_cfg)
+  rescue Exception => e
+    logger.warn("Error changing permissions of nagios configs, Nagios will complain ... #{e}")
+  end
 
   logger.debug("Attempting verification of nagios configs ...")
 
