@@ -92,6 +92,7 @@ opts = OptionParser.new do |opts|
   opts.on('-d', '--[no-]debug', "Whether to log debug output also") do |d|
     config[:debug] = !! d
     if config[:debug]
+      config[:verbose] = config[:debug]
       logger.level = Logger::DEBUG
     end
   end
@@ -370,7 +371,7 @@ end
 # against a temporary nagios.cfg file to see if it passes nagios' 
 # sanity checks.
 if reload_required
-  logger.debug("Reload of nagios required ...")
+  logger.debug("Reload of nagios required will be require.  Checking generated configs ...")
 
   render_erb_tmpfile(binding, "nagios.cfg.erb", tmp_nagios_cfg)
 
@@ -381,12 +382,14 @@ if reload_required
     FileUtils.chown(config[:nagios_user], config[:nagios_group], tmp_nagios_cfg)
     FileUtils.chmod(0655, tmp_nagios_cfg)
   rescue Exception => e
-    logger.warn("Error changing permissions of nagios configs, Nagios will complain ... #{e}")
+    logger.error("ERROR: unable to change permissions of nagios configs, Nagios will complain ... #{e}")
   end
 
-  logger.debug("Attempting verification of nagios configs ...")
+  logger.info("Attempting verification of nagios configs ...")
 
-  if system("/usr/sbin/nagios -v #{tmp_nagios_cfg}") == false
+  check_nagios_cmd = "/usr/sbin/nagios -v #{tmp_nagios_cfg}"
+  logger.debug("Running nagios check: #{check_nagios_cmd}")
+  if system(check_nagios_cmd) == false
     message = "** ERROR: verification of the nagios configs have failed. please investigate."
     logger.error(message)
     #send_email("pobrien@eharmony.com", "pobrien@eharmony.com", "nagios config generation failed", message)
@@ -394,14 +397,16 @@ if reload_required
 
   else
 
-    # backup old configs
-    FileUtils.mv(config[:nagios_dir], File.join(backup_dir, Time.now.to_i.to_s), :force => true)
+    logger.info("Backing up existing nagios configs from #{config[:nagios_dir]} ...")
+    FileUtils.mv(config[:nagios_dir], File.join(config[:backup_dir], Time.now.to_i.to_s), :force => true, :verbose => config[:verbose])
 
-    # move the configs and restart nagios
-    FileUtils.mv(config[:nagios_tmpdir], config[:nagios_dir], :force => true)
+    logger.info("Moving generated nagios configs into #{config[:nagios_dir]} ...")
+    FileUtils.mv(config[:nagios_tmpdir], config[:nagios_dir], :force => true, :verbose => config[:verbose])
 
     # restart nagios
-    if system("/etc/init.d/nagios reload") == false
+    reload_nagios_cmd = "/etc/init.d/nagios reload"
+    logger.info("Restarting nagios via: #{reload_nagios_cmd} ...")
+    if system(reload_nagios_cmd) == false
       message = "*** ERROR: reloading of nagios failed. nagios is down. please investigate immediately."
       logger.error(message)
       #send_email("pobrien@eharmony.com", "pobrien@eharmony.com", "nagios config generation failed", message)
