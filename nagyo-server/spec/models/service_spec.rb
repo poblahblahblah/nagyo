@@ -18,6 +18,7 @@ describe Service do
     # TODO: validates with EitherOrValidator
 
     it { should validate_presence_of :name }
+    it { should validate_presence_of :service_description }
     it { should validate_presence_of :check_command }
     it { should validate_presence_of :check_command_arguments }
     it { should validate_presence_of :max_check_attempts }

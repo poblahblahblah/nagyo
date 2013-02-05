@@ -41,9 +41,11 @@ class Service
     :inverse_of => :service
 
   # required:
+  # NOTE: name is a generated field ... 
   field :name,                          type: String
   slug :name
 
+  field :service_description,           type: String
   field :check_command_arguments,       type: String
   field :max_check_attempts,            type: Integer,  :default => 3
   field :check_interval,                type: Integer,  :default => 3
@@ -51,7 +53,6 @@ class Service
   field :notification_interval,         type: Integer,  :default => 60
 
   # optional:
-  field :service_description,           type: String
 
   field :display_name,                  type: String
   field :is_volatile,                   type: Integer,  :default => 0
@@ -101,8 +102,8 @@ class Service
   # custom validation : one of Host or Hostgroup needs to be present
   validates_with EitherOrValidator, :fields => [:host, :hostgroup]
 
-  validates_presence_of  :name, :check_command, 
-    :check_command_arguments, :max_check_attempts, :check_interval, 
+  validates_presence_of  :name, :check_command, :service_description,
+    :check_command_arguments, :max_check_attempts, :check_interval,
     :check_period, :notification_interval, :notification_period, :contacts
 
   # FIXME: this is failing ... when one of scoped is nil

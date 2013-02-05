@@ -776,7 +776,8 @@ RailsAdmin.config do |config|
   #     configure :host_name, :serialized 
   #     configure :hostgroup_name, :serialized   #   # Sections:
     list do
-      field :name 
+      field :name
+      field :service_description
       field :host do
         searchable [:host_name]
       end
@@ -796,6 +797,7 @@ RailsAdmin.config do |config|
   #   export do; end
   #   show do; end
     edit do
+      field :service_description
       field :host
       field :hostgroup
       field :contacts
