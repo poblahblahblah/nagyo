@@ -1,5 +1,26 @@
 #!/usr/bin/env ruby
 
+
+#
+# Nagyo Worker
+#
+#
+# Options
+#
+#   - nagyo_worker_config
+#
+#   - nagios_tmpdir
+#   - nagios_dir
+#   - backup_dir
+#   - script_base
+#
+#   - sync_nventory_nagyo  (bool)
+#   - nventory_host
+#   - nagyo_host
+#   - nagyo_auth_token
+
+
+
 require 'rubygems'
 
 # stdlib
@@ -25,15 +46,11 @@ nodes           = {}
 node_groups     = {}
 service_ngs     = []
 
-config_file = config[:nagyo_worker_config] || "nagyo-worker.yml"
-
 
 opts = OptionParser.new do |opts|
   opts.banner = "Usage: #$0 [options]"
 
   opts.on('-c', '--config FILE', 'load nagyo-worker config from FILE (after options)') do |file|
-    config_file = file
-    # set in config?
     config[:nagyo_worker_config] = file
   end
 
@@ -83,7 +100,16 @@ end
 opts.parse!(ARGV)
 
 
+################################################################################
+#  Nagyo Worker script __MAIN__
+################################################################################
+
 logger.info("Starting nagyo-worker ...")
+
+# TODO: search a few places for nagyo-worker.yml ...
+# does nagyo config have '/' ? else search a few paths
+config_file = config[:nagyo_worker_config] || "nagyo-worker.yml"
+config_paths = [config[:script_base], config[:nagios_dir], config[:backup_dir]]
 
 # load configuration from yml file -- but occurs after options are parsed ...
 if File.exists?(config_file)
@@ -108,28 +134,25 @@ script_base = config[:script_base]
 reload_required = false
 
 
+  # Create directory that will be used for nagios config
+  FileUtils.mkdir_p(config[:nagios_dir])
 
+  # create backup directory
+  FileUtils.mkdir_p(config[:backup_dir])
 
-def script_init
-  # ...
-end
-
-  # !! create a temporary directory
-  #tmpdir         = Dir.mktmpdir
-  config[:nagios_tmpdir] ||= Dir.mktmpdir
+  # create a temporary directory for staging generated output
+  config[:nagios_tmpdir] ||= Dir.mktmpdir("nagyo-worker")
+  FileUtils.mkdir_p(config[:nagios_tmpdir])
   logger.debug("Using temporary dir: #{config[:nagios_tmpdir]}")
 
   # !! create temporary nagios.cfg main file
-  tmp_nagios_cfg = Tempfile.new('nagios.cfg').path
+  tmp_nagios_cfg = Tempfile.new(['nagios','.cfg'], config[:nagios_tmpdir]).path
   logger.debug("Using temporary nagios.cfg := #{tmp_nagios_cfg}")
 
   # !! create tmp directories for new nagios configs
   gen_directories = config[:nagios_object_dirs] #
   gen_directories.each {|dir| Dir.mkdir(File.join(config[:nagios_tmpdir], dir))} rescue logger.error("Unable to create directories: #{$!}")
 
-
-  # !! create backup directory
-  FileUtils.mkdir_p(config[:backup_dir])
 
 
 
@@ -360,7 +383,7 @@ if reload_required
   logger.debug("Attempting verification of nagios configs ...")
 
   if system("/usr/sbin/nagios -v #{tmp_nagios_cfg}") == false
-    message = "verification of the nagios configs have failed. please investigate."
+    message = "** ERROR: verification of the nagios configs have failed. please investigate."
     logger.error(message)
     #send_email("pobrien@eharmony.com", "pobrien@eharmony.com", "nagios config generation failed", message)
     exit 1
@@ -375,7 +398,7 @@ if reload_required
 
     # restart nagios
     if system("/etc/init.d/nagios reload") == false
-      message = "reloading of nagios failed. nagios is down. please investigate immediately."
+      message = "*** ERROR: reloading of nagios failed. nagios is down. please investigate immediately."
       logger.error(message)
       #send_email("pobrien@eharmony.com", "pobrien@eharmony.com", "nagios config generation failed", message)
       exit 1
