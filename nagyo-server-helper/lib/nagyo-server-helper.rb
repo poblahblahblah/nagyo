@@ -88,13 +88,36 @@ module Nagyo
 
       # CRUD operations - by model class, id
       # want json for pulling data
+
+      # get all results, paging through as needed. pass a block to process one 
+      # page of results at a time.
       def get_all(model, opts = {})
         name = model_name(model)
         opts.symbolize_keys!
-        do_restful_action("get_all", name) do
-          all_opts = {:format => :json, :accept => :json, :params => {:all => 'true'}}
-          self.nagyo["#{name}"].get(all_opts.merge(opts))
+
+        all = []
+        page = 1
+        done = false
+        ###########
+        while !done
+          this_page = do_restful_action("get_all_#{page}", name) do
+            all_opts = {:format => :json, :accept => :json, :params => {:page => page}}
+            self.nagyo["#{name}"].get(all_opts.merge(opts))
+          end
+          if this_page.nil? or this_page.empty?
+            done = true
+            next
+          end
+          all += this_page
+
+          # do something with this_page ... if asked to
+          yield this_page if block_given?
+
+          page += 1
         end
+        ###########
+
+        return all
       end
 
       # want json for pulling data
