@@ -98,15 +98,17 @@ module Nagyo
       end
 
       # want json for pulling data
-      def get(model, id, opts = {})
+      def get(model, id=nil, opts = {})
         name = model_name(model)
         opts.symbolize_keys!
         data = do_restful_action("get", name) do
-          self.nagyo["#{name}/#{URI.encode(id.to_s)}"].get(opts.merge(:format => :json, :accept => :json))
+          self.nagyo["#{name}/#{URI.encode(id.to_s)}"].get({:format => :json, :accept => :json}.merge(opts))
         end
-        # NOTE: if we get a Hash - single record matched - otherwise when no 
-        # match it will return all records in an Array ...
-        if data.is_a?(Hash)
+        if id
+          # NOTE: if we have an ID and get a Hash - single record matched, 
+          # otherwise no match and might have returned first page of records
+          return data if data.is_a?(Hash)
+        else
           return data
         end
       end
