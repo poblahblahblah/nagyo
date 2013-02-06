@@ -5,7 +5,8 @@
 # Nagyo Worker
 #
 #
-# Options
+# Options that can be set via option file (some via command line):
+#   See also lib/nagyo_worker.rb for defaults
 #
 #   - nagyo_worker_config
 #
@@ -24,6 +25,7 @@
 require 'rubygems'
 
 # stdlib
+require 'optparse'
 require 'erb'
 require 'yaml'
 require 'tempfile'
@@ -104,6 +106,11 @@ opts.parse!(ARGV)
 ################################################################################
 #  Nagyo Worker script __MAIN__
 ################################################################################
+#
+# - load config file
+# - maybe sync nventory nodes -> nagyo
+# - generate nagios configs
+# - check if valid and if changed -> replace existing
 
 logger.info("Starting nagyo-worker ...")
 
@@ -159,8 +166,8 @@ reload_required = false
 
 ##################
 
+## pull nodes from nventory and sync to nagyo
 
-# pull from nventory and seed nagyo 
 #config[:sync_nventory_nagyo] = true
 if config[:sync_nventory_nagyo]
   # sync in-service nodes to nagyo hosts
@@ -172,7 +179,7 @@ end
 ##################
 
 
-# helper for writing out config
+# helper for writing out Nagios config using ERB templates
 def render_erb_tmpfile(context, erb_basename, output_filename)
   Nagyo::Worker.logger.debug("rendering #{erb_basename} to #{output_filename}")
   script_base = Nagyo::Worker.config[:script_base]
@@ -187,7 +194,7 @@ def render_erb_tmpfile(context, erb_basename, output_filename)
   # strip extra whitespace
   erb_result.gsub!(/^$\n/, '')
 
-  f = File.new(output_filename, "wb")
+  f = File.new(output_filename, "ab")  # append, binary
   f.puts erb_result
   f.close
 
@@ -204,35 +211,48 @@ end
 # from different sources and to different destinations.
 
 # FIXME: below expects node_groups certain format ... 
+
 #
-# another Thread around this call? - or share hosts var?
-hosts = nagyo_server.get_all("hosts")
-
-
 config_writer_threads = []
 
-# hosts/hosts.cfg (1 file)
-config_writer_threads << Thread.new do
-  # NOTE: the erb template iterates over all hosts ...
-  render_erb_tmpfile(binding, "hosts.erb", "hosts/hosts.cfg")
-end
+all_hosts = []
 
+# hosts/hosts.cfg (1 file)
+hosts_thread = Thread.new do
+
+  page = 1
+  hosts = nagyo_server.get("hosts") # first page
+  while ! hosts.empty?
+    all_hosts += hosts
+
+    # render these hosts
+    render_erb_tmpfile(binding, "hosts.erb", "hosts/hosts.cfg")
+
+    page += 1
+    hosts = nagyo_server.get("hosts", nil, :params => {:page => page})
+  end
+
+end
+config_writer_threads << hosts_thread
+
+# NOTE: the below uses all_hosts var - which is filled by hosts_thread above
 
 # hardware/hardwareID.cfg (1 file per hw profile)
 nagyo_server.get_all("hardwareprofiles").each do |hp|
   config_writer_threads << Thread.new do
+    hosts_thread.join # need all_hosts
 
     # TODO: what is this for --- hardware_host_list used in erb
     hardware_host_list = []
 
-    # TODO: wha? why does this (over)write the hardware/id.cfg for each hardware-profile check_command??
-    hp['check_commands'].to_a.each do |cc|
-      hosts.each do |node|
-        if host['hardware_profile'] =~ /#{hp['hardware_profile']}/
-          hardware_host_list << host['host_name']
-        end
+    all_hosts.each do |host|
+      if host['hardware_profile'] =~ /#{hp['hardware_profile']}/
+        hardware_host_list << host['host_name']
       end
+    end
 
+    hp['check_commands'].to_a.each do |cc|
+      # write the hardware/id.cfg for each hardware-profile check_command?
       render_erb_tmpfile(binding, "hardware.erb", File.join("hardware", hp['_id'] + '.cfg'))
     end
   end
