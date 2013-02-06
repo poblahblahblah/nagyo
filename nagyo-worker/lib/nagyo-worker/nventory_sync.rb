@@ -35,9 +35,8 @@ module Nagyo::Worker
       return graffitis, nodes
     end
 
-    # TODO: rely on nventory config ?
-
-    # pulls nodes and nodegroups from nventory server and returns the result.
+    # pulls nodes and nodegroups from nventory server and returns the result as 
+    # an array of two elements: nodes, nodegroups.
     #
     # Returns: [nodes, nodegroups]
     #   nodes: { "host_name" => {...}, ... }
@@ -46,11 +45,6 @@ module Nagyo::Worker
     def self.nventory_nodes_and_groups(opts = {})
 
       Nagyo::Worker.configure(opts)
-
-      # production
-      #nventory_host   = "http://nventory.corp.eharmony.com"
-      # development
-      #nventory_host   = "http://localhost:7000"
 
       nventory_host   = opts[:nventory_host] || config[:nventory_host]
       nvclient        = NVentory::Client.new(:server => nventory_host,
@@ -83,7 +77,9 @@ module Nagyo::Worker
 
       nodes.delete_if { |x,y| y['operating_system']['name'] !~ /centos|red hat|scientific/i }
 
-      # and now let's get rid of all non setup or *inservice nodes
+      # and now let's get rid of all *NON* setup or inservice nodes, leaving 
+      # only setup and /.*inservice/ - maybe not needed since we :get only 
+      # three status types when selecting above.
       nodes.delete_if { |x,y| y['status']['name'] !~ /^setup$|inservice$/i }
 
       # here we do various things to the nodes array, there will be a blurb before each of them
@@ -105,9 +101,8 @@ module Nagyo::Worker
         end
       end
 
-
       return [nodes, node_groups]
-    end # nventory_nodes
+    end # nventory_nodes_and_groups
 
 
     # load nventory nodes into nagyo-server.
@@ -122,12 +117,17 @@ module Nagyo::Worker
     #   Node.hardware_profile => {:name => ""}
     #
     # Data transformed: (Nagyo Host does not have :status field)
-    #   Node.status => {:name => "", :description => ""} -- determines the notification options on sync
+    #   - Node.status => {:name => "", :description => ""}
+    #     - node.status determines the notification options for Nagyo host
+    #
+    # TODO: keep track of nodes that exist in nagyo that are not synced anymore -- need to delete
+    # TODO: make this faster by batching or limiting data pulls of e.g. all hosts at once
+    #
     #
     def self.sync_nventory_nodes_to_nagyo(opts = {})
       #
       Nagyo::Worker.configure(opts)
-      #
+
       nodes, nodegroups = nventory_nodes_and_groups
 
       nagyo = Nagyo::Server::Helper.new(config[:nagyo_host], config[:nagyo_auth_token])
@@ -137,6 +137,7 @@ module Nagyo::Worker
       logger.debug("Got nodes from nventory (#{config[:nventory_host]}): #{nodes.keys.inspect}")
       logger.debug("Got node groups from nventory #{nodegroups.inspect}")
 
+      # debug output of nventory nodes to Yaml
       if config[:dump_nodes]
         outf = File.new("nventory-nodes-#{Time.now.to_i}.yml", "wb")
         outf.puts YAML.dump({:nodes => nodes, :nodegroups => nodegroups})
@@ -228,6 +229,7 @@ module Nagyo::Worker
             # for now we need to set some required fields:
             :address     => host_name,
             :contact_ids => [ config[:default_contact] ],
+            :check_command_id => "check_tcp",
           })
 
           result = nagyo.create("host", new_opts)
