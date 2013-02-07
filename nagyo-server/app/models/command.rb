@@ -60,13 +60,11 @@ class Command
     super(*params)
   end
 
-  # TODO: is this always what we want? or does some other opts override 
-  # sometimes?
   def to_s
-    "#{command_name}!#{command_line}"
+    "#{command_name}"
   end
 
   def to_label
-    "#{command_name}"
+    self.to_s
   end
 end
