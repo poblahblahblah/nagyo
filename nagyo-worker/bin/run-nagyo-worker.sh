@@ -23,4 +23,4 @@ if [[ ! -f $worker_script ]] ; then
   exit 3
 fi
 
-echo /usr/local/rvm/bin/rvm $NAGYO_WORKER_GEMSET do bundle exec ./bin/nagyo-worker.rb --config nagyo-worker.yml $NAGYO_WORKER_OPTS $*
+/usr/local/rvm/bin/rvm $NAGYO_WORKER_GEMSET do bundle exec ./bin/nagyo-worker.rb --config nagyo-worker.yml $NAGYO_WORKER_OPTS $*
