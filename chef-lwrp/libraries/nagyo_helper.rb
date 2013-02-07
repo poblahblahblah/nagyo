@@ -1,30 +1,49 @@
+
 require 'open-uri'
 
-#gem 'rest-client', '>= 1.6.7'
-require 'rest_client'
+# NOTE: below requirements for nagyo/nagios support ...
+begin
+  #gem 'rest-client', '>= 1.6.7'
+  require 'rest_client'
 
-# TODO: can we use Nagyo::Server::Helper here?  how to get it installed 
-# - rpm / gem? -- chef needs it on machine before it loads libraries ... 
-# ?
-require 'nagyo-server-helper'
+  # NOTE: chef needs Nagyo helper on machine before it loads libraries ...
+  # can build rpm from https://github.com/poblahblahblah/nagyo/nagyo-server-helper
+  #
+  require 'nagyo-server-helper'
+  nagyo_loaded = true
+rescue LoadError
+  err= "ERROR: Unable to load nagyo-server-helper on this machine ... some functionality will be disabled."
+  puts err; Chef::Log.error(err)
+  nagyo_loaded = false
+end
 
 # Used in providers/nagyo_helper to add or update a resource
 #
 module NagyoHelper
   # Nagyo Server URL
-  # TODO: make this more configurable, e.g. yml file like nagyo-worker?
+  # FIXME: TODO: make this more configurable, e.g. yml file like nagyo-worker
   BASE_URL = 'http://nagios2.np.dc1.eharmony.com:3000'
+  AUTH_TOKEN = "naygo-token-test-user"
 
   # TODO: should we just make sure it exists without updating ?  might get 
   # annoying to have chef reloading/re-updating things all the time ...
 
+  #
   def self.add_or_update(resource)
     model_name = resource.model_name
     base_url = (resource.nagyo_url || BASE_URL)
+    auth_token = (resource.nagyo_auth_token || AUTH_TOKEN)
 
     # each resource could have it's own nagyo url so make it fresh
-    nagyo = Nagyo::Server::Helper.new(base_url)
-    nagyo.raise_errors = true
+    # also - library may not be available so fail gracefully ... just return
+    begin
+      nagyo = Nagyo::Server::Helper.new(base_url, auth_token)
+      # errors from chef-recipes need to be recognized and corrected
+      nagyo.raise_errors = true
+    rescue NameError => e
+      Chef::Log.error("Unable to use Nagyo functionality: #{e}")
+      return
+    end
 
     ## ...
     params = {}

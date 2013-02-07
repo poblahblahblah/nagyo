@@ -31,6 +31,7 @@ attribute :my_attr_keys, :kind_of => Array, :required => false, :default => @@my
 self.identity_attr(:vip_name)
 attribute :get_attrs, :kind_of => Array, :required => false, :default => [:vip_name]
 attribute :nagyo_url, :required => false
+attribute :nagyo_auth_token, :required => false
 attribute :model_name, :required => false, :default => "cluster"
 attribute :model_name_plural, :required => false, :default => "clusters"
 
