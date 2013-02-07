@@ -78,11 +78,11 @@ module Nagyo::Worker
       nodes.delete_if { |x,y| y['operating_system']['name'] !~ /centos|red hat|scientific/i }
 
       # and now let's get rid of all *NON* setup or inservice nodes, leaving 
-      # only setup and /.*inservice/ - maybe not needed since we :get only 
-      # three status types when selecting above.
+      # only setup and /.*inservice/ (maybe not needed since we :get only 
+      # three status types when selecting above.)
       nodes.delete_if { |x,y| y['status']['name'] !~ /^setup$|inservice$/i }
 
-      # here we do various things to the nodes array, there will be a blurb before each of them
+      # here we do various things to the nodes array
       nodes.each do |node_name, node|
         # we don't really care about alerting on non production hosts (although this may change)
         # so let's just pass the nodes through a regex matching the SSVMs but not the hypervisors
@@ -229,7 +229,7 @@ module Nagyo::Worker
             # for now we need to set some required fields:
             :address     => host_name,
             :contact_ids => [ config[:default_contact] ],
-            :check_command_id => "check_tcp",
+            :check_command_id => "check_ping",
           })
 
           result = nagyo.create("host", new_opts)
