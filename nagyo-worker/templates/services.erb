@@ -1,8 +1,8 @@
 # FIXME: eharmony specific
 define service {
-  _nodegroup			<%= cc['nodegroup'] %>
+  _nodegroup			<%= cc['hostgroup'] %>
 <% # note for eharmony: I left out hostgroup_name, since we use nodegroup_name %>
-  #hostgroup_name		<%= cc['nodegroup'] %>
+  hostgroup_name		<%= cc['hostgroup'] %>
 <% %W(host_name service_description display_name servicegroups is_volatile
       check_command initial_state max_check_attempts check_interval retry_interval
       active_checks_enabled passive_checks_enabled check_period obsess_over_service 
@@ -14,7 +14,7 @@ define service {
       action_url icon_image icon_image_alt
    ).each do |key| %>
 <% if cc.has_key?(key) && !cc[key].to_s.empty? %>
-  <%= key %>    <%= cc[key].to_s %>
+  <%= key %>    <%= cc[key].to_a.join(",").to_s %>
 <% end %>
 <% end %>
 }
