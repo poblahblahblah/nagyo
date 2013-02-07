@@ -53,7 +53,7 @@ Nagyo::Application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # TODO: set real hostname for production env
-  config.action_mailer.default_url_options = { :host => 'nagyo-web.prod.dc1.eharmony.com' }
+  config.action_mailer.default_url_options = { :host => 'nagyo-web1.prod.dc1.eharmony.com' }
   # production - deliveries, no errors raised
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
