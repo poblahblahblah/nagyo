@@ -229,7 +229,7 @@ module Nagyo::Worker
             # for now we need to set some required fields:
             :address     => host_name,
             :contact_ids => [ config[:default_contact] ],
-            :check_command_id => "check_ping",
+            :check_command_id => "check-host-alive",
           })
 
           result = nagyo.create("host", new_opts)
