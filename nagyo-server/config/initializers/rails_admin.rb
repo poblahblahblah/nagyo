@@ -539,6 +539,7 @@ RailsAdmin.config do |config|
       field :hostgroups
       field :contact_groups
       field :check_command
+      field :check_command_arguments
       field :initial_state, :nagios_options
       field :check_interval #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]
       field :retry_interval #, :as => :select, :collection => [ 1, 2, 3, 4, 5 ]
