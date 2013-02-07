@@ -1,5 +1,6 @@
 # This extension can serialize an array of simple string options into a 
-# comma-separated String for nagios usage.
+# comma-separated String for nagios usage.  Stores into a String field in 
+# MongoDB and in Nagios configs but can be edited as an Array in forms.
 #
 # Usage in model:
 #

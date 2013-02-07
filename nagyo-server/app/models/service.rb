@@ -46,7 +46,7 @@ class Service
   slug :name
 
   field :service_description,           type: String
-  field :check_command_arguments,       type: String
+  field :check_command_arguments,       type: Array
   field :max_check_attempts,            type: Integer,  :default => 3
   field :check_interval,                type: Integer,  :default => 3
   field :retry_interval,                type: Integer,  :default => 3

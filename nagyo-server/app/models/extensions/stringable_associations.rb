@@ -1,8 +1,20 @@
+# A Stringable Association is a slugged model-relationship in Nagyo that is 
+# converted to a simple string-representation for Nagios config files.  E.g. 
+# The Nagyo Command object for check_tcp is just converted to "check_tcp" string 
+# in Nagios.
+#
+# For the opposite direction, on accepting input, see monkey-patched 
+# RailsAdmin::MainController in:
+#   - config/initializers/rails_admin.rb 
+#
+
+# Usage:
+#   include Extensions::StringableAssociations
+#
 #   - will add the stringable_associations class_attribute
 #   - will set stringable_associations based on model
 #     - add association name if related-model has a Slugged field
 #       if ModelClass.slugged_attributes exist and has one entry
-#
 #   - add the custom setter methods for those situations where field_id or 
 #   field_ids is set manually (via console, scripts, etc)
 #
