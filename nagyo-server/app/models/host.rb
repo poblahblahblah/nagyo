@@ -67,7 +67,7 @@ class Host
   field :notification_interval, type: Integer, :default => 5
 
   # optional:
-  field :check_command_arguments,      type: Array
+  field :check_command_arguments,      type: String
   field :notes,                        type: String
   field :notes_url,                    type: String
   field :action_url,                   type: String

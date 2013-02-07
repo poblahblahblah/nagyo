@@ -32,10 +32,10 @@ class Cluster
   field :ecv_uri,              type: String
   field :ecv_string,           type: String
 
-  field :check_command_arguments, type: Array
+  field :check_command_arguments, type: String
 
   # optional:
-  field :node_check_command_arguments,    type: Array
+  field :node_check_command_arguments,    type: String
   field :notify_on_node_service,          type: Integer, default: 0
 
 
