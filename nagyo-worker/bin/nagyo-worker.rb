@@ -283,7 +283,7 @@ end
 services_thread = Thread.new do
   nagyo_server.get_all("services").each do |cc|
     render_erb_tmpfile(binding, "services.erb", File.join("services", cc['_id'] + '.cfg'))
-    service_ngs << cc['nodegroup']
+    service_ngs << cc['hostgroup']
   end
 end
 config_writer_threads << services_thread
@@ -300,7 +300,8 @@ clusters_thread = Thread.new do
   nagyo_server.get_all("clusters").each do |cc|
     Thread.new do
       hosts_to_check = []
-      cc['nodegroup'].each do |ng|
+      # only one hostgroup - why do each here??
+      cc['hostgroup'].each do |ng|
         # FIXME: which nventory does it use?
         nv_results     = Nagyo::Worker::NventorySync.get_data_from_ng(ng)
         graffitis      = nv_results[0]
@@ -313,7 +314,7 @@ clusters_thread = Thread.new do
         end
 
         render_erb_tmpfile(binding, "cluster.erb", File.join("clusters", cc['_id'] + '.cfg'))
-        service_ngs << cc['nodegroup']
+        service_ngs << cc['hostgroup']
       end
     end
   end
