@@ -103,8 +103,8 @@ class Service
   validates_with EitherOrValidator, :fields => [:host, :hostgroup]
 
   validates_presence_of  :name, :check_command, :service_description,
-    :check_command_arguments, :max_check_attempts, :check_interval,
-    :check_period, :notification_interval, :notification_period, :contacts
+    :max_check_attempts, :check_interval, :check_period,
+    :notification_interval, :notification_period, :contacts
 
   # FIXME: this is failing ... when one of scoped is nil
   #validates_uniqueness_of :hostgroup, :scope => [:check_command, :contacts, 

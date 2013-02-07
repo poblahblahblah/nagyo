@@ -40,7 +40,7 @@ class Cluster
 
 
 
-  validates_presence_of :hostgroup, :check_command, :check_command_arguments, :contacts
+  validates_presence_of :hostgroup, :check_command, :contacts
   # validations
   validates_presence_of :vip_name, :vip_dns, :node_alert_when_down
   validates_presence_of :percent_warn, :percent_crit, :ecv_uri, :ecv_string
