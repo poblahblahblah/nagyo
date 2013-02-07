@@ -1,5 +1,5 @@
 # FIXME: eharmony specific
 define hostgroup{
-  hostgroup_name <%= k %>
-  members <%= v.join(',') %>
+  hostgroup_name <%= hg["hostgroup_name"] %>
+  members <%= hg["members"].join(',') %>
 }

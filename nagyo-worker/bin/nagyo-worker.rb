@@ -45,7 +45,6 @@ logger.level = Logger::WARN
 config = Nagyo::Worker.config
 
 nodes           = {}
-node_groups     = {}
 service_ngs     = []
 
 
@@ -210,7 +209,6 @@ end
 # since they're all doing what amounts to the same thing, but 
 # from different sources and to different destinations.
 
-# FIXME: below expects node_groups certain format ... 
 
 #
 config_writer_threads = []
@@ -324,17 +322,16 @@ config_writer_threads << clusters_thread
 # hostgroups and nodegroups are the same thing but named differently
 # between nagios and nventory
 #
-# expecting node_groups like {nodegroup => [hosts], ...}
-#
 # hostgroups/group_name.cfg for each hostgroup
-node_groups.each_pair do |k,v|
+nagyo_server.get_all("hostgroups").each do |hg|
   config_writer_threads << Thread.new do
     services_thread.join
     # TODO: dont we need this too?
     clusters_thread.join
 
-    next if !service_ngs.include?(k)
-    render_erb_tmpfile(binding, "hostgroups.erb", "hostgroups/#{k}.cfg")
+    # NOTE: only outputting hostgroups attached to cluster or service
+    next if !service_ngs.include?(hg["hostgroup_name"])
+    render_erb_tmpfile(binding, "hostgroups.erb", "hostgroups/#{hg['_id']}.cfg")
   end
 end
 
