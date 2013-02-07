@@ -807,6 +807,7 @@ RailsAdmin.config do |config|
       field :max_check_attempts
       field :check_interval
       field :retry_interval
+      field :notifications_enabled, :boolean
       field :notification_interval
       field :check_period
       field :notification_period
