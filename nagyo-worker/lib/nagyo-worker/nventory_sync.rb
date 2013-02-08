@@ -155,7 +155,10 @@ module Nagyo::Worker
           # update existing ...
           nagyo_group = nagyo_hostgroups[groupname]
           # check if nagyo_group members same as these members already
-          unless nagyo_group["members"].to_a.sort == members.sort
+          #unless nagyo_group["members"].to_a.sort == members.sort
+          m1 = nagyo_group["members"].to_a.collect(&:to_s) rescue []
+          m2 = members.to_a.collect(&:to_s) rescue members
+          unless (m1 - m2).empty?
             # ... otherwise update
             nagyo.update("hostgroup", nagyo_group["_id"], :members => members)
           end
