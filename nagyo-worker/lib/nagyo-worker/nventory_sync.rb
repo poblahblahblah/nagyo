@@ -149,14 +149,19 @@ module Nagyo::Worker
       logger.info("Making Nagyo hostgroups for nVentory nodegroups ...")
       nagyo_hostgroups = nagyo.get_all("hostgroups").group_by {|x| x["hostgroup_name"] }
 
-      nodegroups.each do |group, members|
+      nodegroups.each do |groupname, members|
         members = members.flatten
-        if nagyo_hostgroups.include?(group)
+        if nagyo_hostgroups.include?(groupname)
           # update existing ...
-          nagyo.update("hostgroup", group, :members => members)
+          nagyo_group = nagyo_hostgroups[groupname]
+          # check if nagyo_group members same as these members already
+          unless nagyo_group["members"].to_a.sort == members.sort
+            # ... otherwise update
+            nagyo.update("hostgroup", nagyo_group["_id"], :members => members)
+          end
         else
-          # make hostgroup in nagyo
-          nagyo.create("hostgroup", :hostgroup_name => group, :members => members)
+          # make new hostgroup in nagyo
+          nagyo.create("hostgroup", :hostgroup_name => groupname, :members => members)
         end
       end
 
@@ -214,16 +219,20 @@ module Nagyo::Worker
         result = nil
         if nagyo_hosts.include?(host_name)
           logger.debug("update existing host #{host_name}")
-          # what would we update ... only update status ... ?
-          h = nagyo_hosts[host_name].first
-          #logger.debug("updating host #{host_name}: #{h.inspect}")
-          result = nagyo.update("host", h["_id"], host_options)
+          nagyo_host = nagyo_hosts[host_name].first
+          # don't bother updating host if notifications_enabled has not changed
+          unless host_options[:notifications_enabled].to_s == nagyo_host["notifications_enabled"].to_s
+            #logger.debug("updating host #{host_name}: #{nagyo_host.inspect}")
+            result = nagyo.update("host", nagyo_host["_id"], host_options)
+          end
         else
           # create new
           # massage nventory Node data into Nagyo Host data
           logger.debug("creating new host #{host_name}")
-          # TODO: check for default_contact in nagyo ... otherwise creation 
-          # will fail with 406 NotAcceptable
+          # FIXME: TODO: make sure default_contact exists already in nagyo ... 
+          # otherwise creation will fail with 406 NotAcceptable
+
+          # TODO: get contact from nventory node owner? or from nventory node's nodegroup.owner
 
           new_opts = host_options.merge({
             # for now we need to set some required fields:
