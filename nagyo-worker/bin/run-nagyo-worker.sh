@@ -12,7 +12,7 @@ export PATH=/usr/local/rvm/bin:$PATH
 export NAGYO_WORKER_PATH=${NAGYO_WORKER_PATH:-"/data/svc/ops/nagyo/nagyo-worker"}
 export NAGYO_WORKER_GEMSET=${NAGYO_WORKER_GEMSET:-"ruby-1.8.7@nagyo-worker"}
 
-export NAGYO_WORKER_OPTS=${NAGYO_WORKER_OPTS:-"--sync --debug"}
+export NAGYO_WORKER_OPTS=${NAGYO_WORKER_OPTS:-"--sync"}
 ###
 
 cd $NAGYO_WORKER_PATH || exit 1
